@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — ALFAAZ</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Teko:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0b0d17;
+      --bg-secondary: #151925;
+      --text-primary: #e6eef6;
+      --text-secondary: #a0aec0;
+      --accent-gold: #f8d37f;
+      --grid-border: rgba(230, 238, 246, 0.1);
+      --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 100vh;
+    }
+
+    /* Background Setup */
+    .bg-video {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: cover; z-index: -2;
+      filter: brightness(0.2) blur(4px);
+    }
+    .video-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(11, 13, 23, 0.85); z-index: -1;
+    }
+
+    /* Navbar */
+    nav {
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--grid-border);
+    }
+    .logo {
+      font-family: 'Teko', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    /* Dashboard Layout */
+    .dash-container {
+      max-width: 1000px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--grid-border);
+      padding: 2rem;
+      position: relative;
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 2px;
+      background: var(--accent-gold);
+    }
+
+    .panel-title {
+      font-family: 'Teko', sans-serif;
+      font-size: 2rem;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 1.5rem;
+    }
+
+    .data-label {
+      font-size: 9px;
+      color: var(--text-secondary);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .data-value {
+      font-size: 14px;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      background: rgba(248, 211, 127, 0.1);
+      color: var(--accent-gold);
+      border: 1px solid var(--accent-gold);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .logout-btn {
+      margin-top: 2rem;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--grid-border);
+      padding: 0.8rem;
+      width: 100%;
+      font-family: inherit;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      border-color: var(--text-primary);
+    }
+
+    @media (max-width: 768px) {
+      .dash-container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <video class="bg-video" autoplay loop muted playsinline>
+    <source src="https://res.cloudinary.com/dmqwjpmjk/video/upload/v1761507594/portal-bg_oribvr.mp4" type="video/mp4">
+  </video>
+  <div class="video-overlay"></div>
+
+  <nav>
+    <a href="/" class="logo">ALFAAZ</a>
+    <div id="userGreeting" style="font-size: 11px; letter-spacing: 2px;">SYS.ACTIVE</div>
+  </nav>
+
+  <div class="dash-container">
+    <div class="panel">
+      <h2 class="panel-title">Identity</h2>
+      
+      <div class="data-label">Registered Sequence</div>
+      <div class="data-value" id="dashEmail">Loading...</div>
+
+      <div class="data-label">Clearance Level</div>
+      <div class="data-value">
+        <span class="status-badge" id="dashStatus">Loading...</span>
+      </div>
+
+      <button id="logoutBtn" class="logout-btn">Terminate Session</button>
+    </div>
+
+    <div class="panel">
+      <h2 class="panel-title">Terminal Data</h2>
+      <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.8;">
+        Your collective data, exhibition history, and active club enrollments will populate here once your clearance is fully verified by an administrator.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // 1. SECURITY CHECK: Are they logged in?
+    const userData = localStorage.getItem('alfaaz_user');
+    
+    if (!userData) {
+      // If no VIP Pass is found, instantly kick them back to login
+      window.location.href = 'login.html';
+    } else {
+      // 2. LOAD DATA: Parse the saved data
+      const user = JSON.parse(userData);
+      
+      // Inject the data into the HTML
+      document.getElementById('dashEmail').textContent = user.email;
+      document.getElementById('dashStatus').textContent = user.status;
+    }
+
+    // 3. LOG OUT PROTOCOL
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      // Shred the VIP Pass
+      localStorage.removeItem('alfaaz_user');
+      // Kick them to the login page
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>
