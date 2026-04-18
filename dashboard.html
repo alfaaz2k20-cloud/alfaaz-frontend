@@ -145,12 +145,12 @@
 <body>
 
   <video class="bg-video" autoplay loop muted playsinline>
-    <source src="https://res.cloudinary.com/dmqwjpmjk/video/upload/v1761507594/portal-bg_oribvr.mp4" type="video/mp4">
+    <source src="assets/portal-bg_oribvr.mp4" type="video/mp4">
   </video>
   <div class="video-overlay"></div>
 
   <nav>
-    <a href="/" class="logo">ALFAAZ</a>
+    <a href="index.html" class="logo">ALFAAZ</a>
     <div id="userGreeting" style="font-size: 11px; letter-spacing: 2px;">SYS.ACTIVE</div>
   </nav>
 
@@ -171,9 +171,21 @@
 
     <div class="panel">
       <h2 class="panel-title">Terminal Data</h2>
-      <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.8;">
-        Your collective data, exhibition history, and active club enrollments will populate here once your clearance is fully verified by an administrator.
+      
+      <p id="terminalPendingMsg" style="font-size: 12px; color: var(--text-secondary); line-height: 1.8;">
+        Your collective data is encrypted. Full clearance required for terminal access.
       </p>
+
+      <div id="terminalDataDisplay" style="display: none;">
+        <div class="data-label">Exhibitions Logged</div>
+        <div class="data-value" id="dashExhibitions">0</div>
+
+        <div class="data-label">Active Club</div>
+        <div class="data-value" id="dashClub">N/A</div>
+
+        <div class="data-label">Collective Credits</div>
+        <div class="data-value" style="color: var(--accent-gold);" id="dashCredits">0</div>
+      </div>
     </div>
   </div>
 
@@ -184,22 +196,41 @@
     const userData = localStorage.getItem('alfaaz_user');
     
     if (!userData) {
-      // If no VIP Pass is found, instantly kick them back to login
       window.location.href = 'login.html';
     } else {
-      // 2. LOAD DATA: Parse the saved data
+      // 2. LOAD DATA
       const user = JSON.parse(userData);
       
-      // Inject the data into the HTML
-      document.getElementById('dashEmail').textContent = user.email;
-      document.getElementById('dashStatus').textContent = user.status;
+      const emailDisplay = document.getElementById('dashEmail');
+      const statusBadge = document.getElementById('dashStatus');
+      const greeting = document.getElementById('userGreeting');
+
+      emailDisplay.textContent = user.email.toUpperCase();
+      statusBadge.textContent = user.status.replace('_', ' '); 
+      greeting.textContent = `GREETINGS, ${user.email.split('@')[0].toUpperCase()}`;
+
+      // 3. VISUAL POLISH
+      if (user.status === 'PENDING_CLEARANCE') {
+        statusBadge.style.borderColor = '#a0aec0'; 
+        statusBadge.style.color = '#a0aec0';
+        statusBadge.style.background = 'rgba(160, 174, 192, 0.1)';
+      }
+
+      // 4. TERMINAL DATA REVEAL
+      if (user.status === 'ACTIVE_MEMBER' || user.status === 'ADMIN') {
+        document.getElementById('terminalPendingMsg').style.display = 'none';
+        document.getElementById('terminalDataDisplay').style.display = 'block';
+
+        // Add fallback values just in case the database sends null
+        document.getElementById('dashExhibitions').textContent = user.exhibitions || "0";
+        document.getElementById('dashClub').textContent = user.club || "N/A";
+        document.getElementById('dashCredits').textContent = user.credits || "0";
+      }
     }
 
-    // 3. LOG OUT PROTOCOL
+    // 5. LOG OUT PROTOCOL
     document.getElementById('logoutBtn').addEventListener('click', () => {
-      // Shred the VIP Pass
       localStorage.removeItem('alfaaz_user');
-      // Kick them to the login page
       window.location.href = 'login.html';
     });
   </script>
