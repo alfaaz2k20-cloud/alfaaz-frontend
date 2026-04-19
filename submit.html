@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALFAAZ — The Vault</title>
+    <style>
+        body {
+            background-color: #0b0d17;
+            color: #e6eef6;
+            font-family: monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .vault-container {
+            background: #151925;
+            padding: 40px;
+            border: 1px solid rgba(230, 238, 246, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #f8d37f;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #f8d37f;
+            padding-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #a0aec0;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            background: #0b0d17;
+            border: 1px solid #333;
+            color: #e6eef6;
+            font-family: monospace;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #f8d37f;
+        }
+        button {
+            margin-top: 25px;
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: #f8d37f;
+            border: 1px solid #f8d37f;
+            cursor: pointer;
+            font-family: monospace;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #f8d37f;
+            color: #0b0d17;
+        }
+        #status-msg {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="vault-container">
+        <h1>[ INITIATE TRANSMISSION ]</h1>
+        
+        <form id="submission-form">
+            <label>Participant Email</label>
+            <input type="email" id="email" required placeholder="your@email.com">
+
+            <label>Transmission Type</label>
+            <select id="sub-type">
+                <option value="Membership Form">Membership Form</option>
+                <option value="Project Proposal">Project Proposal</option>
+                <option value="Art Portfolio (PDF/IMG)">Art Portfolio (PDF/IMG)</option>
+            </select>
+
+            <label>Title / Designation</label>
+            <input type="text" id="title" required placeholder="e.g., The Echo Protocol">
+
+            <label>Artifact (PDF or Image)</label>
+            <input type="file" id="file-upload" required>
+
+            <label>Curator's Note (Optional)</label>
+            <textarea id="note" rows="3" placeholder="Brief context..."></textarea>
+
+            <button type="submit" id="submit-btn">Transmit to Vault</button>
+        </form>
+        
+        <div id="status-msg"></div>
+    </div>
+
+    <script>
+        // --- CLOUDINARY CONFIGURATION ---
+        const CLOUD_NAME = "dmqwjpmjk"; 
+        const UPLOAD_PRESET = "alfaaz_vault"; 
+        // --------------------------------
+
+        document.getElementById('submission-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const status = document.getElementById('status-msg');
+            const fileInput = document.getElementById('file-upload');
+            
+            btn.innerText = "UPLOADING ARTIFACT...";
+            btn.disabled = true;
+            status.style.color = "#a0aec0";
+
+            try {
+                // 1. Upload to Cloudinary First
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                formData.append('upload_preset', UPLOAD_PRESET);
+
+                const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const cloudData = await cloudRes.json();
+                
+                if (!cloudData.secure_url) {
+                    throw new Error("Failed to secure artifact link.");
+                }
+
+                const fileUrl = cloudData.secure_url;
+
+                // 2. Send Data to your Python Backend
+                btn.innerText = "SEALING VAULT...";
+                
+                const vaultData = {
+                    submission_type: document.getElementById('sub-type').value,
+                    title: document.getElementById('title').value,
+                    file_url: fileUrl,
+                    note: document.getElementById('note').value,
+                    author_email: document.getElementById('email').value
+                };
+
+                const pyRes = await fetch('https://alfaaz-project.onrender.com/vault/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(vaultData)
+                });
+
+                if (pyRes.ok) {
+                    status.style.color = "#f8d37f";
+                    status.innerText = "[ TRANSMISSION SUCCESSFUL ]";
+                    document.getElementById('submission-form').reset();
+                } else {
+                    throw new Error("The Vault rejected the transmission.");
+                }
+
+            } catch (error) {
+                status.style.color = "red";
+                status.innerText = "[ ERROR: " + error.message + " ]";
+            } finally {
+                btn.innerText = "TRANSMIT TO VAULT";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

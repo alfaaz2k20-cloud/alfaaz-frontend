@@ -32,18 +32,36 @@
       justify-content: space-between;
       align-items: baseline;
     }
-    .user-card {
+    .section-title {
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      margin-top: 3rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px dashed var(--grid-border);
+      padding-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .data-card {
       background: var(--bg-secondary);
       border: 1px solid var(--grid-border);
       padding: 1.5rem;
       margin-bottom: 1rem;
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
-      gap: 1rem;
       align-items: end;
+      gap: 1rem;
+    }
+    .user-card {
+      grid-template-columns: 2fr 1fr 1fr; /* Simplified for just Status */
+    }
+    .inbox-card {
+      grid-template-columns: 2fr 1fr 1fr 1fr; 
     }
     .label {
       font-size: 10px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px;
+    }
+    .data-display {
+      font-size: 14px; font-weight: 500; color: #fff;
     }
     input, select {
       background: rgba(0,0,0,0.3);
@@ -56,20 +74,21 @@
     input:focus, select:focus {
       outline: none; border-color: var(--accent-gold);
     }
-    .btn-save {
+    .btn-action {
       background: rgba(248, 211, 127, 0.1);
       color: var(--accent-gold);
       border: 1px solid var(--accent-gold);
       padding: 0.5rem;
       cursor: pointer;
       text-transform: uppercase; font-size: 12px; letter-spacing: 1px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      width: 100%;
       transition: 0.3s;
     }
-    .btn-save:hover {
+    .btn-action:hover {
       background: var(--accent-gold); color: var(--bg-primary);
-    }
-    .email-display {
-      font-size: 14px; font-weight: 500; color: #fff;
     }
   </style>
 </head>
@@ -80,12 +99,18 @@
     <a href="dashboard.html" style="font-size: 1rem; color: var(--text-secondary); text-decoration: none;">&larr; Return to Dashboard</a>
   </div>
 
+  <div class="section-title">[ INBOX : VAULT TRANSMISSIONS ]</div>
+  <div id="inboxContainer">
+    <p style="color: var(--text-secondary);">Decrypting Transmissions...</p>
+  </div>
+
+  <div class="section-title">[ ROSTER : COLLECTIVE MEMBERS ]</div>
   <div id="rosterContainer">
     <p style="color: var(--text-secondary);">Decrypting Collective Roster...</p>
   </div>
 
   <script>
-    // SECURITY CHECK: Are they an Admin?
+    // SECURITY CHECK
     const userData = localStorage.getItem('alfaaz_user');
     if (!userData) window.location.href = 'login.html';
     
@@ -97,87 +122,97 @@
 
     const API_URL = "https://alfaaz-project.onrender.com";
 
-    // 1. Fetch all users
-    async function loadRoster() {
+    // 1. FETCH INBOX (Submissions)
+    async function loadInbox() {
       try {
-        const response = await fetch(`${API_URL}/admin/users`);
-        const users = await response.json();
-        
-        const container = document.getElementById('rosterContainer');
-        container.innerHTML = ''; // clear loading text
+        const response = await fetch(`${API_URL}/admin/submissions`);
+        const submissions = await response.json();
+        const container = document.getElementById('inboxContainer');
+        container.innerHTML = ''; 
 
-        users.forEach((u, index) => {
-          // Build the card for each user
+        if (submissions.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-secondary);">The Vault is currently empty.</p>';
+            return;
+        }
+
+        submissions.forEach(sub => {
           const card = document.createElement('div');
-          card.className = 'user-card';
+          card.className = 'data-card inbox-card';
           
+          const date = new Date(sub.created_at).toLocaleDateString();
+
           card.innerHTML = `
             <div>
-              <div class="label">Identity</div>
-              <div class="email-display">${u.email}</div>
+              <div class="label">Artifact Title</div>
+              <div class="data-display">${sub.title}</div>
+              ${sub.note ? `<div class="label" style="margin-top:5px; text-transform:none;">"${sub.note}"</div>` : ''}
             </div>
-            
             <div>
-              <div class="label">Clearance Tier</div>
-              <select id="status-${index}">
-                <option value="PARTICIPANT" ${u.status === 'PARTICIPANT' ? 'selected' : ''}>Participant</option>
-                <option value="MEMBER" ${u.status === 'MEMBER' ? 'selected' : ''}>Member</option>
-                <option value="ADMIN" ${u.status === 'ADMIN' ? 'selected' : ''}>Admin</option>
-              </select>
+              <div class="label">Type</div>
+              <div class="data-display" style="color: var(--text-secondary);">${sub.submission_type}</div>
             </div>
-
             <div>
-              <div class="label">Club</div>
-              <select id="club-${index}">
-                <option value="N/A" ${u.club === 'N/A' ? 'selected' : ''}>None</option>
-                <option value="Alpha" ${u.club === 'Alpha' ? 'selected' : ''}>Alpha Club</option>
-                <option value="Beta" ${u.club === 'Beta' ? 'selected' : ''}>Beta Club</option>
-                <option value="Omega" ${u.club === 'Omega' ? 'selected' : ''}>Omega Club</option>
-              </select>
+              <div class="label">Origin (Sender)</div>
+              <div class="data-display" style="color: var(--text-secondary); font-size:12px;">${sub.author_email}<br>${date}</div>
             </div>
-
             <div>
-              <div class="label">Exhibitions</div>
-              <input type="text" id="exh-${index}" value="${u.exhibitions}">
-            </div>
-
-            <div>
-              <div class="label">Credits</div>
-              <input type="number" id="cred-${index}" value="${u.credits}">
-            </div>
-
-            <div>
-              <button class="btn-save" onclick="saveUser('${u.email}', ${index})">Commit Edit</button>
+              <a href="${sub.file_url}" target="_blank" class="btn-action">View Artifact</a>
             </div>
           `;
           container.appendChild(card);
         });
       } catch (error) {
-        document.getElementById('rosterContainer').innerHTML = '<p style="color:red;">Error connecting to the vault.</p>';
+        document.getElementById('inboxContainer').innerHTML = '<p style="color:red;">Signal lost. Cannot reach the vault.</p>';
       }
     }
 
-    // 2. Save individual user updates
-    async function saveUser(email, index) {
+    // 2. FETCH ROSTER (Users)
+    async function loadRoster() {
+      try {
+        const response = await fetch(`${API_URL}/admin/users`);
+        const users = await response.json();
+        const container = document.getElementById('rosterContainer');
+        container.innerHTML = ''; 
+
+        users.forEach((u, index) => {
+          const card = document.createElement('div');
+          card.className = 'data-card user-card';
+          
+          card.innerHTML = `
+            <div>
+              <div class="label">Identity</div>
+              <div class="data-display">${u.email}</div>
+            </div>
+            <div>
+              <div class="label">Clearance Tier</div>
+              <select id="status-${index}">
+                <option value="PARTICIPANT" ${u.status === 'PARTICIPANT' ? 'selected' : ''}>Participant</option>
+                <option value="ADMIN" ${u.status === 'ADMIN' ? 'selected' : ''}>Admin</option>
+              </select>
+            </div>
+            <div>
+              <button class="btn-action" onclick="updateStatus('${u.email}', ${index})">Commit Edit</button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (error) {
+        document.getElementById('rosterContainer').innerHTML = '<p style="color:red;">Error connecting to the roster.</p>';
+      }
+    }
+
+    // 3. UPDATE USER STATUS
+    async function updateStatus(email, index) {
       const statusVal = document.getElementById(`status-${index}`).value;
-      const clubVal = document.getElementById(`club-${index}`).value;
-      const exhVal = document.getElementById(`exh-${index}`).value;
-      const credVal = document.getElementById(`cred-${index}`).value;
-      const btn = document.querySelector(`#status-${index}`).parentElement.parentElement.querySelector('.btn-save');
+      const btn = document.querySelector(`#status-${index}`).parentElement.parentElement.querySelector('.btn-action');
 
       btn.textContent = "SAVING...";
 
       try {
-        const response = await fetch(`${API_URL}/admin/update`, {
+        const response = await fetch(`${API_URL}/admin/update_status`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: email,
-            status: statusVal,
-            exhibitions: exhVal,
-            club_affiliation: clubVal,
-            credits: parseInt(credVal)
-          })
+          body: JSON.stringify({ email: email, status: statusVal })
         });
 
         if (response.ok) {
@@ -189,6 +224,8 @@
             btn.style.color = "var(--accent-gold)";
             btn.textContent = "Commit Edit";
           }, 2000);
+        } else {
+            throw new Error("Update failed");
         }
       } catch (error) {
         alert("System error. Edit failed.");
@@ -196,7 +233,8 @@
       }
     }
 
-    // Initialize
+    // Initialize both sectors
+    loadInbox();
     loadRoster();
   </script>
 </body>
