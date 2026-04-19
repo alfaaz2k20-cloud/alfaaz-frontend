@@ -17,7 +17,6 @@
       --text-secondary: #a0aec0;
       --accent-gold: #f8d37f;
       --grid-border: rgba(230, 238, 246, 0.1);
-      --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
     body {
@@ -26,6 +25,7 @@
       color: var(--text-primary);
       font-family: 'JetBrains Mono', monospace;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     /* Background Setup */
@@ -33,12 +33,12 @@
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       object-fit: cover; z-index: -2;
-      filter: brightness(0.2) blur(4px);
+      filter: brightness(0.25) blur(2px);
     }
     .video-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(11, 13, 23, 0.85); z-index: -1;
+      background: radial-gradient(circle, transparent 20%, var(--bg-primary) 100%); z-index: -1;
     }
 
     /* Navbar */
@@ -48,6 +48,7 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--grid-border);
+      backdrop-filter: blur(10px);
     }
     .logo {
       font-family: 'Teko', sans-serif;
@@ -60,19 +61,24 @@
 
     /* Dashboard Layout */
     .dash-container {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 4rem auto;
       padding: 0 2rem;
+    }
+
+    .grid-layout {
       display: grid;
       grid-template-columns: 1fr 2fr;
       gap: 2rem;
+      margin-bottom: 2rem;
     }
 
     .panel {
-      background: var(--bg-secondary);
+      background: rgba(21, 25, 37, 0.7);
       border: 1px solid var(--grid-border);
       padding: 2rem;
       position: relative;
+      backdrop-filter: blur(5px);
     }
 
     .panel::before {
@@ -137,15 +143,74 @@
       border-color: var(--text-primary);
     }
 
+    /* THE PHANTOM STYLING */
+    #phantomTerminal {
+      margin-top: 3rem;
+      border: 1px solid var(--grid-border);
+      background: rgba(11, 13, 23, 0.9);
+      padding: 2.5rem;
+      position: relative;
+    }
+
+    .phantom-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--grid-border);
+      padding-bottom: 1rem;
+    }
+
+    #phantomOutput {
+      background: rgba(0,0,0,0.4);
+      border-left: 2px solid var(--accent-gold);
+      padding: 1.5rem;
+      min-height: 250px;
+      max-height: 450px;
+      overflow-y: auto;
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .phantom-input-wrapper {
+      display: flex;
+      border: 1px solid var(--grid-border);
+      background: rgba(255,255,255,0.03);
+    }
+
+    #phantomInput {
+      flex: 1;
+      padding: 1rem;
+      background: transparent;
+      border: none;
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+      outline: none;
+    }
+
+    .phantom-btn {
+      background: var(--accent-gold);
+      color: var(--bg-primary);
+      padding: 0 2rem;
+      font-family: 'Teko', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+    }
+
     @media (max-width: 768px) {
-      .dash-container { grid-template-columns: 1fr; }
+      .grid-layout { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
   <video class="bg-video" autoplay loop muted playsinline>
-    <source src="assets/portal-bg_oribvr.mp4" type="video/mp4">
+    <source src="https://res.cloudinary.com/dzt669m9w/video/upload/v1713444490/portal-bg_oribvr.mp4" type="video/mp4">
   </video>
   <div class="video-overlay"></div>
 
@@ -155,79 +220,73 @@
   </nav>
 
   <div class="dash-container">
-    <div class="panel">
-      <h2 class="panel-title">Identity</h2>
-      
-      <div class="data-label">Registered Sequence</div>
-      <div class="data-value" id="dashEmail">Loading...</div>
-
-      <div class="data-label">Clearance Level</div>
-      <div class="data-value">
-        <span class="status-badge" id="dashStatus">Loading...</span>
+    <div class="grid-layout">
+      <div class="panel">
+        <h2 class="panel-title">Identity</h2>
+        <div class="data-label">Registered Sequence</div>
+        <div class="data-value" id="dashEmail">Loading...</div>
+        <div class="data-label">Clearance Level</div>
+        <div class="data-value">
+          <span class="status-badge" id="dashStatus">Loading...</span>
+        </div>
+        <button id="logoutBtn" class="logout-btn">Terminate Session</button>
       </div>
 
-      <button id="logoutBtn" class="logout-btn">Terminate Session</button>
+      <div class="panel">
+        <h2 class="panel-title">Terminal Data</h2>
+        <p id="terminalPendingMsg" style="font-size: 12px; color: var(--text-secondary); line-height: 1.8;">
+          Your collective data is encrypted. Full clearance required for terminal access.
+        </p>
+        <div id="terminalDataDisplay" style="display: none;">
+          <div class="data-label">Exhibitions Logged</div>
+          <div class="data-value" id="dashExhibitions">0</div>
+          <div class="data-label">Active Club</div>
+          <div class="data-value" id="dashClub">N/A</div>
+          <div class="data-label">Collective Credits</div>
+          <div class="data-value" style="color: var(--accent-gold);" id="dashCredits">0</div>
+        </div>
+      </div>
     </div>
 
-    <div class="panel">
-      <h2 class="panel-title">Terminal Data</h2>
+    <div id="phantomTerminal" style="display: none;">
+      <div class="phantom-header">
+        <div>
+          <h2 style="font-family: 'Teko', sans-serif; font-size: 3rem; color: var(--accent-gold); letter-spacing: 4px; margin: 0; line-height: 1;">THE PHANTOM</h2>
+          <p style="font-size: 9px; color: var(--text-secondary); letter-spacing: 2px; margin-top: 5px;">AI CURATOR // ALFAAZ COLLECTIVE</p>
+        </div>
+        <div style="font-size: 9px; color: var(--accent-gold); letter-spacing: 2px;">ENCRYPTED_LINK.ACTIVE</div>
+      </div>
       
-      <p id="terminalPendingMsg" style="font-size: 12px; color: var(--text-secondary); line-height: 1.8;">
-        Your collective data is encrypted. Full clearance required for terminal access.
-      </p>
-
-      <div id="terminalDataDisplay" style="display: none;">
-        <div class="data-label">Exhibitions Logged</div>
-        <div class="data-value" id="dashExhibitions">0</div>
-
-        <div class="data-label">Active Club</div>
-        <div class="data-value" id="dashClub">N/A</div>
-
-        <div class="data-label">Collective Credits</div>
-        <div class="data-value" style="color: var(--accent-gold);" id="dashCredits">0</div>
+      <div id="phantomOutput">Awaiting query from the collective...</div>
+      
+      <div class="phantom-input-wrapper">
+        <input type="text" id="phantomInput" placeholder="INQUIRE ABOUT ART, CINEMA, OR PHILOSOPHY...">
+        <button onclick="askPhantom()" class="phantom-btn">EXECUTE</button>
       </div>
     </div>
   </div>
-<div id="phantomTerminal" style="display: none; margin-top: 4rem; border-top: 1px solid var(--grid-border); padding-top: 2rem;">
-    <h2 style="font-family: 'Teko', sans-serif; font-size: 2.5rem; color: var(--accent-gold); letter-spacing: 2px; margin-bottom: 0;">THE PHANTOM</h2>
-    <p style="font-size: 10px; color: var(--text-secondary); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">AI Curator of the Collective</p>
-    
-    <div id="phantomOutput" style="background: rgba(0,0,0,0.3); border: 1px solid var(--grid-border); padding: 1.5rem; min-height: 150px; max-height: 400px; overflow-y: auto; font-size: 12px; margin-bottom: 1rem; color: var(--text-primary); white-space: pre-wrap; line-height: 1.6;">Awaiting query...</div>
-    
-    <div style="display: flex; gap: 1rem;">
-      <input type="text" id="phantomInput" placeholder="Ask about cinema, literature, or philosophical concepts..." style="flex: 1; padding: 0.8rem; background: rgba(0,0,0,0.3); border: 1px solid var(--grid-border); color: white; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-      <button onclick="askPhantom()" class="btn-save" style="padding: 0 2rem;">Query</button>
-    </div>
-  </div>
+
   <script>
     lucide.createIcons();
 
-    // 1. SECURITY CHECK: Are they logged in?
+    // ==========================================
+    // CONFIGURATION
+    // ==========================================
+    const API_URL = "https://alfaaz-project.onrender.com";
+
+    // 1. SECURITY CHECK
     const userData = localStorage.getItem('alfaaz_user');
     
     if (!userData) {
       window.location.href = 'login.html';
     } else {
-      // 2. LOAD DATA
       const user = JSON.parse(userData);
       
-      const emailDisplay = document.getElementById('dashEmail');
-      const statusBadge = document.getElementById('dashStatus');
-      const greeting = document.getElementById('userGreeting');
+      document.getElementById('dashEmail').textContent = user.email.toUpperCase();
+      document.getElementById('dashStatus').textContent = user.status.replace('_', ' '); 
+      document.getElementById('userGreeting').textContent = `GREETINGS, ${user.email.split('@')[0].toUpperCase()}`;
 
-      emailDisplay.textContent = user.email.toUpperCase();
-      statusBadge.textContent = user.status.replace('_', ' '); 
-      greeting.textContent = `GREETINGS, ${user.email.split('@')[0].toUpperCase()}`;
-
-      // 3. VISUAL POLISH
-      if (user.status === 'PENDING_CLEARANCE') {
-        statusBadge.style.borderColor = '#a0aec0'; 
-        statusBadge.style.color = '#a0aec0';
-        statusBadge.style.background = 'rgba(160, 174, 192, 0.1)';
-      }
-
-     // 4. TERMINAL DATA REVEAL
-      // Show data to everyone who is a Participant, Member, or Admin
+      // 2. CLEARANCE CHECK
       if (user.status === 'PARTICIPANT' || user.status === 'MEMBER' || user.status === 'ADMIN') {
         document.getElementById('terminalPendingMsg').style.display = 'none';
         document.getElementById('terminalDataDisplay').style.display = 'block';
@@ -235,18 +294,19 @@
         document.getElementById('dashExhibitions').textContent = user.exhibitions || "0";
         document.getElementById('dashClub').textContent = user.club || "N/A";
         document.getElementById('dashCredits').textContent = user.credits || "0";
+        
+        // Show the Phantom
         document.getElementById('phantomTerminal').style.display = 'block';
       }
     }
 
-// 5. LOG OUT PROTOCOL
+    // 3. LOG OUT
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('alfaaz_user');
       window.location.href = 'login.html';
     });
-    // ==========================================
-    // 5. THE PHANTOM LOGIC
-    // ==========================================
+
+    // 4. PHANTOM LOGIC
     async function askPhantom() {
       const input = document.getElementById('phantomInput');
       const output = document.getElementById('phantomOutput');
@@ -254,16 +314,13 @@
       
       if (!query) return;
       
-      // Clear input and show the user's message
       input.value = '';
-      
-      // Remove the "Awaiting query..." text if it's the first message
-      if (output.textContent.trim() === "Awaiting query...") {
+      if (output.textContent.trim() === "Awaiting query from the collective...") {
           output.textContent = "";
       }
 
-      output.innerHTML += `\n<span style="color: var(--text-secondary);">> You:</span> ${query}\n<span style="color: var(--accent-gold);">> Phantom:</span> <span id="loadingText">...consulting the void...</span>\n`;
-      output.scrollTop = output.scrollHeight; // Auto-scroll to bottom
+      output.innerHTML += `\n<span style="color: var(--text-secondary);">> USER:</span> ${query}\n<span style="color: var(--accent-gold);">> PHANTOM:</span> <span id="loadingText">DECODING VOID...</span>\n`;
+      output.scrollTop = output.scrollHeight;
       
       try {
         const response = await fetch(`${API_URL}/phantom/ask`, {
@@ -273,34 +330,26 @@
         });
         
         const data = await response.json();
-        
-        // Remove the loading text and inject the real answer
         const loadingElement = document.getElementById('loadingText');
-        if (loadingElement) {
-            loadingElement.remove();
-        }
+        if (loadingElement) loadingElement.remove();
 
         if (response.ok) {
           output.innerHTML += `${data.answer}\n`;
         } else {
-          output.innerHTML += `[COMMUNICATION ERROR]\n`;
+          output.innerHTML += `<span style="color: #ff5555;">[COMMUNICATION_ERROR: PROTOCOL REJECTED]</span>\n`;
         }
       } catch (error) {
         const loadingElement = document.getElementById('loadingText');
         if (loadingElement) loadingElement.remove();
-        output.innerHTML += `[SYSTEM FAILURE: The Oracle is unreachable]\n`;
+        output.innerHTML += `<span style="color: #ff5555;">[SYSTEM_FAILURE: THE ORACLE IS UNREACHABLE]</span>\n`;
       }
       
-      output.scrollTop = output.scrollHeight; // Auto-scroll again
+      output.scrollTop = output.scrollHeight;
     }
 
-    // Allow users to press "Enter" to send their query
-    document.getElementById('phantomInput')?.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            askPhantom();
-        }
+    document.getElementById('phantomInput')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') askPhantom();
     });
   </script>
 </body>
 </html>
-``
