@@ -236,12 +236,17 @@
           submitBtn.style.background = "var(--accent-gold)";
           submitBtn.style.color = "var(--bg-primary)";
           
-          // NEW: Save the user's VIP Pass into the browser's memory
+          // Save the user's VIP Pass into the browser's memory
           localStorage.setItem('alfaaz_user', JSON.stringify(data.user));
           
-          // Teleport them to the dashboard after a short dramatic pause
+          // Teleport them to the correct dashboard after a short dramatic pause
           setTimeout(() => {
-            window.location.href = 'dashboard.html';
+            // THE CROSSROADS: Route Admins to the Control Room
+            if (data.user.status === 'ADMIN') {
+                window.location.href = 'admin.html';
+            } else {
+                window.location.href = 'dashboard.html';
+            }
           }, 800);
 
         } else {
