@@ -1665,6 +1665,109 @@
       marquee.style.animationDuration = '25s';
     });
   </script>
+  <div id="phantomMiniOverlay" style="position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; font-family: 'JetBrains Mono', monospace;">
+
+    <div id="phantomMiniBox" style="display: none; width: 320px; background: rgba(11, 13, 23, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(230, 238, 246, 0.1); border-left: 2px solid #f8d37f; margin-bottom: 1rem; padding: 1.5rem; transform: translateY(10px); opacity: 0; transition: all 0.3s ease;">
+      <div style="font-family: 'Teko', sans-serif; font-size: 1.5rem; color: #f8d37f; letter-spacing: 2px; margin-bottom: 1rem; border-bottom: 1px solid rgba(230, 238, 246, 0.1); padding-bottom: 0.5rem; line-height: 1;">THE PHANTOM</div>
+      
+      <div id="phantomMiniOutput" style="font-size: 11px; color: #e6eef6; line-height: 1.6; height: 250px; overflow-y: auto; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 12px; scrollbar-width: thin; scrollbar-color: #f8d37f transparent;">
+        <div style="color: #a0aec0; letter-spacing: 1px;">Whisper your query into the collective...</div>
+      </div>
+      
+      <input type="text" id="phantomMiniInput" placeholder="TYPE HERE [ENTER]" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(230, 238, 246, 0.1); color: white; padding: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 10px; outline: none; box-sizing: border-box; transition: 0.3s;">
+    </div>
+
+    <button id="phantomMiniTrigger" onclick="togglePhantomMini()" style="background: rgba(11, 13, 23, 0.5); backdrop-filter: blur(5px); border: 1px solid rgba(230, 238, 246, 0.2); color: #a0aec0; padding: 0.6rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 3px; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase;">
+      [ WAKE PHANTOM ]
+    </button>
+  </div>
+
+  <script>
+    // 1. Point to your Render Backend
+    const MINI_API_URL = "https://alfaaz-project.onrender.com";
+    
+    // 2. Element Selection
+    const pBox = document.getElementById('phantomMiniBox');
+    const pOut = document.getElementById('phantomMiniOutput');
+    const pIn = document.getElementById('phantomMiniInput');
+    const pTrig = document.getElementById('phantomMiniTrigger');
+
+    // 3. The Toggle Animation Logic
+    function togglePhantomMini() {
+      if (pBox.style.display === 'none') {
+        pBox.style.display = 'block';
+        // Tiny timeout to allow CSS transition to catch the opacity change
+        setTimeout(() => {
+          pBox.style.opacity = '1';
+          pBox.style.transform = 'translateY(0)';
+        }, 10);
+        pTrig.textContent = '[ SLEEP PHANTOM ]';
+        pTrig.style.color = '#0b0d17';
+        pTrig.style.background = '#f8d37f';
+        pTrig.style.borderColor = '#f8d37f';
+        pIn.focus();
+      } else {
+        pBox.style.opacity = '0';
+        pBox.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+          pBox.style.display = 'none';
+        }, 300);
+        pTrig.textContent = '[ WAKE PHANTOM ]';
+        pTrig.style.color = '#a0aec0';
+        pTrig.style.background = 'rgba(11, 13, 23, 0.5)';
+        pTrig.style.borderColor = 'rgba(230, 238, 246, 0.2)';
+      }
+    }
+
+    // 4. The Query Execution
+    pIn.addEventListener('keypress', async (e) => {
+      if (e.key === 'Enter') {
+        const query = pIn.value.trim();
+        if (!query) return;
+
+        pIn.value = '';
+        
+        // Clear initial text
+        if (pOut.innerHTML.includes("Whisper your query")) {
+          pOut.innerHTML = '';
+        }
+
+        // Add User Query
+        pOut.innerHTML += `<div><span style="color: #a0aec0; opacity: 0.5;">> </span> <span style="opacity: 0.8;">${query}</span></div>`;
+        
+        // Add Loading Indicator
+        const loadId = 'load-' + Date.now();
+        pOut.innerHTML += `<div id="${loadId}" style="color: #f8d37f; font-size: 10px;">[CONSULTING_VOID...]</div>`;
+        pOut.scrollTop = pOut.scrollHeight;
+
+        // Fetch from Backend
+        try {
+          const response = await fetch(`${MINI_API_URL}/phantom/ask`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: query })
+          });
+          
+          document.getElementById(loadId).remove();
+          
+          if (response.ok) {
+            const data = await response.json();
+            pOut.innerHTML += `<div style="color: #f8d37f; border-left: 1px solid rgba(248, 211, 127, 0.3); padding-left: 10px; margin-bottom: 8px;">${data.answer}</div>`;
+          } else {
+            pOut.innerHTML += `<div style="color: #ff5555; font-size: 10px;">[ERROR: SIGNAL REJECTED]</div>`;
+          }
+        } catch (error) {
+          if(document.getElementById(loadId)) document.getElementById(loadId).remove();
+          pOut.innerHTML += `<div style="color: #ff5555; font-size: 10px;">[ERROR: SERVER OFFLINE]</div>`;
+        }
+        pOut.scrollTop = pOut.scrollHeight;
+      }
+    });
+
+    // Hover effect for input
+    pIn.addEventListener('focus', () => { pIn.style.borderColor = '#f8d37f'; });
+    pIn.addEventListener('blur', () => { pIn.style.borderColor = 'rgba(230, 238, 246, 0.1)'; });
+  </script>
 </body>
 </html>
 ``
