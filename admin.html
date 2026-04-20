@@ -306,34 +306,54 @@
     }
 
     async function createEvent() {
-      const name = document.getElementById('ev-name').value.trim();
-      const date = document.getElementById('ev-date').value.trim();
-      const capacity = parseInt(document.getElementById('ev-capacity').value) || 0;
-      const desc = document.getElementById('ev-desc').value.trim();
-      const msg = document.getElementById('ev-create-msg');
-      if (!name) { msg.textContent = 'Event name is required.'; msg.style.color = 'var(--accent-red)'; return; }
-      msg.textContent = 'Creating...';
-      try {
-        const res = await apiFetch(`${API_URL}/admin/events/create`, {
-          method: 'POST',
-          body: JSON.stringify({ name, description: desc, event_date: date, capacity })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          msg.textContent = `✓ "${name}" created.`;
-          msg.style.color = 'var(--accent-green)';
-          document.getElementById('ev-name').value = '';
-          document.getElementById('ev-date').value = '';
-          document.getElementById('ev-desc').value = '';
-          document.getElementById('ev-capacity').value = '0';
-          loadEvents();
-        } else {
-          msg.textContent = data.detail || 'Failed.';
-          msg.style.color = 'var(--accent-red)';
-        }
-      } catch (e) { msg.textContent = 'Server error.'; msg.style.color = 'var(--accent-red)'; }
+    const name = document.getElementById('ev-name').value.trim();
+    const date = document.getElementById('ev-date').value.trim();
+    const capacity = parseInt(document.getElementById('ev-capacity').value) || 0;
+    const desc = document.getElementById('ev-desc').value.trim();
+    const msg = document.getElementById('ev-create-msg');
+
+    console.log("Attempting to create event:", { name, date, capacity, desc });
+
+    if (!name) { 
+        msg.textContent = 'Event name is required.'; 
+        msg.style.color = 'var(--accent-red)'; 
+        return; 
     }
 
+    msg.textContent = 'Transmitting to Vault...';
+    msg.style.color = 'var(--accent-gold)';
+
+    try {
+        const res = await apiFetch(`${API_URL}/admin/events/create`, {
+            method: 'POST',
+            body: JSON.stringify({ 
+                name: name, 
+                description: desc, 
+                event_date: date, 
+                capacity: capacity 
+            })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            msg.textContent = `✓ "${name}" online.`;
+            msg.style.color = 'var(--accent-green)';
+            // Clear inputs
+            document.getElementById('ev-name').value = '';
+            document.getElementById('ev-date').value = '';
+            document.getElementById('ev-desc').value = '';
+            document.getElementById('ev-capacity').value = '0';
+            loadEvents(); // Refresh the list
+        } else {
+            msg.textContent = data.detail || 'Transmission failed.';
+            msg.style.color = 'var(--accent-red)';
+        }
+    } catch (e) {
+        console.error(e);
+        msg.textContent = 'Server unreachable.';
+        msg.style.color = 'var(--accent-red)';
+    }
+}
     async function toggleEvent(id, btn) {
       btn.textContent = '...';
       try {

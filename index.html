@@ -1188,12 +1188,43 @@
           <span class="marquee-item">Cultural Heritage</span>
           <span class="marquee-dot"></span>
         </div>
-      </div>
+            </div>
     </section>
 
     <!-- Updates Section -->
+     <div id="live-notices">
+    <p style="opacity: 0.5; font-size: 12px;">SCANNING FOR ACTIVE TRANSMISSIONS...</p>
+</div>
+
+<script>
+    async function loadHomeNotices() {
+        const container = document.getElementById('live-notices');
+        try {
+            // Note: This hits the PUBLIC endpoint, no token needed
+            const res = await fetch('https://alfaaz-project.onrender.com/events/active');
+            const events = await res.json();
+
+            if (!events.length) {
+                container.innerHTML = '<p style="color: #666; font-size: 11px; letter-spacing: 2px;">[ NO ACTIVE NOTICES ]</p>';
+                return;
+            }
+
+            container.innerHTML = events.map(e => `
+                <div style="border-left: 2px solid #f8d37f; padding-left: 15px; margin-bottom: 20px;">
+                    <div style="font-size: 10px; color: #f8d37f; text-transform: uppercase; letter-spacing: 2px;">${e.event_date || 'TBD'}</div>
+                    <div style="font-family: 'Teko', sans-serif; font-size: 1.8rem; color: #fff; line-height: 1.2;">${e.name}</div>
+                    <p style="font-size: 12px; color: #a0aec0; margin: 5px 0;">${e.description || ''}</p>
+                    <a href="login.html" style="font-size: 10px; color: #f8d37f; text-decoration: underline; text-transform: uppercase;">Secure Clearance &rarr;</a>
+                </div>
+            `).join('');
+        } catch (err) {
+            container.innerHTML = '<p style="color: #f87171; font-size: 10px;">SIGNAL LOST.</p>';
+        }
+    }
+    loadHomeNotices();
+</script>
     <section id="updates" class="updates-section">
-      <div class="section-header fade-in">
+            <div class="section-header fade-in">
         <p class="section-label">Latest Updates</p>
         <h2 class="section-title">Notices</h2>
       </div>
