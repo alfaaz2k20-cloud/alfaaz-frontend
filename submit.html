@@ -1,178 +1,318 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALFAAZ — The Vault</title>
-    <style>
-        body {
-            background-color: #0b0d17;
-            color: #e6eef6;
-            font-family: monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .vault-container {
-            background: #151925;
-            padding: 40px;
-            border: 1px solid rgba(230, 238, 246, 0.1);
-            width: 100%;
-            max-width: 500px;
-        }
-        h1 {
-            color: #f8d37f;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #f8d37f;
-            padding-bottom: 10px;
-        }
-        label {
-            display: block;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #a0aec0;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            background: #0b0d17;
-            border: 1px solid #333;
-            color: #e6eef6;
-            font-family: monospace;
-            box-sizing: border-box;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #f8d37f;
-        }
-        button {
-            margin-top: 25px;
-            width: 100%;
-            padding: 12px;
-            background: transparent;
-            color: #f8d37f;
-            border: 1px solid #f8d37f;
-            cursor: pointer;
-            font-family: monospace;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-        }
-        button:hover {
-            background: #f8d37f;
-            color: #0b0d17;
-        }
-        #status-msg {
-            margin-top: 15px;
-            font-size: 0.85rem;
-            text-align: center;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transmit Artifact — ALFAAZ</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Teko:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0b0d17;
+      --bg-secondary: #151925;
+      --text-primary: #e6eef6;
+      --text-secondary: #a0aec0;
+      --accent-gold: #f8d37f;
+      --grid-border: rgba(230, 238, 246, 0.1);
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background Setup */
+    .bg-video {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: cover; z-index: -2;
+      filter: brightness(0.25) blur(2px);
+    }
+    .video-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle, transparent 20%, var(--bg-primary) 100%); z-index: -1;
+    }
+
+    /* Navbar */
+    nav {
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--grid-border);
+      backdrop-filter: blur(10px);
+    }
+    .logo {
+      font-family: 'Teko', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    /* Container & Panel */
+    .vault-container {
+      max-width: 600px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+    }
+    .panel {
+      background: rgba(21, 25, 37, 0.85);
+      border: 1px solid var(--grid-border);
+      padding: 3rem;
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+    .panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 2px;
+      background: var(--accent-gold);
+    }
+
+    .panel-title {
+      font-family: 'Teko', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+      color: var(--accent-gold);
+    }
+    .panel-subtitle {
+      font-size: 10px;
+      color: var(--text-secondary);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--grid-border);
+      padding-bottom: 1rem;
+    }
+
+    /* Form Elements */
+    .input-group { margin-bottom: 1.5rem; }
+    .input-label {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+    .auth-input, select, textarea {
+      width: 100%;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--grid-border);
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      padding: 0.8rem;
+      transition: border-color 0.3s ease;
+    }
+    .auth-input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent-gold);
+    }
+    
+    input[type="file"] {
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding: 0.5rem 0;
+    }
+    input[type="file"]::file-selector-button {
+      background: var(--grid-border);
+      color: var(--text-primary);
+      border: none;
+      padding: 0.5rem 1rem;
+      margin-right: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    input[type="file"]::file-selector-button:hover {
+      background: var(--accent-gold);
+      color: var(--bg-primary);
+    }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 2rem;
+      padding: 1rem;
+      background: transparent;
+      color: var(--accent-gold);
+      border: 1px solid var(--accent-gold);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .submit-btn:hover {
+      background: var(--accent-gold);
+      color: var(--bg-primary);
+    }
+
+    #status-msg {
+      margin-top: 15px;
+      font-size: 10px;
+      text-align: center;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="vault-container">
-        <h1>[ INITIATE TRANSMISSION ]</h1>
-        
-        <form id="submission-form">
-            <label>Participant Email</label>
-            <input type="email" id="email" required placeholder="your@email.com">
+  <video class="bg-video" autoplay loop muted playsinline>
+    <source src="https://res.cloudinary.com/dzt669m9w/video/upload/v1713444490/portal-bg_oribvr.mp4" type="video/mp4">
+  </video>
+  <div class="video-overlay"></div>
 
-            <label>Transmission Type</label>
-            <select id="sub-type">
-                <option value="Membership Form">Membership Form</option>
-                <option value="Project Proposal">Project Proposal</option>
-                <option value="Art Portfolio (PDF/IMG)">Art Portfolio (PDF/IMG)</option>
-            </select>
+  <nav>
+    <a href="dashboard.html" class="logo" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.2rem; color: var(--text-secondary);">
+      <i data-lucide="arrow-left" class="w-5 h-5"></i> Dashboard
+    </a>
+    <div id="userGreeting" style="font-size: 11px; letter-spacing: 2px; color: var(--accent-gold);">SYS.ACTIVE</div>
+  </nav>
 
-            <label>Title / Designation</label>
-            <input type="text" id="title" required placeholder="e.g., The Echo Protocol">
+  <div class="vault-container">
+    <div class="panel">
+      <h1 class="panel-title">The Vault</h1>
+      <p class="panel-subtitle">Initiate secure transmission to the Curator</p>
+      
+      <form id="submission-form">
+        <div class="input-group">
+          <label class="input-label">Transmission Type</label>
+          <select id="sub-type">
+              <option value="Art Portfolio (PDF/IMG)">Art Portfolio (PDF/IMG)</option>
+              <option value="Project Proposal">Project Proposal</option>
+              <option value="Membership Form">Membership Form</option>
+          </select>
+        </div>
 
-            <label>Artifact (PDF or Image)</label>
-            <input type="file" id="file-upload" required>
+        <div class="input-group">
+          <label class="input-label">Artifact Title / Designation</label>
+          <input type="text" id="title" class="auth-input" required placeholder="e.g., The Echo Protocol">
+        </div>
 
-            <label>Curator's Note (Optional)</label>
-            <textarea id="note" rows="3" placeholder="Brief context..."></textarea>
+        <div class="input-group">
+          <label class="input-label">Payload (PDF or Image)</label>
+          <input type="file" id="file-upload" required>
+        </div>
 
-            <button type="submit" id="submit-btn">Transmit to Vault</button>
-        </form>
-        
-        <div id="status-msg"></div>
+        <div class="input-group">
+          <label class="input-label">Curator's Note (Optional context)</label>
+          <textarea id="note" rows="3" placeholder="Brief context..."></textarea>
+        </div>
+
+        <button type="submit" id="submit-btn" class="submit-btn">Transmit to Vault</button>
+      </form>
+      
+      <div id="status-msg"></div>
     </div>
+  </div>
 
-    <script>
-        // --- CLOUDINARY CONFIGURATION ---
+  <script>
+    lucide.createIcons();
+
+    // 1. SECURITY CHECK & IDENTITY INJECTION
+    const userData = localStorage.getItem('alfaaz_user');
+    const token = localStorage.getItem('alfaaz_token');
+    
+    if (!userData || !token) {
+        window.location.href = 'login.html';
+    }
+    
+    const user = JSON.parse(userData);
+    document.getElementById('userGreeting').textContent = user.email.toUpperCase();
+
+    // --- CLOUDINARY CONFIGURATION ---
         const CLOUD_NAME = "dmqwjpmjk"; 
         const UPLOAD_PRESET = "alfaaz_vault"; 
         // --------------------------------
 
-        document.getElementById('submission-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            const status = document.getElementById('status-msg');
-            const fileInput = document.getElementById('file-upload');
+    document.getElementById('submission-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submit-btn');
+        const status = document.getElementById('status-msg');
+        const fileInput = document.getElementById('file-upload');
+        
+        btn.innerText = "UPLOADING ARTIFACT...";
+        btn.disabled = true;
+        status.style.color = "var(--text-secondary)";
+        status.innerText = "[ ENCRYPTING PAYLOAD ]";
+
+        try {
+            // 1. Upload to Cloudinary First
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('upload_preset', UPLOAD_PRESET);
+
+            const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
+                method: 'POST',
+                body: formData
+            });
             
-            btn.innerText = "UPLOADING ARTIFACT...";
-            btn.disabled = true;
-            status.style.color = "#a0aec0";
-
-            try {
-                // 1. Upload to Cloudinary First
-                const formData = new FormData();
-                formData.append('file', fileInput.files[0]);
-                formData.append('upload_preset', UPLOAD_PRESET);
-
-                const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const cloudData = await cloudRes.json();
-                
-                if (!cloudData.secure_url) {
-                    throw new Error("Failed to secure artifact link.");
-                }
-
-                const fileUrl = cloudData.secure_url;
-
-                // 2. Send Data to your Python Backend
-                btn.innerText = "SEALING VAULT...";
-                
-                const vaultData = {
-                    submission_type: document.getElementById('sub-type').value,
-                    title: document.getElementById('title').value,
-                    file_url: fileUrl,
-                    note: document.getElementById('note').value,
-                    author_email: document.getElementById('email').value
-                };
-
-                const pyRes = await fetch('https://alfaaz-project.onrender.com/vault/submit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(vaultData)
-                });
-
-                if (pyRes.ok) {
-                    status.style.color = "#f8d37f";
-                    status.innerText = "[ TRANSMISSION SUCCESSFUL ]";
-                    document.getElementById('submission-form').reset();
-                } else {
-                    throw new Error("The Vault rejected the transmission.");
-                }
-
-            } catch (error) {
-                status.style.color = "red";
-                status.innerText = "[ ERROR: " + error.message + " ]";
-            } finally {
-                btn.innerText = "TRANSMIT TO VAULT";
-                btn.disabled = false;
+            const cloudData = await cloudRes.json();
+            
+            if (!cloudData.secure_url) {
+                throw new Error("Failed to secure artifact link on edge network.");
             }
-        });
-    </script>
+
+            const fileUrl = cloudData.secure_url;
+
+            // 2. Send Data to your Python Backend
+            btn.innerText = "SEALING VAULT...";
+            status.innerText = "[ TRANSMITTING TO DB ]";
+            
+            const vaultData = {
+                submission_type: document.getElementById('sub-type').value,
+                title: document.getElementById('title').value,
+                file_url: fileUrl,
+                note: document.getElementById('note').value,
+                author_email: user.email // INVISIBLE INJECTION: Uses logged-in email securely
+            };
+
+            const pyRes = await fetch('https://alfaaz-project.onrender.com/vault/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(vaultData)
+            });
+
+            if (pyRes.ok) {
+                status.style.color = "#4ade80"; // Success Green
+                status.innerText = "[ TRANSMISSION SUCCESSFUL ]";
+                btn.style.background = "#4ade80";
+                btn.style.color = "#000";
+                btn.style.borderColor = "#4ade80";
+                btn.innerText = "ARTIFACT SECURED";
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+            } else {
+                throw new Error("The Vault rejected the transmission.");
+            }
+
+        } catch (error) {
+            status.style.color = "#ff5555";
+            status.innerText = "[ ERROR: " + error.message + " ]";
+            btn.innerText = "TRANSMIT TO VAULT";
+            btn.disabled = false;
+        }
+    });
+  </script>
 </body>
 </html>

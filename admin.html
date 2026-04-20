@@ -52,7 +52,7 @@
       gap: 1rem;
     }
     .user-card {
-      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-columns: 2fr 1fr 1fr; /* Simplified for just Status */
     }
     .inbox-card {
       grid-template-columns: 2fr 1fr 1fr 1fr; 
@@ -110,13 +110,13 @@
   </div>
 
   <script>
-    // SECURITY CHECK: Ensure user is logged in
+    // SECURITY CHECK: Ensure local data exists
     const userData = localStorage.getItem('alfaaz_user');
-    if (!userData) window.location.href = 'login.html';
+    const token = localStorage.getItem('alfaaz_token');
+    
+    if (!userData || !token) window.location.href = 'login.html';
     
     const user = JSON.parse(userData);
-    
-    // Preliminary Frontend Check (Backend will do the real check)
     if (user.status !== 'ADMIN') {
       document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20vh;'>ACCESS DENIED. ADMIN CLEARANCE REQUIRED.</h1>";
       setTimeout(() => window.location.href = 'dashboard.html', 2000);
@@ -124,10 +124,10 @@
 
     const API_URL = "https://alfaaz-project.onrender.com";
 
-    // THE VAULT KEY: Dynamically pull the logged-in email
+    // The secure JWT Header
     const ADMIN_HEADERS = {
       'Content-Type': 'application/json',
-      'x-user-email': user.email 
+      'Authorization': `Bearer ${token}`
     };
 
     // 1. FETCH INBOX (Submissions)
@@ -135,8 +135,14 @@
       try {
         const response = await fetch(`${API_URL}/admin/submissions`, { headers: ADMIN_HEADERS });
         
-        if (!response.ok) throw new Error("Vault locked.");
-        
+        // EDGE CASE FIX 1: Catch Expired Tokens
+        if (response.status === 401 || response.status === 403) {
+            localStorage.clear();
+            alert("Clearance Expired. Please log in again.");
+            window.location.href = 'login.html';
+            return;
+        }
+
         const submissions = await response.json();
         const container = document.getElementById('inboxContainer');
         container.innerHTML = ''; 
@@ -149,7 +155,6 @@
         submissions.forEach(sub => {
           const card = document.createElement('div');
           card.className = 'data-card inbox-card';
-          
           const date = new Date(sub.created_at).toLocaleDateString();
 
           card.innerHTML = `
@@ -173,7 +178,7 @@
           container.appendChild(card);
         });
       } catch (error) {
-        document.getElementById('inboxContainer').innerHTML = '<p style="color:red;">Signal lost or clearance denied.</p>';
+        document.getElementById('inboxContainer').innerHTML = '<p style="color:red;">Signal lost. Cannot reach the vault.</p>';
       }
     }
 
@@ -182,8 +187,8 @@
       try {
         const response = await fetch(`${API_URL}/admin/users`, { headers: ADMIN_HEADERS });
         
-        if (!response.ok) throw new Error("Roster locked.");
-        
+        if (response.status === 401 || response.status === 403) return; // Handled by loadInbox
+
         const users = await response.json();
         const container = document.getElementById('rosterContainer');
         container.innerHTML = ''; 
@@ -216,7 +221,7 @@
     }
 
     // 3. UPDATE USER STATUS
-    async function updateStatus(email, index) {
+    async function updateStatus(targetEmail, index) {
       const statusVal = document.getElementById(`status-${index}`).value;
       const btn = document.querySelector(`#status-${index}`).parentElement.parentElement.querySelector('.btn-action');
 
@@ -226,19 +231,20 @@
         const response = await fetch(`${API_URL}/admin/update_status`, {
           method: 'POST',
           headers: ADMIN_HEADERS,
-          body: JSON.stringify({ email: email, status: statusVal })
+          body: JSON.stringify({ email: targetEmail, status: statusVal })
         });
 
         if (response.ok) {
           btn.style.background = "#4ade80";
           btn.style.color = "#000";
           btn.textContent = "UPDATED";
-          
-          // If you updated yourself to Participant, immediately boot you out
-          if (email === user.email && statusVal === 'PARTICIPANT') {
-             user.status = 'PARTICIPANT';
-             localStorage.setItem('alfaaz_user', JSON.stringify(user));
-             setTimeout(() => window.location.href = 'dashboard.html', 1000);
+
+          // EDGE CASE FIX 2: If you just demoted yourself, log out.
+          if (targetEmail === user.email && statusVal === 'PARTICIPANT') {
+             localStorage.clear();
+             alert("Admin clearance revoked. Returning to login.");
+             setTimeout(() => window.location.href = 'login.html', 1500);
+             return;
           }
 
           setTimeout(() => {
@@ -250,7 +256,7 @@
             throw new Error("Update failed");
         }
       } catch (error) {
-        alert("System error. Edit failed. Insufficient clearance?");
+        alert("System error. Edit failed. Clearance expired?");
         btn.textContent = "Commit Edit";
       }
     }

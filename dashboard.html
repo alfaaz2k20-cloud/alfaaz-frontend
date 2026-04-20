@@ -122,7 +122,7 @@
       text-transform: uppercase;
     }
 
-    .logout-btn {
+    .action-btn {
       margin-top: 2rem;
       background: transparent;
       color: var(--text-secondary);
@@ -134,13 +134,27 @@
       letter-spacing: 2px;
       text-transform: uppercase;
       cursor: pointer;
+      text-align: center;
+      display: block;
+      text-decoration: none;
       transition: all 0.3s ease;
     }
 
-    .logout-btn:hover {
+    .action-btn:hover {
       background: var(--text-primary);
       color: var(--bg-primary);
       border-color: var(--text-primary);
+    }
+
+    .action-btn.gold {
+      color: var(--accent-gold);
+      border-color: var(--accent-gold);
+      background: rgba(248, 211, 127, 0.05);
+    }
+
+    .action-btn.gold:hover {
+      background: var(--accent-gold);
+      color: var(--bg-primary);
     }
 
     /* THE PHANTOM STYLING */
@@ -221,6 +235,7 @@
 
   <div class="dash-container">
     <div class="grid-layout">
+      
       <div class="panel">
         <h2 class="panel-title">Identity</h2>
         <div class="data-label">Registered Sequence</div>
@@ -229,26 +244,22 @@
         <div class="data-value">
           <span class="status-badge" id="dashStatus">Loading...</span>
         </div>
-        <button id="logoutBtn" class="logout-btn">Terminate Session</button>
+        <button id="logoutBtn" class="action-btn">Terminate Session</button>
       </div>
 
       <div class="panel">
-        <h2 class="panel-title">Terminal Data</h2>
-        <p id="terminalPendingMsg" style="font-size: 12px; color: var(--text-secondary); line-height: 1.8;">
-          Your collective data is encrypted. Full clearance required for terminal access.
+        <h2 class="panel-title">Vault Access</h2>
+        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 2rem;">
+          The private secure vault is online. You may transmit your project proposals, membership forms, and art portfolios directly to the Curator for review.
         </p>
-        <div id="terminalDataDisplay" style="display: none;">
-          <div class="data-label">Exhibitions Logged</div>
-          <div class="data-value" id="dashExhibitions">0</div>
-          <div class="data-label">Active Club</div>
-          <div class="data-value" id="dashClub">N/A</div>
-          <div class="data-label">Collective Credits</div>
-          <div class="data-value" style="color: var(--accent-gold);" id="dashCredits">0</div>
+        <div style="display: flex; gap: 1rem;">
+          <a href="submit.html" class="action-btn gold" style="margin-top: 0; flex: 1;">Initiate Transmission</a>
+          <a id="adminLink" href="admin.html" class="action-btn" style="margin-top: 0; flex: 1; display: none;">Enter Control Room</a>
         </div>
       </div>
     </div>
 
-    <div id="phantomTerminal" style="display: none;">
+    <div id="phantomTerminal">
       <div class="phantom-header">
         <div>
           <h2 style="font-family: 'Teko', sans-serif; font-size: 3rem; color: var(--accent-gold); letter-spacing: 4px; margin: 0; line-height: 1;">THE PHANTOM</h2>
@@ -286,27 +297,20 @@
       document.getElementById('dashStatus').textContent = user.status.replace('_', ' '); 
       document.getElementById('userGreeting').textContent = `GREETINGS, ${user.email.split('@')[0].toUpperCase()}`;
 
-      // 2. CLEARANCE CHECK
-      if (user.status === 'PARTICIPANT' || user.status === 'MEMBER' || user.status === 'ADMIN') {
-        document.getElementById('terminalPendingMsg').style.display = 'none';
-        document.getElementById('terminalDataDisplay').style.display = 'block';
-
-        document.getElementById('dashExhibitions').textContent = user.exhibitions || "0";
-        document.getElementById('dashClub').textContent = user.club || "N/A";
-        document.getElementById('dashCredits').textContent = user.credits || "0";
-        
-        // Show the Phantom
-        document.getElementById('phantomTerminal').style.display = 'block';
+      // If the user is an ADMIN, show them the backdoor link to the control room
+      if (user.status === 'ADMIN') {
+        document.getElementById('adminLink').style.display = 'block';
       }
     }
 
-    // 3. LOG OUT
+    // 2. LOG OUT
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('alfaaz_user');
+      localStorage.removeItem('alfaaz_token');
       window.location.href = 'login.html';
     });
 
-    // 4. PHANTOM LOGIC
+    // 3. PHANTOM LOGIC
     async function askPhantom() {
       const input = document.getElementById('phantomInput');
       const output = document.getElementById('phantomOutput');

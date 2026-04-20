@@ -236,8 +236,9 @@
           submitBtn.style.background = "var(--accent-gold)";
           submitBtn.style.color = "var(--bg-primary)";
           
-          // Save the user's VIP Pass into the browser's memory
+          // Save user info AND token into browser memory
           localStorage.setItem('alfaaz_user', JSON.stringify(data.user));
+          localStorage.setItem('alfaaz_token', data.token);
           
           // Teleport them to the correct dashboard after a short dramatic pause
           setTimeout(() => {
