@@ -3,223 +3,353 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ALFAAZ — Art • Literature • Culture</title>
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Teko:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <title>ALFAAZ — Collective of Art</title>
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/images/favicon.ico">
+
+  <meta name="description" content="Alfaaz — A collective of art, literature, and culture celebrating expression through visual and written forms." />
+  <meta name="keywords" content="Alfaaz, art, culture, literature, exhibition, collective, poetry, design" />
+  <meta name="author" content="Alfaaz Collective" />
+  <meta property="og:title" content="Alfaaz — Collective of Art" />
+  <meta property="og:description" content="Celebrating art and literature from the valley — exhibitions, clubs and curated shows by Alfaaz." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://placehold.co/1200x630/0b0d17/f8d37f?text=Alfaaz" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Alfaaz",
+    "url": "https://alfaazcollective.neocities.org",
+    "logo": "https://placehold.co/1200x630/0b0d17/f8d37f?text=Alfaaz",
+    "description": "A collective of art, literature & culture from the valley. Exhibitions and curated community events."
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com" defer></script>
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Teko:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    /* ========================================
+       BRUTALIST CORE VARIABLES
+    ======================================== */
     :root {
       --bg-primary: #0b0d17;
       --bg-secondary: #151925;
       --text-primary: #e6eef6;
       --text-secondary: #a0aec0;
       --accent-gold: #f8d37f;
+      --accent-gold-dim: rgba(248, 211, 127, 0.1);
+      --accent-gold-bright: #f8d37f;
       --grid-border: rgba(230, 238, 246, 0.1);
+      --cursor-size: 12px;
+      --cursor-hover-size: 80px;
+      --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      --kashmir: #0b0d17;
+      --gold: #f8d37f;
     }
 
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    
     body {
       margin: 0;
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      font-family: 'JetBrains Mono', monospace;
-      min-height: 100vh;
+      background-color: var(--kashmir);
+      color: #e6eef6;
+      font-family: 'Poppins', 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       overflow-x: hidden;
+      scroll-behavior: smooth;
     }
 
-    /* Hero Background */
-    .hero-video {
+    .bg-video {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       object-fit: cover; z-index: -2;
-      filter: brightness(0.3) contrast(1.1);
+      filter: brightness(0.4) blur(3px);
     }
-    .hero-overlay {
+
+    .video-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: radial-gradient(circle, transparent 20%, var(--bg-primary) 100%);
+      background: rgba(11, 13, 23, 0.6);
       z-index: -1;
     }
 
-    /* Navigation */
+    a { cursor: none; }
+
+    /* CUSTOM CURSOR */
+    .custom-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--cursor-size);
+      height: var(--cursor-size);
+      background: var(--accent-gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s var(--transition-bounce), height 0.3s var(--transition-bounce);
+    }
+    .custom-cursor.hover {
+      width: var(--cursor-hover-size);
+      height: var(--cursor-hover-size);
+      background: transparent;
+      border: 2px solid var(--accent-gold);
+    }
+
+    /* PRELOADER */
+    #loader {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center; flex-direction: column;
+      font-family: 'Teko', sans-serif;
+      z-index: 3000;
+      background: var(--bg-primary);
+      transition: opacity 0.8s var(--transition-smooth), visibility 0.8s ease;
+    }
+    #loader.fade-out { opacity: 0; pointer-events: none; visibility: hidden; }
+    .preloader-counter { font-size: clamp(4rem, 20vw, 15rem); font-weight: 300; color: var(--text-primary); }
+    .preloader-counter.loading { color: var(--accent-gold); }
+    .preloader-line { width: 0; height: 2px; background: var(--accent-gold); margin-top: 2rem; transition: width 0.5s var(--transition-smooth); }
+    .preloader-line.animate { width: 200px; }
+
+    /* NAVIGATION */
     nav {
+      position: fixed; top: 0; left: 0; width: 100%;
       padding: 1.5rem 3rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--grid-border);
-      backdrop-filter: blur(8px);
-      position: sticky; top: 0; z-index: 50;
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 1000;
+      transition: transform 0.4s var(--transition-smooth);
     }
-    .logo {
-      font-family: 'Teko', sans-serif;
-      font-size: 2.2rem;
-      letter-spacing: 5px;
-      text-transform: uppercase;
-      color: var(--text-primary);
-      text-decoration: none;
-    }
+    nav.hidden { transform: translateY(-100%); }
+    .logo { font-family: 'Teko', sans-serif; font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    nav a { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-primary); text-decoration: none; padding: 0.5rem 0; }
+    nav a:hover { color: var(--accent-gold); }
 
-    /* Hero Text */
-    .hero-content {
-      padding: 8rem 3rem 4rem 3rem;
-      max-width: 900px;
-    }
-    .hero-title {
-      font-family: 'Teko', sans-serif;
-      font-size: clamp(4rem, 12vw, 8rem);
-      line-height: 0.9;
-      letter-spacing: -2px;
-      margin-bottom: 1rem;
-      text-transform: uppercase;
-    }
-    .hero-tagline {
-      font-size: 14px;
-      letter-spacing: 4px;
-      color: var(--accent-gold);
-      text-transform: uppercase;
-      margin-bottom: 2rem;
-    }
+    .nav-actions { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-cta { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--bg-primary); background: var(--text-primary); padding: 0.6rem 1.2rem; text-decoration: none; }
+    .nav-cta:hover { background: var(--accent-gold); }
 
-    /* Dynamic Notice Board */
-    .notices-section {
-      border: 1px solid var(--grid-border);
-      background: rgba(21, 25, 37, 0.6);
-      backdrop-filter: blur(10px);
-      padding: 2.5rem;
-      max-width: 500px;
-      margin-left: 3rem;
-      position: relative;
-    }
-    .notices-section::before {
-      content: 'VAULT_TRANSMISSIONS';
-      position: absolute;
-      top: -10px; left: 20px;
-      background: var(--accent-gold);
-      color: var(--bg-primary);
-      padding: 0 10px;
-      font-size: 9px;
-      letter-spacing: 2px;
-    }
+    /* HERO */
+    .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; }
+    .hero-title { font-family: 'Teko', sans-serif; font-size: clamp(3rem, 15vw, 12rem); font-weight: 300; line-height: 0.85; text-transform: uppercase; opacity: 0; transform: translateY(30px); transition: 1.2s var(--transition-smooth); }
+    .hero-title.visible { opacity: 1; transform: translateY(0); }
+    .hero-title .outline { -webkit-text-stroke: 2px var(--text-primary); color: transparent; }
 
-    /* Buttons */
-    .btn-portal {
-      display: inline-block;
-      border: 1px solid var(--accent-gold);
-      padding: 1rem 2.5rem;
-      color: var(--accent-gold);
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 3px;
-      transition: all 0.3s;
-      text-decoration: none;
-      margin-top: 2rem;
-    }
-    .btn-portal:hover {
-      background: var(--accent-gold);
-      color: var(--bg-primary);
-    }
+    /* UPDATES SECTION - DYNAMIC MODS */
+    .updates-section { padding: 5rem 3rem; background: var(--bg-primary); border-top: 1px solid var(--grid-border); }
+    .updates-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1px; background: var(--grid-border); border: 1px solid var(--grid-border); }
+    .update-card { background: var(--bg-secondary); padding: 2rem; transition: all 0.4s var(--transition-smooth); text-decoration: none; display: block; }
+    .update-card:hover { background: var(--accent-gold-dim); }
+    .update-date { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--accent-gold); margin-bottom: 1rem; text-transform: uppercase; }
+    .update-text { font-family: 'Teko', sans-serif; font-size: 1.4rem; text-transform: uppercase; color: var(--text-primary); }
 
-    .notice-item {
-      border-bottom: 1px dashed var(--grid-border);
-      padding-bottom: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-    .notice-item:last-child { border: none; margin-bottom: 0; padding-bottom: 0; }
+    /* REUSABLE FADE IN */
+    .fade-in { opacity: 0; transform: translateY(30px); transition: 0.8s var(--transition-smooth); }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
 
+    /* MOBILE ADJUSTMENTS */
     @media (max-width: 768px) {
       nav { padding: 1rem 1.5rem; }
-      .hero-content { padding: 4rem 1.5rem; }
-      .notices-section { margin-left: 1.5rem; margin-right: 1.5rem; }
+      .nav-links { display: none; }
+      .updates-section { padding: 3rem 1.5rem; }
     }
   </style>
 </head>
 <body>
 
-  <video class="hero-video" autoplay loop muted playsinline>
+  <video class="bg-video" autoplay loop muted playsinline preload="auto">
     <source src="https://res.cloudinary.com/dmqwjpmjk/video/upload/v1761507594/portal-bg_oribvr.mp4" type="video/mp4">
   </video>
-  <div class="hero-overlay"></div>
+  <div class="video-overlay"></div>
+  <div class="custom-cursor" id="cursor"></div>
 
-  <nav>
-    <a href="#" class="logo">ALFAAZ</a>
-    <div class="flex gap-8 items-center">
-      <a href="login.html" class="text-[10px] uppercase tracking-[3px] text-secondary hover:text-white transition">Initialize Session</a>
-      <a href="register.html" class="text-[10px] uppercase tracking-[3px] py-2 px-4 border border-white/20 hover:border-white transition">Enlist</a>
+  <div id="loader">
+    <div class="preloader-counter" id="preloaderCounter">0</div>
+    <div class="preloader-line" id="preloaderLine"></div>
+    <div class="preloader-text">ALFAAZ — Collective</div>
+  </div>
+
+  <nav id="navbar">
+    <a href="#" class="logo magnetic">ALFAAZ</a>
+    <div class="nav-links">
+      <a href="#home" class="magnetic">Home</a>
+      <a href="#updates" class="magnetic">Notices</a>
+      <a href="#about" class="magnetic">About</a>
+      <a href="#journey" class="magnetic">Exhibitions</a>
+      <a href="#clubs" class="magnetic">Clubs</a>
+    </div>
+    <div class="nav-actions">
+      <a href="login.html" class="nav-cta magnetic">Initialize Session</a>
     </div>
   </nav>
 
   <main>
-    <div class="hero-content">
-      <p class="hero-tagline">Art • Literature • Culture</p>
-      <h1 class="hero-title">Where creativity <br>meets the void.</h1>
-      <p class="text-secondary max-w-md mt-6 leading-relaxed">
-        A curated collective for those who find meaning in the abstract. 
-        Join the roster to access private exhibitions and secure your place in the clubs.
-      </p>
-      <a href="login.html" class="btn-portal">Join a Club</a>
-    </div>
-
-    <div class="notices-section" id="notices-anchor">
-      <div id="live-notices">
-        <p class="text-[11px] text-secondary animate-pulse uppercase tracking-[2px]">Scanning for active transmissions...</p>
+    <section id="home" class="hero">
+      <div class="text-center px-8">
+        <h1 class="hero-title">
+          <span>Alfaaz</span>
+          <span class="outline">Collective</span>
+        </h1>
+        <p class="hero-subtitle italic opacity-60 tracking-[10px] uppercase text-[10px] mt-4">Art • Literature • Culture</p>
       </div>
-    </div>
+    </section>
+
+    <section id="updates" class="updates-section">
+      <div class="mb-12 fade-in">
+        <p class="text-accent-gold text-[10px] tracking-[4px] uppercase mb-2">Vault Transmissions</p>
+        <h2 class="font-['Teko'] text-5xl uppercase text-white">Live Notices</h2>
+      </div>
+      
+      <div id="live-notices-grid" class="updates-grid">
+        <p class="p-12 text-secondary animate-pulse uppercase text-[10px] tracking-widest">Scanning collective signals...</p>
+      </div>
+    </section>
+
+    <section id="about" class="py-24 px-8 bg-black/40 border-t border-white/10">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div class="fade-in">
+                <h2 class="font-['Teko'] text-6xl uppercase leading-none mb-8">Where creativity <br><span class="text-accent-gold">meets the void.</span></h2>
+                <p class="font-['JetBrains_Mono'] text-sm leading-relaxed text-secondary mb-8">
+                    Alfaaz is a collective dedicated to fostering spaces where creativity meets collaboration. 
+                    We celebrate local artists and writers through exhibitions, curated showcases, and creative events.
+                </p>
+                <a href="https://linktr.ee/alfaaz2k20" target="_blank" class="border border-accent-gold px-8 py-3 text-accent-gold uppercase text-[10px] tracking-[4px] hover:bg-accent-gold hover:text-black transition-all">Explore Archive</a>
+            </div>
+            <div class="grid gap-1 fade-in">
+                <div class="bg-white/5 p-6 border border-white/10">
+                    <h4 class="font-['Teko'] text-xl uppercase text-white">Celebrate Talent</h4>
+                    <p class="text-[10px] text-secondary mt-2">Curating showcases for the unheard voices of the valley.</p>
+                </div>
+                <div class="bg-white/5 p-6 border border-white/10">
+                    <h4 class="font-['Teko'] text-xl uppercase text-white">Inspire Dialogue</h4>
+                    <p class="text-[10px] text-secondary mt-2">Bridging the gap between classical tradition and modern expression.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="clubs" class="py-24 px-8 bg-black/20 border-t border-white/10">
+        <div class="text-center mb-16 fade-in">
+            <h2 class="font-['Teko'] text-6xl uppercase">The Collectives</h2>
+        </div>
+        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-1">
+            <div class="bg-white/5 border border-white/10 p-8 text-center hover:bg-accent-gold-dim transition-all">
+                <div class="font-['Teko'] text-2xl uppercase">Art & Craft</div>
+            </div>
+            <div class="bg-white/5 border border-white/10 p-8 text-center hover:bg-accent-gold-dim transition-all">
+                <div class="font-['Teko'] text-2xl uppercase">Film Club</div>
+            </div>
+            <div class="bg-white/5 border border-white/10 p-8 text-center hover:bg-accent-gold-dim transition-all">
+                <div class="font-['Teko'] text-2xl uppercase">Photography</div>
+            </div>
+            <div class="bg-white/5 border border-white/10 p-8 text-center hover:bg-accent-gold-dim transition-all">
+                <div class="font-['Teko'] text-2xl uppercase">Philosophy</div>
+            </div>
+            <div class="bg-white/5 border border-white/10 p-8 text-center hover:bg-accent-gold-dim transition-all">
+                <div class="font-['Teko'] text-2xl uppercase">Literature</div>
+            </div>
+        </div>
+        <div class="text-center mt-12 fade-in">
+            <a href="login.html" class="bg-white text-black px-12 py-4 uppercase text-[11px] font-bold tracking-[4px] hover:bg-accent-gold transition-all">Join a Club</a>
+        </div>
+    </section>
   </main>
 
+  <footer class="py-12 px-8 border-t border-white/10 text-center">
+    <div class="font-['Teko'] text-3xl tracking-widest mb-4">ALFAAZ</div>
+    <p class="text-[9px] text-secondary uppercase tracking-[5px]">© 2026 Collective of Art</p>
+  </footer>
+
   <script>
-    lucide.createIcons();
-
-    // DYNAMIC NOTICES ENGINE
+    // 1. DYNAMIC NOTICES ENGINE
     async function loadPublicNotices() {
-        const container = document.getElementById('live-notices');
-        const API_URL = "https://alfaaz-project.onrender.com";
-
+        const grid = document.getElementById('live-notices-grid');
         try {
-            // Hit the PUBLIC active events endpoint
-            const res = await fetch(`${API_URL}/events/active`);
+            const res = await fetch('https://alfaaz-project.onrender.com/events/active');
             const events = await res.json();
-            
+
             if (!events.length) {
-                container.innerHTML = `
-                    <div class="notice-item">
-                        <div class="text-[10px] text-secondary tracking-widest uppercase">System Status</div>
-                        <div class="font-bold text-white text-lg font-['Teko'] tracking-wider">THE VAULT IS QUIET</div>
-                        <p class="text-[11px] text-secondary mt-1">No active registrations at this cycle. Monitor Instagram for live signals.</p>
-                    </div>
-                `;
+                grid.innerHTML = `
+                    <div class="p-12 bg-secondary/50 border border-white/5 text-center col-span-full">
+                        <p class="text-[10px] text-secondary uppercase tracking-[3px]">[ ALL TRANSMISSIONS CLEAR — NO ACTIVE NOTICES ]</p>
+                    </div>`;
                 return;
             }
 
-            container.innerHTML = events.map(e => `
-                <div class="notice-item">
-                    <div class="flex justify-between items-start mb-1">
-                        <div class="text-[9px] text-accent-gold tracking-[2px] uppercase">${e.event_date || 'Date TBD'}</div>
-                        ${e.full ? 
-                           '<span class="text-[8px] border border-red-500/50 text-red-400 px-1 uppercase">Capacity Reached</span>' : 
-                           `<span class="text-[8px] border border-green-500/50 text-green-400 px-1 uppercase">${e.spots_left} Spots Left</span>`
-                        }
+            grid.innerHTML = events.map(e => `
+                <a href="login.html" class="update-card fade-in visible">
+                    <div class="flex justify-between items-start">
+                        <p class="update-date">${e.event_date || 'TBD'}</p>
+                        ${e.full ? '<span class="text-[8px] border border-red-500/50 text-red-400 px-1 uppercase">FULL</span>' : ''}
                     </div>
-                    <div class="font-bold text-white text-2xl font-['Teko'] tracking-wider leading-none uppercase">${e.name}</div>
-                    <p class="text-[11px] text-secondary mt-2 line-clamp-2">${e.description || ''}</p>
-                    <a href="login.html" class="text-[9px] text-accent-gold underline mt-3 block uppercase tracking-widest hover:text-white transition">
-                       Secure Clearance &rarr;
-                    </a>
-                </div>
+                    <h3 class="update-text">${e.name}</h3>
+                    <p class="text-[11px] text-secondary mt-3 line-clamp-2">${e.description || ''}</p>
+                    <div class="text-accent-gold text-[9px] mt-4 uppercase tracking-widest underline">Secure Ticket &rarr;</div>
+                </a>
             `).join('');
-
         } catch (err) {
-            container.innerHTML = `
-                <div class="text-red-400 text-[10px] uppercase tracking-widest">
-                   [ Transmission Interrupted: Check Connection ]
-                </div>
-            `;
+            grid.innerHTML = '<p class="p-12 text-red-400 uppercase text-[9px]">Signal Lost: Link Unreachable</p>';
         }
     }
-
-    // Run the scan
     loadPublicNotices();
+
+    // 2. CURSOR & ANIMATIONS
+    const cursor = document.getElementById('cursor');
+    let mX = 0, mY = 0, cX = 0, cY = 0;
+    document.addEventListener('mousemove', e => { mX = e.clientX; mY = e.clientY; });
+    
+    function animCursor() {
+      cX += (mX - cX) * 0.15; cY += (mY - cY) * 0.15;
+      cursor.style.left = cX + 'px'; cursor.style.top = cY + 'px';
+      requestAnimationFrame(animCursor);
+    }
+    animCursor();
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+
+    // 3. PRELOADER
+    const ldr = document.getElementById('loader');
+    const cnt = document.getElementById('preloaderCounter');
+    const lin = document.getElementById('preloaderLine');
+    let val = 0;
+    function updateLdr() {
+      val++; cnt.textContent = val;
+      if (val >= 100) {
+        setTimeout(() => { ldr.classList.add('fade-out'); reveal(); }, 300);
+      } else { setTimeout(updateLdr, 15); }
+    }
+    setTimeout(() => { lin.classList.add('animate'); updateLdr(); }, 500);
+
+    function reveal() { document.querySelector('.hero-title').classList.add('visible'); }
+
+    // 4. SCROLL OBSERVER
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+    // 5. NAVBAR AUTO-HIDE
+    let lastY = window.scrollY;
+    window.addEventListener('scroll', () => {
+      const curY = window.scrollY;
+      const nav = document.getElementById('navbar');
+      if (curY > lastY && curY > 100) nav.classList.add('hidden');
+      else nav.classList.remove('hidden');
+      lastY = curY;
+    });
   </script>
 </body>
 </html>
