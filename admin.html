@@ -52,7 +52,7 @@
       gap: 1rem;
     }
     .user-card {
-      grid-template-columns: 2fr 1fr 1fr; /* Simplified for just Status */
+      grid-template-columns: 2fr 1fr 1fr;
     }
     .inbox-card {
       grid-template-columns: 2fr 1fr 1fr 1fr; 
@@ -110,11 +110,13 @@
   </div>
 
   <script>
-    // SECURITY CHECK
+    // SECURITY CHECK: Ensure user is logged in
     const userData = localStorage.getItem('alfaaz_user');
     if (!userData) window.location.href = 'login.html';
     
     const user = JSON.parse(userData);
+    
+    // Preliminary Frontend Check (Backend will do the real check)
     if (user.status !== 'ADMIN') {
       document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20vh;'>ACCESS DENIED. ADMIN CLEARANCE REQUIRED.</h1>";
       setTimeout(() => window.location.href = 'dashboard.html', 2000);
@@ -122,10 +124,19 @@
 
     const API_URL = "https://alfaaz-project.onrender.com";
 
+    // THE VAULT KEY: Dynamically pull the logged-in email
+    const ADMIN_HEADERS = {
+      'Content-Type': 'application/json',
+      'x-user-email': user.email 
+    };
+
     // 1. FETCH INBOX (Submissions)
     async function loadInbox() {
       try {
-        const response = await fetch(`${API_URL}/admin/submissions`);
+        const response = await fetch(`${API_URL}/admin/submissions`, { headers: ADMIN_HEADERS });
+        
+        if (!response.ok) throw new Error("Vault locked.");
+        
         const submissions = await response.json();
         const container = document.getElementById('inboxContainer');
         container.innerHTML = ''; 
@@ -162,14 +173,17 @@
           container.appendChild(card);
         });
       } catch (error) {
-        document.getElementById('inboxContainer').innerHTML = '<p style="color:red;">Signal lost. Cannot reach the vault.</p>';
+        document.getElementById('inboxContainer').innerHTML = '<p style="color:red;">Signal lost or clearance denied.</p>';
       }
     }
 
     // 2. FETCH ROSTER (Users)
     async function loadRoster() {
       try {
-        const response = await fetch(`${API_URL}/admin/users`);
+        const response = await fetch(`${API_URL}/admin/users`, { headers: ADMIN_HEADERS });
+        
+        if (!response.ok) throw new Error("Roster locked.");
+        
         const users = await response.json();
         const container = document.getElementById('rosterContainer');
         container.innerHTML = ''; 
@@ -211,7 +225,7 @@
       try {
         const response = await fetch(`${API_URL}/admin/update_status`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: ADMIN_HEADERS,
           body: JSON.stringify({ email: email, status: statusVal })
         });
 
@@ -219,6 +233,14 @@
           btn.style.background = "#4ade80";
           btn.style.color = "#000";
           btn.textContent = "UPDATED";
+          
+          // If you updated yourself to Participant, immediately boot you out
+          if (email === user.email && statusVal === 'PARTICIPANT') {
+             user.status = 'PARTICIPANT';
+             localStorage.setItem('alfaaz_user', JSON.stringify(user));
+             setTimeout(() => window.location.href = 'dashboard.html', 1000);
+          }
+
           setTimeout(() => {
             btn.style.background = "rgba(248, 211, 127, 0.1)";
             btn.style.color = "var(--accent-gold)";
@@ -228,7 +250,7 @@
             throw new Error("Update failed");
         }
       } catch (error) {
-        alert("System error. Edit failed.");
+        alert("System error. Edit failed. Insufficient clearance?");
         btn.textContent = "Commit Edit";
       }
     }
