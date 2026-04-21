@@ -290,10 +290,11 @@
         loadMyTickets();
     }
 
-    // EXHIBITION STATUS (Dynamically Hidden if Config says CLOSED)
+    // EXHIBITION STATUS (Dynamically Hidden if Config says CLOSED - Cache Bypassed)
     async function loadExhibitionStatus() {
         try {
-            const cfgRes = await fetch(`${API_URL}/exhibitions/config`);
+            // FORCE BROWSER TO BYPASS CACHE FOR MASTER SWITCH
+            const cfgRes = await fetch(`${API_URL}/exhibitions/config`, { cache: 'no-store' });
             const cfg = await cfgRes.json();
             const masterPanel = document.getElementById('exhibitionPanel');
 
@@ -304,7 +305,8 @@
 
             if (masterPanel) masterPanel.style.display = "block";
 
-            const res = await apiFetch('/exhibitions/my-status');
+            // FORCE BROWSER TO BYPASS CACHE FOR USER STATUS
+            const res = await apiFetch('/exhibitions/my-status', { cache: 'no-store' });
             const data = await res.json();
             const viewStatus = document.getElementById('exhibStatusView');
             const viewApply = document.getElementById('exhibApplyView');
