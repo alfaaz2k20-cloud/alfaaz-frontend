@@ -238,160 +238,49 @@
   <script>
     lucide.createIcons();
 
-    // 1. AUTHENTICATION & SETUP
     const API_URL = "https://alfaaz-project.onrender.com";
-    const token = localStorage.getItem('alfaaz_token');
-    const userData = localStorage.getItem('alfaaz_user');
-    
-    if (!userData || !token || token === "undefined") {
-      window.location.href = 'login.html';
+    const token = localStorage.getItem('alfaaz_token'); const userData = localStorage.getItem('alfaaz_user');
+    if (!userData || !token || token === "undefined") window.location.href = 'login.html';
+    const user = JSON.parse(userData); document.getElementById('userGreeting').textContent = `[ ${user.email.split('@')[0]} ]`;
+
+    // FETCH GLOBAL SETTINGS
+    async function loadExhibitionConfig() {
+        try {
+            const res = await fetch(`${API_URL}/exhibitions/config`);
+            const cfg = await res.json();
+            
+            // Inject Admin text
+            document.getElementById('dyn-title').textContent = cfg.title;
+            document.getElementById('dyn-date').innerHTML = `<span class="highlight">Exhibition Date:</span> ${cfg.date_text}`;
+            document.getElementById('dyn-venue').innerHTML = `<span class="highlight">Venue:</span> ${cfg.venue}`;
+            document.getElementById('dyn-desc').textContent = cfg.about_text;
+
+            // Security Lock
+            if (!cfg.is_open) {
+                document.getElementById('exhibitionForm').innerHTML = `
+                    <div style="padding: 3rem; text-align: center; border: 1px dashed var(--accent-red); background: rgba(248,113,113,0.05);">
+                        <h2 style="font-family: 'Teko', sans-serif; font-size: 2.5rem; color: var(--accent-red); text-transform: uppercase;">TRANSMISSIONS CLOSED</h2>
+                        <p style="font-size: 11px; color: var(--text-secondary); margin-top: 1rem; letter-spacing: 1px;">The Curator is not currently accepting portfolios. Monitor the collective for updates.</p>
+                        <a href="dashboard.html" class="action-btn" style="display: inline-block; margin-top: 2rem;">Return to Dashboard</a>
+                    </div>`;
+            }
+        } catch (e) { console.error("Config missing"); }
     }
 
-    const user = JSON.parse(userData);
-    document.getElementById('userGreeting').textContent = `[ ${user.email.split('@')[0]} ]`;
-
-    // 2. CHECK EXISTING APPLICATION
-    // Prevents users from applying twice if they are already PENDING
     async function checkStatus() {
         try {
-            const res = await fetch(`${API_URL}/exhibitions/my-status`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const res = await fetch(`${API_URL}/exhibitions/my-status`, { headers: { 'Authorization': `Bearer ${token}` } });
             const data = await res.json();
-            if (data.status === "PENDING" || data.status === "APPROVED") {
-                alert("You already have an active exhibition clearance. Returning to dashboard.");
-                window.location.href = 'dashboard.html';
-            }
-        } catch (e) {
-            console.error("Status check failed.");
-        }
+            if (data.status === "PENDING" || data.status === "APPROVED") { alert("You already have an active exhibition clearance."); window.location.href = 'dashboard.html'; }
+            else { loadExhibitionConfig(); } // Load config only if they are allowed to apply
+        } catch (e) { console.error("Status check failed."); }
     }
     checkStatus();
 
-    // 3. CLOUDINARY CONFIG
-    const CLOUD_NAME = "dmqwjpmjk"; 
-    const UPLOAD_PRESET = "alfaaz_vault"; 
-
-    // 4. MULTI-STEP LOGIC
-    function nextStep(step) {
-      // Basic validation before moving forward
-      if (step === 3) {
-          const name = document.getElementById('fullName').value;
-          const age = document.getElementById('age').value;
-          const address = document.getElementById('address').value;
-          const wa = document.getElementById('whatsapp').value;
-          if (!name || !age || !address || !wa) {
-              alert("All demographic fields are required to proceed.");
-              return;
-          }
-      }
-
-      document.querySelectorAll('.step-section').forEach(el => el.classList.remove('active'));
-      document.getElementById(`step-${step}`).classList.add('active');
-      
-      document.querySelectorAll('.step-dot').forEach((el, index) => {
-        if (index < step) el.classList.add('active');
-        else el.classList.remove('active');
-      });
-    }
-
-    function prevStep(step) {
-      document.querySelectorAll('.step-section').forEach(el => el.classList.remove('active'));
-      document.getElementById(`step-${step}`).classList.add('active');
-      
-      document.querySelectorAll('.step-dot').forEach((el, index) => {
-        if (index < step) el.classList.add('active');
-        else el.classList.remove('active');
-      });
-    }
-
-    // 5. TRANSMISSION LOGIC
-    async function transmitApplication() {
-      const genre = document.getElementById('genre').value;
-      const medium = document.getElementById('medium').value;
-      const over19 = document.getElementById('over19').checked;
-      const agreed = document.getElementById('agreed').checked;
-      const fileInput = document.getElementById('portfolioFile');
-
-      if (!genre || !medium || !fileInput.files[0]) {
-          alert("Genre, Medium, and Portfolio PDF are required.");
-          return;
-      }
-      if (!over19 || !agreed) {
-          alert("You must agree to the terms to submit your portfolio.");
-          return;
-      }
-
-      const btn = document.getElementById('submitBtn');
-      const backBtn = document.getElementById('backBtn3');
-      const statusMsg = document.getElementById('statusMsg');
-
-      btn.textContent = "ENCRYPTING PAYLOAD...";
-      btn.disabled = true; backBtn.disabled = true;
-      statusMsg.textContent = "[ Uploading Portfolio to Edge Network ]";
-
-      try {
-          // PHASE A: Upload to Cloudinary
-          const formData = new FormData();
-          formData.append('file', fileInput.files[0]);
-          formData.append('upload_preset', UPLOAD_PRESET);
-
-          const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
-              method: 'POST', body: formData
-          });
-          const cloudData = await cloudRes.json();
-          
-          if (!cloudData.secure_url) throw new Error("Failed to secure artifact link.");
-          const fileUrl = cloudData.secure_url;
-
-          // PHASE B: Transmit Data to Backend
-          btn.textContent = "TRANSMITTING...";
-          statusMsg.textContent = "[ Routing to Alfaaz Servers ]";
-
-          const payload = {
-              full_name: document.getElementById('fullName').value,
-              age: parseInt(document.getElementById('age').value),
-              address: document.getElementById('address').value,
-              whatsapp: document.getElementById('whatsapp').value,
-              genre: genre,
-              medium: medium,
-              portfolio_url: fileUrl,
-              over_19: over19,
-              agreed_to_screening: agreed,
-              applicant_note: document.getElementById('comments').value
-          };
-
-          const pyRes = await fetch(`${API_URL}/exhibitions/apply`, {
-              method: 'POST',
-              headers: { 
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}` 
-              },
-              body: JSON.stringify(payload)
-          });
-
-          const data = await pyRes.json();
-
-          if (pyRes.ok) {
-              statusMsg.style.color = "var(--accent-green)";
-              statusMsg.textContent = "[ TRANSMISSION SECURED ]";
-              btn.style.background = "var(--accent-green)";
-              btn.style.color = "#000";
-              btn.style.borderColor = "var(--accent-green)";
-              btn.textContent = "SUCCESS";
-              
-              setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
-          } else {
-              throw new Error(data.detail || "Server rejected transmission.");
-          }
-
-      } catch (error) {
-          statusMsg.style.color = "var(--accent-red)";
-          statusMsg.textContent = `[ ERROR: ${error.message} ]`;
-          btn.textContent = "TRANSMIT PORTFOLIO";
-          btn.disabled = false; backBtn.disabled = false;
-      }
-    }
+    // Make sure to add id="dyn-title", id="dyn-date", id="dyn-venue", and id="dyn-desc" 
+    // to the corresponding HTML elements in Step 1 of your exhibition.html!
+    
+    // ... Keep your existing Cloudinary Transmission Logic Here ...
   </script>
 </body>
 </html>

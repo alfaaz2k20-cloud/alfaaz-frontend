@@ -10,6 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Teko:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
+    /* ========================================
+       BRUTALIST CORE VARIABLES
+    ======================================== */
     :root {
       --bg-primary: #0b0d17;
       --bg-secondary: #151925;
@@ -231,6 +234,19 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="rsvpModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="max-width: 400px; width: 90%; padding: 2.5rem; background: rgba(21, 25, 37, 0.95); border: 1px solid var(--accent-gold);">
+       <h3 style="font-family: 'Teko', sans-serif; font-size: 2rem; color: var(--accent-gold); margin-bottom: 1rem; text-transform: uppercase; line-height: 1;">Event Clearance</h3>
+       <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.6;">Provide your active WhatsApp number. Your clearance will be instantly secured.</p>
+       <label style="font-size: 9px; color: var(--text-secondary); letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 0.5rem;">WhatsApp Number</label>
+       <input type="text" id="rsvpWhatsapp" placeholder="+91..." required style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--grid-border); color: #fff; padding: 1rem; margin-bottom: 1.5rem; outline: none; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+       <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+          <button onclick="closeRsvpModal()" style="background: transparent; color: var(--text-secondary); border: 1px solid var(--grid-border); padding: 0.8rem 1.5rem; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; cursor: pointer;">Cancel</button>
+          <button id="confirmRsvpBtn" onclick="submitRsvp()" style="background: var(--accent-gold); color: var(--bg-primary); border: none; padding: 0.8rem 1.5rem; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; cursor: pointer;">Secure Spot</button>
+       </div>
+    </div>
+  </div>
+
   <script>
     // CURSOR & PRELOADER LOGIC
     const cursor = document.getElementById('cursor');
@@ -274,7 +290,7 @@
         loadMyTickets();
     }
 
-    // NEW: EXHIBITION STATUS
+    // EXHIBITION STATUS
     async function loadExhibitionStatus() {
         try {
             const res = await apiFetch('/exhibitions/my-status');
@@ -330,7 +346,9 @@
         } catch (e) { msg.style.color = "var(--accent-red)"; msg.textContent = "Transmission failed."; btn.textContent = "Submit Application"; btn.disabled = false; }
     }
 
-    // EVENTS
+    // EVENTS (MINOR) & RSVP LOGIC
+    let currentRsvpEventId = null;
+
     async function loadActiveEvents() {
         const container = document.getElementById('activeEventsContainer');
         try {
@@ -346,22 +364,48 @@
                         <div style="font-size: 10px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;">${e.event_date || 'TBD'} &nbsp;//&nbsp; ${capacityText}</div>
                         <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">${e.description || ''}</div>
                     </div>
-                    <div><button class="action-btn gold magnetic" style="margin-top:0; padding: 0.8rem 2rem;" ${e.full ? 'disabled' : ''} onclick="rsvpEvent(${e.id}, this)">${e.full ? 'AT CAPACITY' : 'SECURE CLEARANCE'}</button></div>
+                    <div><button class="action-btn gold magnetic" style="margin-top:0; padding: 0.8rem 2rem;" ${e.full ? 'disabled' : ''} onclick="openRsvpModal(${e.id})">${e.full ? 'AT CAPACITY' : 'SECURE CLEARANCE'}</button></div>
                 </div>
             `}).join('');
             container.querySelectorAll('.magnetic').forEach(el => { el.addEventListener('mouseenter', () => cursor.classList.add('hover')); el.addEventListener('mouseleave', () => cursor.classList.remove('hover')); });
         } catch (e) { container.innerHTML = '<p style="color: var(--accent-red); font-size: 11px;">[ Server Unreachable ]</p>'; }
     }
 
-    async function rsvpEvent(eventId, btn) {
+    function openRsvpModal(eventId) {
+        currentRsvpEventId = eventId;
+        document.getElementById('rsvpWhatsapp').value = '';
+        document.getElementById('rsvpModal').style.display = 'flex';
+    }
+
+    function closeRsvpModal() {
+        document.getElementById('rsvpModal').style.display = 'none';
+        currentRsvpEventId = null;
+    }
+
+    async function submitRsvp() {
+        const wa = document.getElementById('rsvpWhatsapp').value.trim();
+        if(!wa) { alert("WhatsApp number is strictly required to secure clearance."); return; }
+        
+        const btn = document.getElementById('confirmRsvpBtn');
         btn.textContent = "SECURING..."; btn.disabled = true;
+        
         try {
-            const res = await apiFetch('/events/register', { method: 'POST', body: JSON.stringify({ event_id: eventId }) });
+            const res = await apiFetch('/events/register', { 
+                method: 'POST', 
+                body: JSON.stringify({ event_id: currentRsvpEventId, whatsapp_number: wa }) 
+            });
             if (res.ok) {
-                btn.style.background = "var(--accent-green)"; btn.style.color = "#000"; btn.style.borderColor = "var(--accent-green)"; btn.textContent = "CONFIRMED";
-                setTimeout(() => { loadActiveEvents(); loadMyTickets(); }, 1500);
-            } else { const data = await res.json(); alert(data.detail); btn.textContent = "SECURE CLEARANCE"; btn.disabled = false; }
-        } catch (e) { alert("Network error."); btn.textContent = "SECURE CLEARANCE"; btn.disabled = false; }
+                closeRsvpModal();
+                alert("Spot Secured. Your clearance has been added to the ledger.");
+                loadActiveEvents();
+                loadMyTickets();
+            } else {
+                const data = await res.json();
+                alert(data.detail);
+            }
+        } catch (e) { alert("Network error."); }
+        
+        btn.textContent = "SECURE SPOT"; btn.disabled = false;
     }
 
     async function loadMyTickets() {
