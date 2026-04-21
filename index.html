@@ -554,8 +554,6 @@
       position: relative;
       overflow: hidden;
       transition: all 0.4s var(--transition-smooth);
-      display: block;
-      text-decoration: none;
     }
 
     .update-card::before {
@@ -1094,21 +1092,26 @@
   </style>
 </head>
 <body class="bg-kashmir min-h-screen antialiased relative">
+  <!-- Background Video -->
   <video class="bg-video" autoplay loop muted playsinline preload="auto">
     <source src="https://res.cloudinary.com/dmqwjpmjk/video/upload/v1761507594/portal-bg_oribvr.mp4" type="video/mp4">
     <img src="https://placehold.co/1920x1080/0b0d17/f8d37f?text=Art+Inspiration" alt="Fallback background">
   </video>
   
+  <!-- Video Overlay for better text readability -->
   <div class="video-overlay"></div>
 
+  <!-- Custom Cursor -->
   <div class="custom-cursor" id="cursor"></div>
 
+  <!-- Preloader -->
   <div id="loader">
     <div class="preloader-counter" id="preloaderCounter">0</div>
     <div class="preloader-line" id="preloaderLine"></div>
     <div class="preloader-text">ALFAAZ — Collective</div>
   </div>
 
+  <!-- Light Background -->
   <div class="bg-placeholder"></div>
   <div class="texture-overlay"></div>
 
@@ -1126,7 +1129,7 @@
     </div>
 
     <div class="nav-actions">
-      <a href="login.html" class="nav-login magnetic">Login / Sign Up</a>
+      <a href="login.html" id="navLoginBtn" class="nav-login magnetic">Login / Sign Up</a>
       
       <button id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
         <i data-lucide="menu" class="w-6 h-6 hamburger-open"></i>
@@ -1139,6 +1142,7 @@
     </div>
   </nav>
 
+  <!-- Social Sidebar -->
   <div class="social-sidebar">
     <a href="https://www.instagram.com/alfaaz.2020" target="_blank" class="social-link magnetic">Instagram</a>
     <a href="mailto:alfaaz2k20@gmail.com" class="social-link magnetic">Email</a>
@@ -1146,6 +1150,7 @@
   </div>
 
   <main>
+    <!-- Hero Section -->
     <section id="home" class="hero">
       <div class="hero-content">
         <h1 class="hero-title">
@@ -1160,6 +1165,7 @@
       </div>
     </section>
 
+    <!-- Marquee Banner -->
     <section class="marquee-section">
       <div class="marquee">
         <div class="marquee-content">
@@ -1185,18 +1191,21 @@
       </div>
     </section>
 
+    <!-- Updates Section -->
     <section id="updates" class="updates-section">
       <div class="section-header fade-in">
         <p class="section-label">Latest Updates</p>
         <h2 class="section-title">Notices</h2>
       </div>
-      <div class="updates-grid" id="live-notices-grid">
-        <div style="padding: 2.5rem; text-align: center; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 2px;">
-          Scanning for active transmissions...
+      <div id="live-notices-grid" class="updates-grid">
+        <div class="update-card fade-in">
+          <p class="update-date" style="opacity:0.4;">Scanning signals...</p>
+          <p class="update-text" style="opacity:0.3;">Loading collective transmissions</p>
         </div>
       </div>
     </section>
 
+    <!-- About Section -->
     <section id="about" class="about-section">
       <div class="about-grid">
         <div class="about-content fade-in">
@@ -1242,6 +1251,7 @@
       </div>
     </section>
 
+    <!-- Journey / Exhibitions Section -->
     <section id="journey" class="journey-section">
       <div class="section-header fade-in">
         <p class="section-label">Our Journey</p>
@@ -1312,6 +1322,7 @@
       </div>
     </section>
 
+    <!-- Clubs Section -->
     <section id="clubs" class="clubs-section">
       <div class="section-header fade-in">
         <p class="section-label">Get Involved</p>
@@ -1355,10 +1366,11 @@
         </div>
       </div>
       <div class="text-center mt-12 fade-in" id="joinClubContainer">
-        <a href="login.html" class="cta-btn magnetic">Join a Club</a>
+        <a href="login.html" id="joinClubBtn" class="cta-btn magnetic">Join a Club</a>
       </div>
     </section>
 
+    <!-- CTA Section -->
     <section class="cta-section">
       <div class="fade-in">
         <p class="section-label">Explore More</p>
@@ -1373,6 +1385,7 @@
     </section>
   </main>
 
+  <!-- Footer -->
   <footer id="contact">
     <div class="footer-content">
       <div class="footer-logo">ALFAAZ</div>
@@ -1388,68 +1401,10 @@
     </div>
   </footer>
 
+  <!-- Scroll to Top -->
   <button id="scrollToTopBtn" aria-label="Scroll to top">
     <i data-lucide="arrow-up" class="w-5 h-5"></i>
   </button>
-
-  <script>
-    async function loadPublicNotices() {
-        const grid = document.getElementById('live-notices-grid');
-        if (!grid) return;
-
-        try {
-            const res = await fetch('https://alfaaz-project.onrender.com/events/active');
-            const events = await res.json();
-
-            if (!events || !events.length) {
-                grid.innerHTML = `
-                    <div style="padding: 2.5rem; text-align: center; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 2px;">
-                        [ ALL TRANSMISSIONS CLEAR — NO ACTIVE NOTICES ]
-                    </div>`;
-                return;
-            }
-
-            grid.innerHTML = events.map(e => {
-                const isFull = e.capacity > 0 && e.registered >= e.capacity;
-                const statusBadge = isFull ? 
-                    `<span style="font-family: 'JetBrains Mono', monospace; font-size: 9px; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 2px 6px; letter-spacing: 1px;">AT CAPACITY</span>` : 
-                    `<span style="font-family: 'JetBrains Mono', monospace; font-size: 9px; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 2px 6px; letter-spacing: 1px;">OPEN</span>`;
-                
-                return `
-                <a href="login.html" class="update-card fade-in visible">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                        <p class="update-date" style="margin-bottom: 0;">${e.event_date || 'TBD'}</p>
-                        ${statusBadge}
-                    </div>
-                    <h3 class="update-text">${e.name}</h3>
-                    <p style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-secondary); margin-top: 1rem; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${e.description || ''}</p>
-                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-gold); letter-spacing: 2px; text-transform: uppercase; margin-top: 1.5rem; text-decoration: underline;">
-                        Secure Clearance &rarr;
-                    </div>
-                </a>
-            `}).join('');
-
-            // Re-attach the custom cursor hover effect to the newly injected cards
-            const newCards = grid.querySelectorAll('.update-card');
-            const customCursor = document.getElementById('cursor');
-            if (customCursor) {
-                newCards.forEach(el => {
-                    el.addEventListener('mouseenter', () => customCursor.classList.add('hover'));
-                    el.addEventListener('mouseleave', () => customCursor.classList.remove('hover'));
-                });
-            }
-
-        } catch (err) {
-            grid.innerHTML = `
-                <div style="padding: 2.5rem; text-align: center; color: var(--accent-red); font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 2px;">
-                    [ SIGNAL LOST: BACKEND UNREACHABLE ]
-                </div>`;
-        }
-    }
-    
-    // Execute when the page finishes parsing
-    document.addEventListener('DOMContentLoaded', loadPublicNotices);
-  </script>
 
   <script>
     // ========================================
@@ -1724,6 +1679,87 @@
   </div>
 
   <script>
+    // ========================================
+    // SMART ROUTING — session-aware links
+    // ========================================
+    (function() {
+      const isLoggedIn = !!localStorage.getItem('alfaaz_token') && !!localStorage.getItem('alfaaz_user');
+      const navLoginBtn = document.getElementById('navLoginBtn');
+      const joinClubBtn = document.getElementById('joinClubBtn');
+
+      if (isLoggedIn) {
+        if (navLoginBtn) {
+          navLoginBtn.textContent = 'My Dashboard';
+          navLoginBtn.href = 'dashboard.html';
+          navLoginBtn.style.color = 'var(--accent-gold)';
+        }
+        if (joinClubBtn) {
+          joinClubBtn.textContent = 'Apply for a Club';
+          joinClubBtn.href = 'dashboard.html';
+          joinClubBtn.style.background = 'var(--accent-gold)';
+          joinClubBtn.style.borderColor = 'var(--accent-gold)';
+        }
+      }
+    })();
+
+    // ========================================
+    // LIVE NOTICES — pulls from events/active
+    // ========================================
+    (async function() {
+      const grid = document.getElementById('live-notices-grid');
+      const isLoggedIn = !!localStorage.getItem('alfaaz_token');
+
+      try {
+        const res = await fetch('https://alfaaz-project.onrender.com/events/active');
+        const events = await res.json();
+
+        if (!events.length) {
+          grid.innerHTML = `
+            <div class="update-card fade-in visible">
+              <p class="update-date">January 01, 2026</p>
+              <p class="update-text">Dates of new exhibition of Alfaaz will be soon updated.</p>
+            </div>
+            <div class="update-card fade-in visible">
+              <p class="update-date">January 01, 2026</p>
+              <p class="update-text">Upcoming exhibition "Absence" — details coming soon.</p>
+            </div>`;
+          return;
+        }
+
+        const destination = isLoggedIn ? 'dashboard.html' : 'login.html';
+        grid.innerHTML = events.map(e => `
+          <a href="${destination}" class="update-card fade-in visible" style="text-decoration:none; color:inherit; display:block;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <p class="update-date">${e.event_date || 'Date TBD'}</p>
+              ${e.full
+                ? '<span style="font-size:8px;border:1px solid rgba(248,113,113,0.5);color:#f87171;padding:2px 6px;text-transform:uppercase;letter-spacing:1px;">Full</span>'
+                : '<span style="font-size:8px;border:1px solid rgba(74,222,128,0.5);color:#4ade80;padding:2px 6px;text-transform:uppercase;letter-spacing:1px;">Open</span>'
+              }
+            </div>
+            <p class="update-text">${e.name}</p>
+            ${e.description ? `<p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-secondary);margin-top:0.8rem;line-height:1.6;">${e.description}</p>` : ''}
+            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent-gold);margin-top:1.2rem;letter-spacing:3px;text-transform:uppercase;">
+              ${e.full ? 'At Capacity' : (isLoggedIn ? 'Secure Ticket →' : 'Login to Register →')}
+            </p>
+          </a>
+        `).join('');
+
+      } catch (err) {
+        // Fallback to static notices on API failure
+        grid.innerHTML = `
+          <div class="update-card fade-in visible">
+            <p class="update-date">January 01, 2026</p>
+            <p class="update-text">Dates of new exhibition of Alfaaz will be soon updated.</p>
+          </div>
+          <div class="update-card fade-in visible">
+            <p class="update-date">January 01, 2026</p>
+            <p class="update-text">Upcoming exhibition "Absence" — details coming soon.</p>
+          </div>`;
+      }
+    })();
+  </script>
+
+  <script>
     // 1. Point to your Render Backend
     const MINI_API_URL = "https://alfaaz-project.onrender.com";
     
@@ -1811,3 +1847,4 @@
   </script>
 </body>
 </html>
+``
