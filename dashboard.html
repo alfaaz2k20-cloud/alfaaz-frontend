@@ -157,7 +157,7 @@
           <a id="adminLink" href="admin.html" class="action-btn gold magnetic" style="display: none;">Enter Control Room</a>
         </div>
 
-        <div class="panel">
+        <div class="panel" id="exhibitionPanel" style="display: none;">
           <h2 class="panel-title">Exhibition Screening</h2>
           
           <div id="exhibStatusView" style="display: none; padding: 2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--grid-border); text-align: center;">
@@ -241,8 +241,8 @@
        <label style="font-size: 9px; color: var(--text-secondary); letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 0.5rem;">WhatsApp Number</label>
        <input type="text" id="rsvpWhatsapp" placeholder="+91..." required style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--grid-border); color: #fff; padding: 1rem; margin-bottom: 1.5rem; outline: none; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-          <button onclick="closeRsvpModal()" style="background: transparent; color: var(--text-secondary); border: 1px solid var(--grid-border); padding: 0.8rem 1.5rem; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; cursor: pointer;">Cancel</button>
-          <button id="confirmRsvpBtn" onclick="submitRsvp()" style="background: var(--accent-gold); color: var(--bg-primary); border: none; padding: 0.8rem 1.5rem; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; cursor: pointer;">Secure Spot</button>
+          <button onclick="closeRsvpModal()" style="background: transparent; color: var(--text-secondary); border: 1px solid var(--grid-border); padding: 0.8rem 1.5rem; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s ease;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Cancel</button>
+          <button id="confirmRsvpBtn" onclick="submitRsvp()" style="background: var(--accent-gold); color: var(--bg-primary); border: none; padding: 0.8rem 1.5rem; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s ease;" onmouseover="this.style.background='#fff'" onmouseout="this.style.background='var(--accent-gold)'">Secure Spot</button>
        </div>
     </div>
   </div>
@@ -290,9 +290,20 @@
         loadMyTickets();
     }
 
-    // EXHIBITION STATUS
+    // EXHIBITION STATUS (Dynamically Hidden if Config says CLOSED)
     async function loadExhibitionStatus() {
         try {
+            const cfgRes = await fetch(`${API_URL}/exhibitions/config`);
+            const cfg = await cfgRes.json();
+            const masterPanel = document.getElementById('exhibitionPanel');
+
+            if (!cfg.is_open) {
+                if (masterPanel) masterPanel.style.display = "none";
+                return; 
+            }
+
+            if (masterPanel) masterPanel.style.display = "block";
+
             const res = await apiFetch('/exhibitions/my-status');
             const data = await res.json();
             const viewStatus = document.getElementById('exhibStatusView');

@@ -304,7 +304,7 @@
       border: none;
     }
 
-/* ========================================
+    /* ========================================
        NEW NAV ACTIONS & LOGIN STYLES
     ======================================== */
     .nav-actions {
@@ -328,21 +328,13 @@
     }
 
     .mobile-only-link {
-      display: none; /* Hidden on desktop, shown in mobile menu */
+      display: none;
     }
 
-    /* Update existing media query for mobile */
     @media (max-width: 768px) {
-      .nav-login {
-        display: none; /* Hide standard login link on mobile header */
-      }
-      .mobile-only-link {
-        display: block; /* Show inside the mobile dropdown menu */
-        color: var(--accent-gold); /* Highlight it slightly in the menu */
-      }
-      .nav-actions {
-        gap: 1rem;
-      }
+      .nav-login { display: none; }
+      .mobile-only-link { display: block; color: var(--accent-gold); }
+      .nav-actions { gap: 1rem; }
     }
 
     /* ========================================
@@ -407,11 +399,7 @@
       transition: opacity 1.2s var(--transition-smooth), transform 1.2s var(--transition-smooth);
     }
 
-    .hero-title.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
+    .hero-title.visible { opacity: 1; transform: translateY(0); }
     .hero-title span { display: block; }
     .hero-title .outline { -webkit-text-stroke: 2px var(--text-primary); color: transparent; }
 
@@ -426,10 +414,7 @@
       transition: opacity 1s ease 0.5s, transform 1s ease 0.5s;
     }
 
-    .hero-subtitle.visible {
-      opacity: 0.8;
-      transform: translateY(0);
-    }
+    .hero-subtitle.visible { opacity: 0.8; transform: translateY(0); }
 
     .hero-scroll {
       position: absolute;
@@ -474,34 +459,19 @@
       overflow: hidden;
     }
 
-    .marquee {
-      display: flex;
-      animation: marqueeScroll 25s linear infinite;
-    }
+    .marquee { display: flex; animation: marqueeScroll 25s linear infinite; }
 
     .marquee-content {
-      display: flex;
-      align-items: center;
-      gap: 3rem;
-      padding-right: 3rem;
-      flex-shrink: 0;
+      display: flex; align-items: center; gap: 3rem; padding-right: 3rem; flex-shrink: 0;
     }
 
     .marquee-item {
-      font-family: 'Teko', sans-serif;
-      font-size: 2.5rem;
-      font-weight: 300;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      white-space: nowrap;
-      color: var(--text-primary);
+      font-family: 'Teko', sans-serif; font-size: 2.5rem; font-weight: 300;
+      text-transform: uppercase; letter-spacing: 2px; white-space: nowrap; color: var(--text-primary);
     }
 
     .marquee-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--accent-gold);
-      border-radius: 50%;
+      width: 6px; height: 6px; background: var(--accent-gold); border-radius: 50%;
     }
 
     @keyframes marqueeScroll {
@@ -513,611 +483,177 @@
        UPDATES SECTION - BRUTALIST CARDS
     ======================================== */
     .updates-section {
-      padding: 5rem 3rem;
-      background: var(--bg-primary);
-      border-top: 1px solid var(--grid-border);
+      padding: 5rem 3rem; background: var(--bg-primary); border-top: 1px solid var(--grid-border);
     }
 
-    .section-header {
-      margin-bottom: 3rem;
-    }
-
+    .section-header { margin-bottom: 3rem; }
     .section-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      margin-bottom: 1rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--accent-gold); margin-bottom: 1rem;
     }
-
     .section-title {
-      font-family: 'Teko', sans-serif;
-      font-size: clamp(2rem, 5vw, 4rem);
-      font-weight: 300;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--text-primary);
+      font-family: 'Teko', sans-serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 300;
+      text-transform: uppercase; letter-spacing: 2px; color: var(--text-primary);
     }
 
     .updates-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 1px;
-      background: var(--grid-border);
-      border: 1px solid var(--grid-border);
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1px; background: var(--grid-border); border: 1px solid var(--grid-border);
     }
 
     .update-card {
-      background: var(--bg-secondary);
-      padding: 2rem;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s var(--transition-smooth);
+      background: var(--bg-secondary); padding: 2rem; position: relative;
+      overflow: hidden; transition: all 0.4s var(--transition-smooth);
     }
 
     .update-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 3px;
-      height: 100%;
-      background: var(--accent-gold);
-      transform: scaleY(0);
-      transform-origin: top;
-      transition: transform 0.4s var(--transition-smooth);
+      content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+      background: var(--accent-gold); transform: scaleY(0); transform-origin: top; transition: transform 0.4s var(--transition-smooth);
     }
 
-    .update-card:hover::before {
-      transform: scaleY(1);
-    }
-
-    .update-card:hover {
-      background: var(--accent-gold-dim);
-    }
+    .update-card:hover::before { transform: scaleY(1); }
+    .update-card:hover { background: var(--accent-gold-dim); }
 
     .update-date {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      margin-bottom: 1rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--accent-gold); margin-bottom: 1rem;
     }
 
     .update-text {
-      font-family: 'Teko', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 400;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-primary);
-      line-height: 1.3;
+      font-family: 'Teko', sans-serif; font-size: 1.4rem; font-weight: 400;
+      text-transform: uppercase; letter-spacing: 1px; color: var(--text-primary); line-height: 1.3;
     }
 
     /* ========================================
        ABOUT / MISSION SECTION
     ======================================== */
     .about-section {
-      padding: 6rem 3rem;
-      background: var(--bg-primary);
-      border-top: 1px solid var(--grid-border);
+      padding: 6rem 3rem; background: var(--bg-primary); border-top: 1px solid var(--grid-border);
     }
 
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 4rem;
-      align-items: center;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .about-lead {
-      font-family: 'Teko', sans-serif;
-      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
-      font-weight: 300;
-      line-height: 1.2;
-      text-transform: uppercase;
-      color: var(--text-primary);
-      margin-bottom: 2rem;
-    }
-
+    .about-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 4rem; align-items: center; max-width: 1200px; margin: 0 auto; }
+    .about-lead { font-family: 'Teko', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.5rem); font-weight: 300; line-height: 1.2; text-transform: uppercase; color: var(--text-primary); margin-bottom: 2rem; }
     .about-lead .highlight { color: var(--accent-gold); }
-
-    .about-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      line-height: 2;
-      color: var(--text-secondary);
-      margin-bottom: 2rem;
-    }
-
-    .features-grid {
-      display: grid;
-      gap: 1px;
-      background: var(--grid-border);
-      border: 1px solid var(--grid-border);
-    }
-
-    .feature-item {
-      background: var(--bg-secondary);
-      padding: 1.5rem;
-      display: flex;
-      gap: 1rem;
-      align-items: flex-start;
-      transition: all 0.3s var(--transition-smooth);
-    }
-
-    .feature-item:hover {
-      background: var(--accent-gold-dim);
-    }
-
-    .feature-icon {
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--accent-gold-dim);
-      border: 1px solid var(--accent-gold);
-      flex-shrink: 0;
-    }
-
-    .feature-icon svg {
-      color: var(--accent-gold);
-    }
-
-    .feature-content h4 {
-      font-family: 'Teko', sans-serif;
-      font-size: 1.3rem;
-      font-weight: 400;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .feature-content p {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      line-height: 1.6;
-      color: var(--text-secondary);
-    }
+    .about-text { font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 2; color: var(--text-secondary); margin-bottom: 2rem; }
+    
+    .features-grid { display: grid; gap: 1px; background: var(--grid-border); border: 1px solid var(--grid-border); }
+    .feature-item { background: var(--bg-secondary); padding: 1.5rem; display: flex; gap: 1rem; align-items: flex-start; transition: all 0.3s var(--transition-smooth); }
+    .feature-item:hover { background: var(--accent-gold-dim); }
+    .feature-icon { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: var(--accent-gold-dim); border: 1px solid var(--accent-gold); flex-shrink: 0; }
+    .feature-icon svg { color: var(--accent-gold); }
+    .feature-content h4 { font-family: 'Teko', sans-serif; font-size: 1.3rem; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; color: var(--text-primary); margin-bottom: 0.5rem; }
+    .feature-content p { font-family: 'JetBrains Mono', monospace; font-size: 10px; line-height: 1.6; color: var(--text-secondary); }
 
     /* ========================================
        JOURNEY SLIDER - BRUTALIST
     ======================================== */
-    .journey-section {
-      padding: 6rem 3rem;
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--grid-border);
-    }
-
-    .slider-container {
-      max-width: 1000px;
-      margin: 0 auto;
-      position: relative;
-    }
-
-    .slider-wrap {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--grid-border);
-    }
-
-    .slides {
-      display: flex;
-      transition: transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1);
-    }
-
-    .slide {
-      min-width: 100%;
-      user-select: none;
-      position: relative;
-    }
-
-    .slide img {
-      width: 100%;
-      height: auto;
-      display: block;
-      object-fit: cover;
-      aspect-ratio: 16/9;
-      filter: grayscale(100%);
-      transition: filter 0.6s var(--transition-smooth);
-    }
-
-    .slide:hover img {
-      filter: grayscale(0%);
-    }
-
-    .slide-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 1.5rem;
-      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%);
-      transform: translateY(100%);
-      transition: transform 0.4s var(--transition-smooth);
-    }
-
-    .slide:hover .slide-overlay {
-      transform: translateY(0);
-    }
-
-    .slide-title {
-      font-family: 'Teko', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 400;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--text-primary);
-    }
-
-    .slider-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 1.5rem;
-    }
-
-    .slider-arrow {
-      width: 50px;
-      height: 50px;
-      background: transparent;
-      border: 1px solid var(--grid-border);
-      color: var(--text-primary);
-      cursor: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s var(--transition-smooth);
-    }
-
-    .slider-arrow:hover {
-      background: var(--accent-gold);
-      border-color: var(--accent-gold);
-    }
-
-    .slider-dots {
-      display: flex;
-      gap: 8px;
-    }
-
-    .dot {
-      width: 12px;
-      height: 12px;
-      background: transparent;
-      border: 1px solid var(--grid-border);
-      cursor: none;
-      transition: all 0.3s var(--transition-smooth);
-    }
-
-    .dot.active {
-      background: var(--accent-gold);
-      border-color: var(--accent-gold);
-    }
+    .journey-section { padding: 6rem 3rem; background: var(--bg-secondary); border-top: 1px solid var(--grid-border); }
+    .slider-container { max-width: 1000px; margin: 0 auto; position: relative; }
+    .slider-wrap { position: relative; overflow: hidden; border: 1px solid var(--grid-border); }
+    .slides { display: flex; transition: transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1); }
+    .slide { min-width: 100%; user-select: none; position: relative; }
+    .slide img { width: 100%; height: auto; display: block; object-fit: cover; aspect-ratio: 16/9; filter: grayscale(100%); transition: filter 0.6s var(--transition-smooth); }
+    .slide:hover img { filter: grayscale(0%); }
+    .slide-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%); transform: translateY(100%); transition: transform 0.4s var(--transition-smooth); }
+    .slide:hover .slide-overlay { transform: translateY(0); }
+    .slide-title { font-family: 'Teko', sans-serif; font-size: 1.5rem; font-weight: 400; text-transform: uppercase; letter-spacing: 2px; color: var(--text-primary); }
+    .slider-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+    .slider-arrow { width: 50px; height: 50px; background: transparent; border: 1px solid var(--grid-border); color: var(--text-primary); cursor: none; display: flex; align-items: center; justify-content: center; transition: all 0.3s var(--transition-smooth); }
+    .slider-arrow:hover { background: var(--accent-gold); border-color: var(--accent-gold); }
+    .slider-dots { display: flex; gap: 8px; }
+    .dot { width: 12px; height: 12px; background: transparent; border: 1px solid var(--grid-border); cursor: none; transition: all 0.3s var(--transition-smooth); }
+    .dot.active { background: var(--accent-gold); border-color: var(--accent-gold); }
 
     /* ========================================
        CLUBS SECTION - ASYMMETRICAL GRID
     ======================================== */
-    .clubs-section {
-      padding: 6rem 3rem;
-      background: var(--bg-primary);
-      border-top: 1px solid var(--grid-border);
-    }
-
-    .clubs-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1px;
-      background: var(--grid-border);
-      border: 1px solid var(--grid-border);
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .club-card {
-      background: var(--bg-secondary);
-      padding: 2rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s var(--transition-smooth);
-    }
-
-    .club-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: var(--accent-gold);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.4s var(--transition-smooth);
-    }
-
-    .club-card:hover::before {
-      transform: scaleX(1);
-    }
-
-    .club-card:hover {
-      background: var(--accent-gold-dim);
-    }
-
-    .club-card:nth-child(1) { grid-column: span 2; }
-    .club-card:nth-child(3) { grid-column: span 2; }
-
-    .club-icon {
-      width: 70px;
-      height: 70px;
-      margin: 0 auto 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--accent-gold-dim);
-      border: 1px solid transparent;
-      transition: all 0.3s var(--transition-smooth);
-    }
-
-    .club-card:hover .club-icon {
-      background: var(--accent-gold);
-      border-color: var(--accent-gold);
-    }
-
-    .club-card:hover .club-icon svg {
-      color: var(--bg-primary);
-    }
-
-    .club-icon svg {
-      color: var(--accent-gold);
-      transition: color 0.3s ease;
-    }
-
-    .club-title {
-      font-family: 'Teko', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 400;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .club-desc {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 1px;
-      color: var(--text-secondary);
-    }
+    .clubs-section { padding: 6rem 3rem; background: var(--bg-primary); border-top: 1px solid var(--grid-border); }
+    .clubs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--grid-border); border: 1px solid var(--grid-border); max-width: 1200px; margin: 0 auto; }
+    .club-card { background: var(--bg-secondary); padding: 2rem; text-align: center; position: relative; overflow: hidden; transition: all 0.4s var(--transition-smooth); }
+    .club-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--accent-gold); transform: scaleX(0); transform-origin: left; transition: transform 0.4s var(--transition-smooth); }
+    .club-card:hover::before { transform: scaleX(1); }
+    .club-card:hover { background: var(--accent-gold-dim); }
+    .club-card:nth-child(1), .club-card:nth-child(3) { grid-column: span 2; }
+    .club-icon { width: 70px; height: 70px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; background: var(--accent-gold-dim); border: 1px solid transparent; transition: all 0.3s var(--transition-smooth); }
+    .club-card:hover .club-icon { background: var(--accent-gold); border-color: var(--accent-gold); }
+    .club-card:hover .club-icon svg { color: var(--bg-primary); }
+    .club-icon svg { color: var(--accent-gold); transition: color 0.3s ease; }
+    .club-title { font-family: 'Teko', sans-serif; font-size: 1.4rem; font-weight: 400; text-transform: uppercase; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 0.5rem; }
+    .club-desc { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; color: var(--text-secondary); }
 
     /* ========================================
        CTA SECTION
     ======================================== */
-    .cta-section {
-      padding: 8rem 3rem;
-      background: var(--bg-primary);
-      border-top: 1px solid var(--grid-border);
-      text-align: center;
-    }
-
-    .cta-title {
-      font-family: 'Teko', sans-serif;
-      font-size: clamp(2rem, 6vw, 5rem);
-      font-weight: 300;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--text-primary);
-      margin-bottom: 2rem;
-    }
-
-    .cta-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      line-height: 1.8;
-      color: var(--text-secondary);
-      max-width: 500px;
-      margin: 0 auto 2.5rem;
-    }
-
-    .cta-btn {
-      display: inline-block;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--bg-primary);
-      text-decoration: none;
-      padding: 1.2rem 3rem;
-      border: 1px solid var(--text-primary);
-      background: var(--text-primary);
-      transition: all 0.3s var(--transition-smooth);
-    }
-
-    .cta-btn:hover {
-      background: var(--accent-gold);
-      border-color: var(--accent-gold);
-    }
+    .cta-section { padding: 8rem 3rem; background: var(--bg-primary); border-top: 1px solid var(--grid-border); text-align: center; }
+    .cta-title { font-family: 'Teko', sans-serif; font-size: clamp(2rem, 6vw, 5rem); font-weight: 300; text-transform: uppercase; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 2rem; }
+    .cta-text { font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8; color: var(--text-secondary); max-width: 500px; margin: 0 auto 2.5rem; }
+    .cta-btn { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--bg-primary); text-decoration: none; padding: 1.2rem 3rem; border: 1px solid var(--text-primary); background: var(--text-primary); transition: all 0.3s var(--transition-smooth); }
+    .cta-btn:hover { background: var(--accent-gold); border-color: var(--accent-gold); }
 
     /* ========================================
        FOOTER - BRUTALIST
     ======================================== */
-    footer {
-      padding: 5rem 3rem 3rem;
-      background: var(--bg-primary);
-      border-top: 1px solid var(--grid-border);
-    }
-
-    .footer-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding-bottom: 3rem;
-      border-bottom: 1px solid var(--grid-border);
-    }
-
-    .footer-logo {
-      font-family: 'Teko', sans-serif;
-      font-size: 2.5rem;
-      font-weight: 500;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--text-primary);
-    }
-
-    .footer-social {
-      display: flex;
-      gap: 2rem;
-    }
-
-    .footer-social a {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-
-    .footer-social a:hover {
-      color: var(--accent-gold);
-    }
-
-    .footer-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding-top: 2rem;
-    }
-
-    .footer-copyright {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 2px;
-      color: var(--text-secondary);
-    }
+    footer { padding: 5rem 3rem 3rem; background: var(--bg-primary); border-top: 1px solid var(--grid-border); }
+    .footer-content { display: flex; justify-content: space-between; align-items: flex-end; max-width: 1200px; margin: 0 auto; padding-bottom: 3rem; border-bottom: 1px solid var(--grid-border); }
+    .footer-logo { font-family: 'Teko', sans-serif; font-size: 2.5rem; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: var(--text-primary); }
+    .footer-social { display: flex; gap: 2rem; }
+    .footer-social a { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); text-decoration: none; transition: color 0.3s ease; }
+    .footer-social a:hover { color: var(--accent-gold); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding-top: 2rem; }
+    .footer-copyright { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--text-secondary); }
 
     /* ========================================
        SCROLL TO TOP
     ======================================== */
-    #scrollToTopBtn {
-      position: fixed;
-      bottom: 3rem;
-      right: 3rem;
-      width: 50px;
-      height: 50px;
-      background: transparent;
-      border: 1px solid var(--text-primary);
-      color: var(--text-primary);
-      cursor: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 50;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.3s var(--transition-smooth);
-    }
-
-    #scrollToTopBtn.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    #scrollToTopBtn:hover {
-      background: var(--accent-gold);
-      border-color: var(--accent-gold);
-    }
+    #scrollToTopBtn { position: fixed; bottom: 3rem; right: 3rem; width: 50px; height: 50px; background: transparent; border: 1px solid var(--text-primary); color: var(--text-primary); cursor: none; display: flex; align-items: center; justify-content: center; z-index: 50; opacity: 0; transform: translateY(20px); transition: all 0.3s var(--transition-smooth); }
+    #scrollToTopBtn.visible { opacity: 1; transform: translateY(0); }
+    #scrollToTopBtn:hover { background: var(--accent-gold); border-color: var(--accent-gold); }
 
     /* ========================================
-       MAGNETIC EFFECT
+       MAGNETIC EFFECT & ANIMATIONS
     ======================================== */
-    .magnetic {
-      transition: transform 0.3s var(--transition-smooth);
-    }
-
-    /* ========================================
-       FADE IN ANIMATIONS
-    ======================================== */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth);
-    }
-
-    .fade-in.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .magnetic { transition: transform 0.3s var(--transition-smooth); }
+    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth); }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
 
     /* ========================================
        RESPONSIVE
     ======================================== */
     @media (max-width: 1024px) {
-      .clubs-grid { grid-template-columns: repeat(2, 1fr); }
-      .club-card:nth-child(1), .club-card:nth-child(3) { grid-column: span 1; }
-      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
-      nav { padding: 1.5rem 2rem; }
-      .social-sidebar { display: none; }
+      .clubs-grid { grid-template-columns: repeat(2, 1fr); } .club-card:nth-child(1), .club-card:nth-child(3) { grid-column: span 1; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; } nav { padding: 1.5rem 2rem; } .social-sidebar { display: none; }
     }
-
     @media (max-width: 768px) {
-      nav { padding: 1rem 1.5rem; }
-      .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; flex-direction: column; background: var(--bg-primary); padding: 1.5rem; gap: 1rem; border-bottom: 1px solid var(--grid-border); }
-      .nav-links.active { display: flex; }
-      #menuToggle { display: flex; }
+      nav { padding: 1rem 1.5rem; } .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; flex-direction: column; background: var(--bg-primary); padding: 1.5rem; gap: 1rem; border-bottom: 1px solid var(--grid-border); }
+      .nav-links.active { display: flex; } #menuToggle { display: flex; }
       .updates-section, .about-section, .journey-section, .clubs-section, .cta-section, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
-      .updates-grid { grid-template-columns: 1fr; }
-      .clubs-grid { grid-template-columns: 1fr; }
-      .footer-content { flex-direction: column; align-items: start; gap: 2rem; }
-      .footer-bottom { flex-direction: column; align-items: start; gap: 1rem; }
-      #scrollToTopBtn { bottom: 2rem; right: 2rem; width: 40px; height: 40px; }
-      .slider-arrow { width: 40px; height: 40px; }
+      .updates-grid { grid-template-columns: 1fr; } .clubs-grid { grid-template-columns: 1fr; }
+      .footer-content { flex-direction: column; align-items: start; gap: 2rem; } .footer-bottom { flex-direction: column; align-items: start; gap: 1rem; }
+      #scrollToTopBtn { bottom: 2rem; right: 2rem; width: 40px; height: 40px; } .slider-arrow { width: 40px; height: 40px; }
     }
-
-    /* Accessibility focus ring */
-    :focus {
-      outline: 3px solid rgba(248, 211, 127, 0.3);
-      outline-offset: 3px;
-    }
+    :focus { outline: 3px solid rgba(248, 211, 127, 0.3); outline-offset: 3px; }
   </style>
 </head>
 <body class="bg-kashmir min-h-screen antialiased relative">
-  <!-- Background Video -->
   <video class="bg-video" autoplay loop muted playsinline preload="auto">
     <source src="https://res.cloudinary.com/dmqwjpmjk/video/upload/v1761507594/portal-bg_oribvr.mp4" type="video/mp4">
     <img src="https://placehold.co/1920x1080/0b0d17/f8d37f?text=Art+Inspiration" alt="Fallback background">
   </video>
   
-  <!-- Video Overlay for better text readability -->
   <div class="video-overlay"></div>
-
-  <!-- Custom Cursor -->
   <div class="custom-cursor" id="cursor"></div>
 
-  <!-- Preloader -->
   <div id="loader">
     <div class="preloader-counter" id="preloaderCounter">0</div>
     <div class="preloader-line" id="preloaderLine"></div>
     <div class="preloader-text">ALFAAZ — Collective</div>
   </div>
 
-  <!-- Light Background -->
   <div class="bg-placeholder"></div>
   <div class="texture-overlay"></div>
 
   <nav id="navbar">
     <a href="#" class="logo magnetic">ALFAAZ</a>
-    
     <div class="nav-links" id="navLinks">
       <a href="#home" class="magnetic">Home</a>
       <a href="#updates" class="magnetic">Updates</a>
@@ -1127,22 +663,18 @@
       <a href="https://tchandervar.neocities.org/blog/" class="magnetic">Blog</a>
       <a href="login.html" class="magnetic mobile-only-link">Login / Sign Up</a>
     </div>
-
     <div class="nav-actions">
       <a href="login.html" id="navLoginBtn" class="nav-login magnetic">Login / Sign Up</a>
-      
       <button id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
         <i data-lucide="menu" class="w-6 h-6 hamburger-open"></i>
         <i data-lucide="x" class="w-6 h-6 hamburger-close"></i>
       </button>
-      
       <a id="tchLinkNav" href="https://tchandervar.neocities.org" target="_blank" rel="noopener noreferrer" class="nav-cta magnetic">
         tchandervar
       </a>
     </div>
   </nav>
 
-  <!-- Social Sidebar -->
   <div class="social-sidebar">
     <a href="https://www.instagram.com/alfaaz.2020" target="_blank" class="social-link magnetic">Instagram</a>
     <a href="mailto:alfaaz2k20@gmail.com" class="social-link magnetic">Email</a>
@@ -1150,48 +682,31 @@
   </div>
 
   <main>
-    <!-- Hero Section -->
     <section id="home" class="hero">
       <div class="hero-content">
-        <h1 class="hero-title">
-          <span>Alfaaz</span>
-          <span class="outline">Collective</span>
-        </h1>
+        <h1 class="hero-title"><span>Alfaaz</span><span class="outline">Collective</span></h1>
         <p class="hero-subtitle">Art • Literature • Culture</p>
       </div>
-      <div class="hero-scroll">
-        <span>Scroll</span>
-        <div class="scroll-line"></div>
-      </div>
+      <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
     </section>
 
-    <!-- Marquee Banner -->
     <section class="marquee-section">
       <div class="marquee">
         <div class="marquee-content">
-          <span class="marquee-item">Art & Literature</span>
-          <span class="marquee-dot"></span>
-          <span class="marquee-item">Creative Expression</span>
-          <span class="marquee-dot"></span>
-          <span class="marquee-item">Visual Storytelling</span>
-          <span class="marquee-dot"></span>
-          <span class="marquee-item">Cultural Heritage</span>
-          <span class="marquee-dot"></span>
+          <span class="marquee-item">Art & Literature</span><span class="marquee-dot"></span>
+          <span class="marquee-item">Creative Expression</span><span class="marquee-dot"></span>
+          <span class="marquee-item">Visual Storytelling</span><span class="marquee-dot"></span>
+          <span class="marquee-item">Cultural Heritage</span><span class="marquee-dot"></span>
         </div>
         <div class="marquee-content">
-          <span class="marquee-item">Art & Literature</span>
-          <span class="marquee-dot"></span>
-          <span class="marquee-item">Creative Expression</span>
-          <span class="marquee-dot"></span>
-          <span class="marquee-item">Visual Storytelling</span>
-          <span class="marquee-dot"></span>
-          <span class="marquee-item">Cultural Heritage</span>
-          <span class="marquee-dot"></span>
+          <span class="marquee-item">Art & Literature</span><span class="marquee-dot"></span>
+          <span class="marquee-item">Creative Expression</span><span class="marquee-dot"></span>
+          <span class="marquee-item">Visual Storytelling</span><span class="marquee-dot"></span>
+          <span class="marquee-item">Cultural Heritage</span><span class="marquee-dot"></span>
         </div>
       </div>
     </section>
 
-    <!-- Updates Section -->
     <section id="updates" class="updates-section">
       <div class="section-header fade-in">
         <p class="section-label">Latest Updates</p>
@@ -1205,53 +720,31 @@
       </div>
     </section>
 
-    <!-- About Section -->
     <section id="about" class="about-section">
       <div class="about-grid">
         <div class="about-content fade-in">
           <p class="section-label">Our Mission</p>
-          <h2 class="about-lead">
-            A collective united by <span class="highlight">passion</span> for art, literature, and culture.
-          </h2>
-          <p class="about-text">
-            Alfaaz is a collective founded by students dedicated to fostering spaces where creativity meets collaboration. 
-            We celebrate local artists and writers through exhibitions, curated showcases, and creative events.
-          </p>
+          <h2 class="about-lead">A collective united by <span class="highlight">passion</span> for art, literature, and culture.</h2>
+          <p class="about-text">Alfaaz is a collective founded by students dedicated to fostering spaces where creativity meets collaboration. We celebrate local artists and writers through exhibitions, curated showcases, and creative events.</p>
           <a href="https://linktr.ee/alfaaz2k20" target="_blank" class="cta-btn magnetic">Explore Archive</a>
         </div>
         <div class="features-grid fade-in">
           <div class="feature-item">
-            <div class="feature-icon">
-              <i data-lucide="sparkles" class="w-6 h-6"></i>
-            </div>
-            <div class="feature-content">
-              <h4>Celebrate Talent</h4>
-              <p>Highlighting local artists through exhibitions and curated showcases.</p>
-            </div>
+            <div class="feature-icon"><i data-lucide="sparkles" class="w-6 h-6"></i></div>
+            <div class="feature-content"><h4>Celebrate Talent</h4><p>Highlighting local artists through exhibitions and curated showcases.</p></div>
           </div>
           <div class="feature-item">
-            <div class="feature-icon">
-              <i data-lucide="palette" class="w-6 h-6"></i>
-            </div>
-            <div class="feature-content">
-              <h4>Curate Culture</h4>
-              <p>Bridging artists and commercial spaces with tchandervar.</p>
-            </div>
+            <div class="feature-icon"><i data-lucide="palette" class="w-6 h-6"></i></div>
+            <div class="feature-content"><h4>Curate Culture</h4><p>Bridging artists and commercial spaces with tchandervar.</p></div>
           </div>
           <div class="feature-item">
-            <div class="feature-icon">
-              <i data-lucide="book-open-text" class="w-6 h-6"></i>
-            </div>
-            <div class="feature-content">
-              <h4>Inspire Dialogue</h4>
-              <p>Creative contests, clubs, and literary discussions among peers.</p>
-            </div>
+            <div class="feature-icon"><i data-lucide="book-open-text" class="w-6 h-6"></i></div>
+            <div class="feature-content"><h4>Inspire Dialogue</h4><p>Creative contests, clubs, and literary discussions among peers.</p></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Journey / Exhibitions Section -->
     <section id="journey" class="journey-section">
       <div class="section-header fade-in">
         <p class="section-label">Our Journey</p>
@@ -1260,132 +753,51 @@
       <div class="slider-container fade-in">
         <div id="slider" class="slider-wrap">
           <div id="slides" class="slides" tabindex="0" aria-roledescription="carousel" aria-label="Journey slides">
-            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 1">
-              <img src="./images/slider-1.jpg" alt="Annual Exhibition Event" loading="lazy">
-              <div class="slide-overlay">
-                <h3 class="slide-title">Kaamil</h3>
-              </div>
-            </div>
-            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 2">
-              <img src="./images/slider-2.jpg" alt="Poetry Slam Event" loading="lazy">
-              <div class="slide-overlay">
-                <h3 class="slide-title">Khayaal</h3>
-              </div>
-            </div>
-            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 3">
-              <img src="./images/slider-3.jpg" alt="Tchandervar Launch" loading="lazy">
-              <div class="slide-overlay">
-                <h3 class="slide-title">Harud</h3>
-              </div>
-            </div>
-            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 4">
-              <img src="./images/slider-4.jpg" alt="Art Workshop" loading="lazy">
-              <div class="slide-overlay">
-                <h3 class="slide-title">Live Painting</h3>
-              </div>
-            </div>
-            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 5">
-              <img src="./images/slider-5.jpg" alt="Film Screening" loading="lazy">
-              <div class="slide-overlay">
-                <h3 class="slide-title">Kaamil</h3>
-              </div>
-            </div>
-            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 6">
-              <img src="./images/slider-6.jpg" alt="Philosophy Debate" loading="lazy">
-              <div class="slide-overlay">
-                <h3 class="slide-title">Bayaan</h3>
-              </div>
-            </div>
-            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 7">
-              <img src="./images/slider-7.jpg" alt="Photography Excursion" loading="lazy">
-              <div class="slide-overlay">
-                <h3 class="slide-title">Live Performance</h3>
-              </div>
-            </div>
-            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 8">
-              <img src="./images/slider-8.jpg" alt="Community Project" loading="lazy">
-              <div class="slide-overlay">
-                <h3 class="slide-title">Act</h3>
-              </div>
-            </div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 1"><img src="./images/slider-1.jpg" alt="Event" loading="lazy"><div class="slide-overlay"><h3 class="slide-title">Kaamil</h3></div></div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 2"><img src="./images/slider-2.jpg" alt="Event" loading="lazy"><div class="slide-overlay"><h3 class="slide-title">Khayaal</h3></div></div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 3"><img src="./images/slider-3.jpg" alt="Event" loading="lazy"><div class="slide-overlay"><h3 class="slide-title">Harud</h3></div></div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 4"><img src="./images/slider-4.jpg" alt="Event" loading="lazy"><div class="slide-overlay"><h3 class="slide-title">Live Painting</h3></div></div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 5"><img src="./images/slider-5.jpg" alt="Event" loading="lazy"><div class="slide-overlay"><h3 class="slide-title">Kaamil</h3></div></div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 6"><img src="./images/slider-6.jpg" alt="Event" loading="lazy"><div class="slide-overlay"><h3 class="slide-title">Bayaan</h3></div></div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 7"><img src="./images/slider-7.jpg" alt="Event" loading="lazy"><div class="slide-overlay"><h3 class="slide-title">Live Performance</h3></div></div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="Slide 8"><img src="./images/slider-8.jpg" alt="Event" loading="lazy"><div class="slide-overlay"><h3 class="slide-title">Act</h3></div></div>
           </div>
         </div>
         <div class="slider-controls">
-          <button id="prevSlide" class="slider-arrow magnetic" aria-label="Previous slide">
-            <i data-lucide="chevrons-left" class="w-5 h-5"></i>
-          </button>
+          <button id="prevSlide" class="slider-arrow magnetic" aria-label="Previous slide"><i data-lucide="chevrons-left" class="w-5 h-5"></i></button>
           <div id="dots" class="slider-dots" role="tablist" aria-label="Slide dots"></div>
-          <button id="nextSlide" class="slider-arrow magnetic" aria-label="Next slide">
-            <i data-lucide="chevrons-right" class="w-5 h-5"></i>
-          </button>
+          <button id="nextSlide" class="slider-arrow magnetic" aria-label="Next slide"><i data-lucide="chevrons-right" class="w-5 h-5"></i></button>
         </div>
       </div>
     </section>
 
-    <!-- Clubs Section -->
     <section id="clubs" class="clubs-section">
       <div class="section-header fade-in">
         <p class="section-label">Get Involved</p>
         <h2 class="section-title">Our Clubs</h2>
       </div>
       <div class="clubs-grid">
-        <div class="club-card fade-in">
-          <div class="club-icon">
-            <i data-lucide="palette" class="w-8 h-8"></i>
-          </div>
-          <h4 class="club-title">Art & Craft</h4>
-          <p class="club-desc">Visual arts, sketching, installations</p>
-        </div>
-        <div class="club-card fade-in">
-          <div class="club-icon">
-            <i data-lucide="clapperboard" class="w-8 h-8"></i>
-          </div>
-          <h4 class="club-title">Film Club</h4>
-          <p class="club-desc">Screenings & short film production</p>
-        </div>
-        <div class="club-card fade-in">
-          <div class="club-icon">
-            <i data-lucide="camera" class="w-8 h-8"></i>
-          </div>
-          <h4 class="club-title">Photography</h4>
-          <p class="club-desc">Photo walks & editing workshops</p>
-        </div>
-        <div class="club-card fade-in">
-          <div class="club-icon">
-            <i data-lucide="brain" class="w-8 h-8"></i>
-          </div>
-          <h4 class="club-title">Philosophy</h4>
-          <p class="club-desc">Discussions, debates & readings</p>
-        </div>
-        <div class="club-card fade-in">
-          <div class="club-icon">
-            <i data-lucide="pen-tool" class="w-8 h-8"></i>
-          </div>
-          <h4 class="club-title">Literature</h4>
-          <p class="club-desc">Poetry, prose, and creative writing</p>
-        </div>
+        <div class="club-card fade-in"><div class="club-icon"><i data-lucide="palette" class="w-8 h-8"></i></div><h4 class="club-title">Art & Craft</h4><p class="club-desc">Visual arts, sketching, installations</p></div>
+        <div class="club-card fade-in"><div class="club-icon"><i data-lucide="clapperboard" class="w-8 h-8"></i></div><h4 class="club-title">Film Club</h4><p class="club-desc">Screenings & short film production</p></div>
+        <div class="club-card fade-in"><div class="club-icon"><i data-lucide="camera" class="w-8 h-8"></i></div><h4 class="club-title">Photography</h4><p class="club-desc">Photo walks & editing workshops</p></div>
+        <div class="club-card fade-in"><div class="club-icon"><i data-lucide="brain" class="w-8 h-8"></i></div><h4 class="club-title">Philosophy</h4><p class="club-desc">Discussions, debates & readings</p></div>
+        <div class="club-card fade-in"><div class="club-icon"><i data-lucide="pen-tool" class="w-8 h-8"></i></div><h4 class="club-title">Literature</h4><p class="club-desc">Poetry, prose, and creative writing</p></div>
       </div>
       <div class="text-center mt-12 fade-in" id="joinClubContainer">
         <a href="login.html" id="joinClubBtn" class="cta-btn magnetic">Join a Club</a>
       </div>
     </section>
 
-    <!-- CTA Section -->
     <section class="cta-section">
       <div class="fade-in">
         <p class="section-label">Explore More</p>
         <h2 class="cta-title">Archived Works</h2>
-        <p class="cta-text">
-          Discover our collective's ongoing initiatives, curated shows, and archived exhibitions celebrating local art and expression.
-        </p>
-        <a href="https://linktr.ee/alfaaz2k20" target="_blank" rel="noopener noreferrer" class="cta-btn magnetic">
-          Visit Collection →
-        </a>
+        <p class="cta-text">Discover our collective's ongoing initiatives, curated shows, and archived exhibitions celebrating local art and expression.</p>
+        <a href="https://linktr.ee/alfaaz2k20" target="_blank" rel="noopener noreferrer" class="cta-btn magnetic">Visit Collection →</a>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
   <footer id="contact">
     <div class="footer-content">
       <div class="footer-logo">ALFAAZ</div>
@@ -1401,194 +813,88 @@
     </div>
   </footer>
 
-  <!-- Scroll to Top -->
-  <button id="scrollToTopBtn" aria-label="Scroll to top">
-    <i data-lucide="arrow-up" class="w-5 h-5"></i>
-  </button>
+  <button id="scrollToTopBtn" aria-label="Scroll to top"><i data-lucide="arrow-up" class="w-5 h-5"></i></button>
+
+  <div id="phantomMiniOverlay" style="position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; font-family: 'JetBrains Mono', monospace;">
+
+    <div id="phantomMiniBox" style="display: none; width: 320px; background: rgba(11, 13, 23, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(230, 238, 246, 0.1); border-left: 2px solid #f8d37f; margin-bottom: 1rem; padding: 1.5rem; transform: translateY(10px); opacity: 0; transition: all 0.3s ease;">
+      <div style="font-family: 'Teko', sans-serif; font-size: 1.5rem; color: #f8d37f; letter-spacing: 2px; margin-bottom: 1rem; border-bottom: 1px solid rgba(230, 238, 246, 0.1); padding-bottom: 0.5rem; line-height: 1;">THE PHANTOM</div>
+      
+      <div id="phantomMiniOutput" style="font-size: 11px; color: #e6eef6; line-height: 1.6; height: 250px; overflow-y: auto; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 12px; scrollbar-width: thin; scrollbar-color: #f8d37f transparent;">
+        <div style="color: #a0aec0; letter-spacing: 1px;">Whisper your query into the collective...</div>
+      </div>
+      
+      <input type="text" id="phantomMiniInput" placeholder="TYPE HERE [ENTER]" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(230, 238, 246, 0.1); color: white; padding: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 10px; outline: none; box-sizing: border-box; transition: 0.3s;">
+    </div>
+
+    <button id="phantomMiniTrigger" class="magnetic" onclick="togglePhantomMini()" style="background: rgba(11, 13, 23, 0.5); backdrop-filter: blur(5px); border: 1px solid rgba(230, 238, 246, 0.2); color: #a0aec0; padding: 0.6rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 3px; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase;">
+      [ WAKE PHANTOM ]
+    </button>
+  </div>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+    document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+    function animateCursor() { const dx = mouseX - cursorX; const dy = mouseY - cursorY; cursorX += dx * 0.15; cursorY += dy * 0.15; cursor.style.left = cursorX + 'px'; cursor.style.top = cursorY + 'px'; requestAnimationFrame(animateCursor); }
+    animateCursor();
+    document.querySelectorAll('.magnetic, a, button, .update-card, .club-card, .feature-item').forEach(el => { el.addEventListener('mouseenter', () => cursor.classList.add('hover')); el.addEventListener('mouseleave', () => cursor.classList.remove('hover')); });
+
+    const preloader = document.getElementById('loader'), preloaderCounter = document.getElementById('preloaderCounter'), preloaderLine = document.getElementById('preloaderLine');
+    let count = 0;
+    function updatePreloader() { count++; preloaderCounter.textContent = count; if (count === 30) preloaderCounter.classList.add('loading'); if (count >= 100) { setTimeout(() => { preloaderLine.classList.remove('animate'); preloader.classList.add('fade-out'); revealHero(); }, 300); } else { setTimeout(updatePreloader, 20); } }
+    setTimeout(() => { preloaderLine.classList.add('animate'); updatePreloader(); }, 500);
+    function revealHero() { const heroTitle = document.querySelector('.hero-title'); const heroSubtitle = document.querySelector('.hero-subtitle'); if (heroTitle) heroTitle.classList.add('visible'); if (heroSubtitle) setTimeout(() => heroSubtitle.classList.add('visible'), 500); }
+
+    document.querySelectorAll('.magnetic').forEach(element => { element.addEventListener('mousemove', (e) => { const rect = element.getBoundingClientRect(); const x = e.clientX - rect.left - rect.width / 2; const y = e.clientY - rect.top - rect.height / 2; element.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`; }); element.addEventListener('mouseleave', () => { element.style.transform = 'translate(0, 0)'; }); });
+
+    const fadeElements = document.querySelectorAll('.fade-in');
+    const fadeObserver = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } }); }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    fadeElements.forEach(el => fadeObserver.observe(el));
+
+    (function() {
+      const slidesWrap = document.getElementById('slides'); if (!slidesWrap) return;
+      const slides = Array.from(slidesWrap.children), total = slides.length, prevBtn = document.getElementById('prevSlide'), nextBtn = document.getElementById('nextSlide'), dotsContainer = document.getElementById('dots');
+      let index = 0, timer = null, startX = 0, isDragging = false;
+      for (let i = 0; i < total; i++) { const dot = document.createElement('button'); dot.className = 'dot magnetic'; dot.setAttribute('aria-label', 'Go to slide ' + (i + 1)); dot.dataset.i = i; dot.type = 'button'; dotsContainer.appendChild(dot); }
+      const dots = Array.from(dotsContainer.children);
+      function setTransform(i, animate = true) { index = (i + total) % total; slidesWrap.style.transition = animate ? 'transform .7s cubic-bezier(.2,.9,.3,1)' : 'none'; slidesWrap.style.transform = `translateX(-${index * 100}%)`; dots.forEach((d, idx) => d.classList.toggle('active', idx === index)); }
+      function next() { setTransform(index + 1); } function prev() { setTransform(index - 1); }
+      nextBtn?.addEventListener('click', () => { next(); resetTimer(); }); prevBtn?.addEventListener('click', () => { prev(); resetTimer(); });
+      dots.forEach(d => d.addEventListener('click', (e) => { setTransform(Number(e.currentTarget.dataset.i)); resetTimer(); }));
+      function startTimer() { if (timer) clearInterval(timer); timer = setInterval(() => next(), 4500); }
+      function resetTimer() { if (timer) clearInterval(timer); startTimer(); }
+      const slider = document.getElementById('slider'); slider?.addEventListener('mouseenter', () => { if (timer) clearInterval(timer); }); slider?.addEventListener('mouseleave', () => startTimer());
+      slidesWrap.addEventListener('pointerdown', (e) => { isDragging = true; startX = e.clientX; slidesWrap.style.transition = 'none'; slidesWrap.setPointerCapture(e.pointerId); });
+      slidesWrap.addEventListener('pointermove', (e) => { if (!isDragging) return; const diff = e.clientX - startX; const percent = (diff / slider.offsetWidth) * 100; slidesWrap.style.transform = `translateX(-${index * 100 - percent}%)`; });
+      slidesWrap.addEventListener('pointerup', (e) => { if (!isDragging) return; isDragging = false; const diff = e.clientX - startX; const thresh = Math.max(40, slider.offsetWidth * 0.12); if (diff > thresh) prev(); else if (diff < -thresh) next(); else setTransform(index); });
+      slidesWrap.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') { next(); resetTimer(); } if (e.key === 'ArrowLeft') { prev(); resetTimer(); } });
+      setTransform(0, false); startTimer();
+    })();
+
+    (function() {
+      const btn = document.getElementById('scrollToTopBtn'); if (!btn) return;
+      window.addEventListener('scroll', () => { if (window.scrollY > 300) { btn.classList.add('visible'); } else { btn.classList.remove('visible'); } }, { passive: true });
+      btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    })();
+
+    (function() {
+      const navbar = document.getElementById('navbar'); let lastY = window.scrollY, ticking = false;
+      window.addEventListener('scroll', () => { if (ticking) return; window.requestAnimationFrame(() => { const currentY = window.scrollY; if (currentY > lastY && currentY > 120) { navbar.classList.add('hidden'); } else { navbar.classList.remove('hidden'); } lastY = currentY; ticking = false; }); ticking = true; }, { passive: true });
+    })();
+
+    (function() {
+      const menuToggle = document.getElementById('menuToggle'), navLinks = document.getElementById('navLinks');
+      menuToggle?.addEventListener('click', () => { const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true'; menuToggle.setAttribute('aria-expanded', !isExpanded); menuToggle.classList.toggle('active'); navLinks.classList.toggle('active'); });
+    })();
+
+    document.addEventListener('DOMContentLoaded', () => { if (window.lucide) { lucide.createIcons(); setTimeout(() => lucide.createIcons(), 400); } });
+    const marquee = document.querySelector('.marquee');
+    marquee?.addEventListener('mouseenter', () => { marquee.style.animationDuration = '60s'; }); marquee?.addEventListener('mouseleave', () => { marquee.style.animationDuration = '25s'; });
+  </script>
 
   <script>
     // ========================================
-    // CUSTOM CURSOR
-    // ========================================
-    const cursor = document.getElementById('cursor');
-    let mouseX = 0, mouseY = 0;
-    let cursorX = 0, cursorY = 0;
-
-    document.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    function animateCursor() {
-      const dx = mouseX - cursorX;
-      const dy = mouseY - cursorY;
-      cursorX += dx * 0.15;
-      cursorY += dy * 0.15;
-      cursor.style.left = cursorX + 'px';
-      cursor.style.top = cursorY + 'px';
-      requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
-
-    // Cursor hover effects
-    const hoverElements = document.querySelectorAll('.magnetic, a, button, .update-card, .club-card, .feature-item');
-    hoverElements.forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-    });
-
-    // ========================================
-    // PRELOADER
-    // ========================================
-    const preloader = document.getElementById('loader');
-    const preloaderCounter = document.getElementById('preloaderCounter');
-    const preloaderLine = document.getElementById('preloaderLine');
-    let count = 0;
-
-    function updatePreloader() {
-      count++;
-      preloaderCounter.textContent = count;
-      if (count === 30) preloaderCounter.classList.add('loading');
-      if (count >= 100) {
-        setTimeout(() => {
-          preloaderLine.classList.remove('animate');
-          preloader.classList.add('fade-out');
-          revealHero();
-        }, 300);
-      } else {
-        setTimeout(updatePreloader, 20);
-      }
-    }
-
-    setTimeout(() => {
-      preloaderLine.classList.add('animate');
-      updatePreloader();
-    }, 500);
-
-    function revealHero() {
-      const heroTitle = document.querySelector('.hero-title');
-      const heroSubtitle = document.querySelector('.hero-subtitle');
-      if (heroTitle) heroTitle.classList.add('visible');
-      if (heroSubtitle) setTimeout(() => heroSubtitle.classList.add('visible'), 500);
-    }
-
-    // ========================================
-    // MAGNETIC EFFECT
-    // ========================================
-    document.querySelectorAll('.magnetic').forEach(element => {
-      element.addEventListener('mousemove', (e) => {
-        const rect = element.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        element.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
-      });
-      element.addEventListener('mouseleave', () => {
-        element.style.transform = 'translate(0, 0)';
-      });
-    });
-
-    // ========================================
-    // SCROLL ANIMATIONS
-    // ========================================
-    const fadeElements = document.querySelectorAll('.fade-in');
-    const fadeObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-    fadeElements.forEach(el => fadeObserver.observe(el));
-
-    // ========================================
-    // SLIDER LOGIC
-    // ========================================
-    (function() {
-      const slidesWrap = document.getElementById('slides');
-      if (!slidesWrap) return;
-      const slides = Array.from(slidesWrap.children);
-      const total = slides.length;
-      const prevBtn = document.getElementById('prevSlide');
-      const nextBtn = document.getElementById('nextSlide');
-      const dotsContainer = document.getElementById('dots');
-      let index = 0, timer = null, startX = 0, isDragging = false;
-
-      // Create dots
-      for (let i = 0; i < total; i++) {
-        const dot = document.createElement('button');
-        dot.className = 'dot magnetic';
-        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
-        dot.dataset.i = i;
-        dot.type = 'button';
-        dotsContainer.appendChild(dot);
-      }
-      const dots = Array.from(dotsContainer.children);
-
-      function setTransform(i, animate = true) {
-        index = (i + total) % total;
-        slidesWrap.style.transition = animate ? 'transform .7s cubic-bezier(.2,.9,.3,1)' : 'none';
-        slidesWrap.style.transform = `translateX(-${index * 100}%)`;
-        dots.forEach((d, idx) => d.classList.toggle('active', idx === index));
-      }
-
-      function next() { setTransform(index + 1); }
-      function prev() { setTransform(index - 1); }
-
-      nextBtn?.addEventListener('click', () => { next(); resetTimer(); });
-      prevBtn?.addEventListener('click', () => { prev(); resetTimer(); });
-      dots.forEach(d => d.addEventListener('click', (e) => {
-        setTransform(Number(e.currentTarget.dataset.i));
-        resetTimer();
-      }));
-
-      function startTimer() {
-        if (timer) clearInterval(timer);
-        timer = setInterval(() => next(), 4500);
-      }
-
-      function resetTimer() {
-        if (timer) clearInterval(timer);
-        startTimer();
-      }
-
-      const slider = document.getElementById('slider');
-      slider?.addEventListener('mouseenter', () => { if (timer) clearInterval(timer); });
-      slider?.addEventListener('mouseleave', () => startTimer());
-
-      slidesWrap.addEventListener('pointerdown', (e) => {
-        isDragging = true;
-        startX = e.clientX;
-        slidesWrap.style.transition = 'none';
-        slidesWrap.setPointerCapture(e.pointerId);
-      });
-
-      slidesWrap.addEventListener('pointermove', (e) => {
-        if (!isDragging) return;
-        const diff = e.clientX - startX;
-        const percent = (diff / slider.offsetWidth) * 100;
-        slidesWrap.style.transform = `translateX(-${index * 100 - percent}%)`;
-      });
-
-      slidesWrap.addEventListener('pointerup', (e) => {
-        if (!isDragging) return;
-        isDragging = false;
-        const diff = e.clientX - startX;
-        const thresh = Math.max(40, slider.offsetWidth * 0.12);
-        if (diff > thresh) prev();
-        else if (diff < -thresh) next();
-        else setTransform(index);
-      });
-
-      slidesWrap.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') { next(); resetTimer(); }
-        if (e.key === 'ArrowLeft') { prev(); resetTimer(); }
-      });
-
-      setTransform(0, false);
-      startTimer();
-    })();
-
-// ========================================
     // LIVE NOTICES — pulls from events & config
     // ========================================
     (async function() {
@@ -1596,7 +902,6 @@
       const isLoggedIn = !!localStorage.getItem('alfaaz_token');
 
       try {
-        // Fetch BOTH Standard Events and Master Exhibition settings
         const [eventsRes, configRes] = await Promise.all([
             fetch('https://alfaaz-project.onrender.com/events/active'),
             fetch('https://alfaaz-project.onrender.com/exhibitions/config')
@@ -1608,7 +913,6 @@
         let html = '';
         const destination = isLoggedIn ? 'dashboard.html' : 'login.html';
 
-        // 1. Inject Master Exhibition if OPEN
         if (config.is_open) {
             html += `
               <a href="${destination}" class="update-card fade-in visible" style="border-left: 3px solid var(--accent-red); text-decoration:none; color:inherit; display:block;">
@@ -1625,7 +929,6 @@
             `;
         }
 
-        // 2. Inject Standard Minor Events
         if (events && events.length > 0) {
             html += events.map(e => `
               <a href="${destination}" class="update-card fade-in visible" style="text-decoration:none; color:inherit; display:block;">
@@ -1645,7 +948,6 @@
             `).join('');
         }
 
-        // 3. Fallback if absolutely nothing is open
         if (html === '') {
             grid.innerHTML = `
               <div class="update-card fade-in visible">
@@ -1658,12 +960,8 @@
               </div>`;
             return;
         }
-
-        // Output the combined dynamic grid
         grid.innerHTML = html;
-
       } catch (err) {
-        // Fallback to static notices on total API failure
         grid.innerHTML = `
           <div class="update-card fade-in visible">
             <p class="update-date">January 01, 2026</p>
@@ -1691,7 +989,6 @@
     function togglePhantomMini() {
       if (pBox.style.display === 'none') {
         pBox.style.display = 'block';
-        // Tiny timeout to allow CSS transition to catch the opacity change
         setTimeout(() => {
           pBox.style.opacity = '1';
           pBox.style.transform = 'translateY(0)';
@@ -1721,21 +1018,15 @@
         if (!query) return;
 
         pIn.value = '';
-        
-        // Clear initial text
         if (pOut.innerHTML.includes("Whisper your query")) {
           pOut.innerHTML = '';
         }
 
-        // Add User Query
         pOut.innerHTML += `<div><span style="color: #a0aec0; opacity: 0.5;">> </span> <span style="opacity: 0.8;">${query}</span></div>`;
-        
-        // Add Loading Indicator
         const loadId = 'load-' + Date.now();
         pOut.innerHTML += `<div id="${loadId}" style="color: #f8d37f; font-size: 10px;">[CONSULTING_VOID...]</div>`;
         pOut.scrollTop = pOut.scrollHeight;
 
-        // Fetch from Backend
         try {
           const response = await fetch(`${MINI_API_URL}/phantom/ask`, {
             method: 'POST',
@@ -1759,10 +1050,8 @@
       }
     });
 
-    // Hover effect for input
     pIn.addEventListener('focus', () => { pIn.style.borderColor = '#f8d37f'; });
     pIn.addEventListener('blur', () => { pIn.style.borderColor = 'rgba(230, 238, 246, 0.1)'; });
   </script>
 </body>
 </html>
-``
