@@ -93,6 +93,7 @@
     </div>
     <div id="clubsContainer"><div class="empty-state">Loading applications...</div></div>
   </div>
+  
   <div id="tab-roster" class="tab-panel">
     <div class="section-title">[ Collective Roster ]</div>
     <div id="rosterContainer"><div class="empty-state">Loading roster...</div></div>
@@ -132,18 +133,19 @@
       if (!tabLoaded[name]) { tabLoaded[name] = true; loadTab(name); }
     }
     function loadTab(name) {
-      if (name === 'events') loadEvents(); if (name === 'exhibitions') loadExhibitions('ALL');
-      if (name === 'clubs') loadClubs('ALL'); if (name === 'roster') loadRoster();
+      if (name === 'events') loadEvents(); 
+      if (name === 'exhibitions') loadExhibitions('ALL');
+      if (name === 'clubs') loadClubs('ALL'); 
+      if (name === 'roster') loadRoster();
     }
 
-    // GLOBALS FOR FIXING THE "LIST" BUG
     let allEvents = [];
 
     // EVENTS
     async function loadEvents() {
       const container = document.getElementById('eventsContainer');
       try {
-        const res = await apiFetch(`${API_URL}/admin/events`);
+        const res = await apiFetch(`${API_URL}/admin/events`, { cache: 'no-store' });
         allEvents = await res.json();
         if (!allEvents.length) { container.innerHTML = '<div class="empty-state">No events found.</div>'; return; }
         container.innerHTML = '';
@@ -175,12 +177,11 @@
     async function toggleEvent(id, btn) { btn.textContent = '...'; const res = await apiFetch(`${API_URL}/admin/events/${id}/toggle`, { method: 'PATCH' }); if (res.ok) loadEvents(); }
     async function deleteEvent(id, name, btn) { if (!confirm(`Delete ${name}?`)) return; btn.textContent = '...'; const res = await apiFetch(`${API_URL}/admin/events/${id}`, { method: 'DELETE' }); if (res.ok) loadEvents(); }
     
-    // FIXED VIEW REGISTRATIONS BUG
     async function viewRegistrations(id) {
       const event = allEvents.find(e => e.id === id);
       document.getElementById('modalTitle').textContent = event.name.toUpperCase(); 
       document.getElementById('modalBody').innerHTML = 'Loading...'; document.getElementById('regModal').classList.add('open');
-      const res = await apiFetch(`${API_URL}/admin/events/${id}/registrations`);
+      const res = await apiFetch(`${API_URL}/admin/events/${id}/registrations`, { cache: 'no-store' });
       const data = await res.json();
       let html = `<div style="font-size:11px; margin-bottom:1rem; color:var(--accent-gold);">Total Approved: ${data.registrations.length}</div>`;
       data.registrations.forEach((r, i) => {
@@ -196,8 +197,7 @@
     // EXHIBITIONS ENGINE
     let allExhibs = [];
     async function loadExhibitions(f) {
-      // Load Config First
-      const cfgRes = await fetch(`${API_URL}/exhibitions/config`);
+      const cfgRes = await fetch(`${API_URL}/exhibitions/config`, { cache: 'no-store' });
       const cfg = await cfgRes.json();
       document.getElementById('cfg-title').value = cfg.title || '';
       document.getElementById('cfg-date').value = cfg.date_text || '';
@@ -205,8 +205,7 @@
       document.getElementById('cfg-desc').value = cfg.about_text || '';
       document.getElementById('cfg-open').value = cfg.is_open ? "true" : "false";
 
-      // Load Portfolios
-      const res = await apiFetch(`${API_URL}/admin/exhibitions`);
+      const res = await apiFetch(`${API_URL}/admin/exhibitions`, { cache: 'no-store' });
       allExhibs = await res.json(); renderExhibitions(f);
     }
 
@@ -224,6 +223,7 @@
     }
 
     function filterExhibitions(f) { document.querySelectorAll('[id^="filt-"]').forEach(b => b.classList.remove('btn-gold')); document.getElementById(`filt-${f}`).classList.add('btn-gold'); renderExhibitions(f); }
+    
     function renderExhibitions(f) {
       const container = document.getElementById('exhibitionsContainer');
       const apps = f === 'ALL' ? allExhibs : allExhibs.filter(a => a.status === f);
@@ -235,7 +235,7 @@
         card.innerHTML = `
           <div><div class="label">Artist</div><div class="data-display">${a.full_name}</div><div style="font-size:10px; color:var(--text-secondary);">Age: ${a.age} | WA: ${a.whatsapp}</div><div style="font-size:10px; color:var(--text-secondary);">${a.user_email}</div></div>
           <div><div class="label">Art Profile</div><div class="data-display" style="font-size:12px;">${a.genre}</div><div style="font-size:10px; color:var(--text-secondary);">Medium: ${a.medium}</div>${a.applicant_note ? `<div style="font-size:9px; font-style:italic; color:var(--accent-gold);">"${a.applicant_note}"</div>` : ''}</div>
-          <div><div class="label">Status</div><span class="badge ${badge}">${a.status}</span>${a.curator_note ? `<div style="font-size:9px; color:var(--text-secondary);">Note sent.</div>` : ''}</div>
+          <div><div class="label">Status</div><span class="badge ${badge}">${a.status}</span>${a.curator_note ? `<div style="font-size:9px; color:var(--accent-gold); margin-top:4px; font-style:italic;">Curator Note:<br>"${a.curator_note}"</div>` : ''}</div>
           <div style="display:flex; flex-direction:column; gap:0.4rem;">
             <a href="${a.portfolio_url}" target="_blank" class="btn btn-ghost btn-sm btn-full" style="border-color:var(--accent-gold); color:var(--accent-gold);">View Portfolio</a>
             ${a.status === 'PENDING' ? `<button class="btn btn-green btn-sm" onclick="reviewExhibition(${a.id}, 'APPROVED', this)">Approve</button><button class="btn btn-red btn-sm" onclick="reviewExhibition(${a.id}, 'REJECTED', this)">Reject</button>` : ''}
@@ -243,6 +243,7 @@
         container.appendChild(card);
       });
     }
+    
     async function reviewExhibition(id, status, btn) {
       let paymentLink = null; if (status === 'APPROVED') { paymentLink = prompt("Enter the secure payment/registration link to email to the artist:"); if (!paymentLink) return; }
       const note = prompt('Optional Curator Note (this will be shown on their dashboard):'); btn.textContent = '...';
@@ -252,7 +253,7 @@
 
     // CLUBS
     let allClubApps = [];
-    async function loadClubs(f) { const res = await apiFetch(`${API_URL}/admin/club-applications`); allClubApps = await res.json(); renderClubs(f); }
+    async function loadClubs(f) { const res = await apiFetch(`${API_URL}/admin/club-applications`, { cache: 'no-store' }); allClubApps = await res.json(); renderClubs(f); }
     function filterClubs(f) { document.querySelectorAll('[id^="filter-"]').forEach(b => b.classList.remove('btn-gold')); document.getElementById(`filter-${f}`).classList.add('btn-gold'); renderClubs(f); }
     function renderClubs(f) {
       const container = document.getElementById('clubsContainer'); const apps = f === 'ALL' ? allClubApps : allClubApps.filter(a => a.status === f); container.innerHTML = '';
@@ -267,7 +268,7 @@
 
     // ROSTER
     async function loadRoster() {
-      const container = document.getElementById('rosterContainer'); const res = await apiFetch(`${API_URL}/admin/users`); const users = await res.json(); container.innerHTML = '';
+      const container = document.getElementById('rosterContainer'); const res = await apiFetch(`${API_URL}/admin/users`, { cache: 'no-store' }); const users = await res.json(); container.innerHTML = '';
       users.forEach((u, i) => {
         const card = document.createElement('div'); card.className = 'data-card user-card';
         card.innerHTML = `<div><div class="label">User</div><div class="data-display">${u.email}</div></div><div><select id="st-${i}"><option value="PARTICIPANT" ${u.status==='PARTICIPANT'?'selected':''}>Participant</option><option value="ADMIN" ${u.status==='ADMIN'?'selected':''}>Admin</option></select></div><button class="btn btn-gold btn-sm" onclick="updateStatus('${u.email}', ${i}, this)">Commit</button>`;
