@@ -10,9 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Teko:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ========================================
-       BRUTALIST CORE VARIABLES
-    ======================================== */
     :root {
       --bg-primary: #0b0d17;
       --bg-secondary: #151925;
@@ -31,81 +28,44 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      font-family: 'JetBrains Mono', monospace;
-      min-height: 100vh;
-      overflow-x: hidden;
+      background-color: var(--bg-primary); color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace; min-height: 100vh; overflow-x: hidden;
     }
 
     a, button { cursor: none; }
 
-    /* ========================================
-       BACKGROUND & OVERLAYS
-    ======================================== */
-    .bg-video {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      object-fit: cover; z-index: -3;
-      filter: brightness(0.35) blur(4px);
-    }
-    .video-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: radial-gradient(circle at center, rgba(11, 13, 23, 0.4) 0%, var(--bg-primary) 100%);
-      z-index: -2;
-    }
-    .texture-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-      pointer-events: none;
-    }
+    /* BACKGROUND */
+    .bg-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; filter: brightness(0.35) blur(4px); }
+    .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(11, 13, 23, 0.4) 0%, var(--bg-primary) 100%); z-index: -2; }
 
-    /* ========================================
-       CUSTOM CURSOR & PRELOADER
-    ======================================== */
+    /* CURSOR & PRELOADER */
     .custom-cursor {
       position: fixed; top: 0; left: 0; width: var(--cursor-size); height: var(--cursor-size);
       background: var(--accent-gold); border-radius: 50%; pointer-events: none; z-index: 10000;
-      transform: translate(-50%, -50%);
-      transition: width 0.3s var(--transition-bounce), height 0.3s var(--transition-bounce), background 0.3s ease, border 0.3s ease;
+      transform: translate(-50%, -50%); transition: width 0.3s var(--transition-bounce), height 0.3s var(--transition-bounce), background 0.3s ease, border 0.3s ease;
     }
-    .custom-cursor.hover {
-      width: var(--cursor-hover-size); height: var(--cursor-hover-size);
-      background: transparent; border: 1px solid var(--accent-gold);
-    }
+    .custom-cursor.hover { width: var(--cursor-hover-size); height: var(--cursor-hover-size); background: transparent; border: 1px solid var(--accent-gold); }
 
-    #loader {
-      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column;
-      z-index: 3000; background: var(--bg-primary); transition: opacity 0.8s var(--transition-smooth);
-    }
+    #loader { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; z-index: 3000; background: var(--bg-primary); transition: opacity 0.8s var(--transition-smooth); }
     #loader.fade-out { opacity: 0; pointer-events: none; }
     .preloader-counter { font-family: 'Teko', sans-serif; font-size: clamp(4rem, 20vw, 15rem); font-weight: 300; line-height: 1; color: var(--text-primary); }
     .preloader-counter.loading { color: var(--accent-gold); }
     .preloader-line { width: 0; height: 2px; background: var(--accent-gold); margin-top: 2rem; transition: width 0.5s var(--transition-smooth); }
     .preloader-line.animate { width: 200px; }
 
-    /* ========================================
-       NAVIGATION
-    ======================================== */
+    /* NAVIGATION */
     nav {
       padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid var(--grid-border); background: rgba(11, 13, 23, 0.7); backdrop-filter: blur(12px);
-      position: sticky; top: 0; z-index: 50;
+      border-bottom: 1px solid var(--grid-border); background: rgba(11, 13, 23, 0.7); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50;
     }
     .logo { font-family: 'Teko', sans-serif; font-size: 2rem; letter-spacing: 5px; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
 
-    /* ========================================
-       DASHBOARD LAYOUT
-    ======================================== */
+    /* DASHBOARD LAYOUT */
     .dash-container { max-width: 1200px; margin: 3rem auto; padding: 0 2rem; }
     .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
-    
     @media (max-width: 900px) { .grid-layout { grid-template-columns: 1fr; } }
 
-    /* ========================================
-       GLASS PANELS
-    ======================================== */
+    /* GLASS PANELS */
     .panel {
       background: rgba(21, 25, 37, 0.4); border: 1px solid var(--grid-border); padding: 2.5rem;
       position: relative; backdrop-filter: blur(10px); transition: all 0.3s ease;
@@ -118,9 +78,7 @@
     .data-label { font-size: 9px; color: var(--text-secondary); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 0.4rem; }
     .data-value { font-size: 15px; margin-bottom: 1.5rem; color: #fff; }
 
-    /* ========================================
-       UI ELEMENTS
-    ======================================== */
+    /* UI ELEMENTS */
     .badge { display: inline-block; padding: 0.3rem 0.8rem; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; border: 1px solid; }
     .badge-gold { background: rgba(248, 211, 127, 0.1); color: var(--accent-gold); border-color: var(--accent-gold); }
     .badge-green { background: rgba(74, 222, 128, 0.1); color: var(--accent-green); border-color: var(--accent-green); }
@@ -147,12 +105,8 @@
     }
     .list-item:hover { border-color: rgba(230, 238, 246, 0.3); background: rgba(0,0,0,0.5); }
 
-    /* ========================================
-       THE PHANTOM TERMINAL
-    ======================================== */
-    #phantomTerminal {
-      margin-top: 3rem; border: 1px solid var(--accent-gold); background: rgba(11, 13, 23, 0.8); backdrop-filter: blur(15px); padding: 3rem; position: relative;
-    }
+    /* THE PHANTOM TERMINAL */
+    #phantomTerminal { margin-top: 3rem; border: 1px solid var(--accent-gold); background: rgba(11, 13, 23, 0.8); backdrop-filter: blur(15px); padding: 3rem; position: relative; }
     .phantom-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 1px solid rgba(248, 211, 127, 0.2); padding-bottom: 1.5rem; }
     #phantomOutput {
       background: rgba(0,0,0,0.6); border-left: 2px solid var(--accent-gold); padding: 2rem; min-height: 300px; max-height: 500px;
@@ -163,19 +117,13 @@
     #phantomInput { flex: 1; padding: 1.2rem; background: transparent; border: none; color: white; font-family: 'JetBrains Mono', monospace; font-size: 11px; outline: none; }
     .phantom-btn { background: var(--accent-gold); color: var(--bg-primary); padding: 0 2.5rem; font-family: 'Teko', sans-serif; font-size: 1.5rem; letter-spacing: 2px; text-transform: uppercase; border: none; transition: background 0.3s ease; }
     .phantom-btn:hover { background: #fff; }
-
-    /* Utility */
     .magnetic { transition: transform 0.3s var(--transition-smooth); }
   </style>
 </head>
 <body>
 
-  <video class="bg-video" autoplay loop muted playsinline preload="auto">
-    <source src="https://res.cloudinary.com/dmqwjpmjk/video/upload/v1761507594/portal-bg_oribvr.mp4" type="video/mp4">
-  </video>
+  <video class="bg-video" autoplay loop muted playsinline preload="auto"><source src="https://res.cloudinary.com/dmqwjpmjk/video/upload/v1761507594/portal-bg_oribvr.mp4" type="video/mp4"></video>
   <div class="video-overlay"></div>
-  <div class="texture-overlay"></div>
-
   <div class="custom-cursor" id="cursor"></div>
 
   <div id="loader">
@@ -207,16 +155,24 @@
         </div>
 
         <div class="panel">
-          <h2 class="panel-title">The Vault</h2>
-          <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
-            Transmit artifacts, portfolios, or project proposals directly to the Curator's encrypted network.
-          </p>
-          <a href="submit.html" class="action-btn gold magnetic">Initiate Transmission</a>
+          <h2 class="panel-title">Exhibition Screening</h2>
+          
+          <div id="exhibStatusView" style="display: none; padding: 2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--grid-border); text-align: center;">
+             <div class="data-label" style="margin-bottom: 15px;">Clearance Status</div>
+             <div id="myExhibBadge" style="margin-top: 5px; margin-bottom: 15px;"></div>
+             <p id="myExhibNote" style="font-size: 10px; color: var(--text-secondary); margin-top: 15px; font-style: italic; border-top: 1px dashed var(--grid-border); padding-top: 15px; line-height: 1.6;"></p>
+          </div>
+
+          <div id="exhibApplyView" style="display: none;">
+            <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+              Transmit your portfolios directly to the Curator's encrypted network for the upcoming major exhibition.
+            </p>
+            <a href="exhibition.html" class="action-btn gold magnetic">Initiate Transmission</a>
+          </div>
         </div>
 
         <div class="panel">
           <h2 class="panel-title">Collective Affiliation</h2>
-          
           <div id="clubStatusView" style="display: none; padding: 2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--grid-border); text-align: center;">
              <div class="data-label" style="margin-bottom: 15px;">Current Assignment</div>
              <div style="font-family: 'Teko', sans-serif; font-size: 2.5rem; color: #fff; line-height: 1;" id="myClubName"></div>
@@ -243,22 +199,16 @@
       </div>
 
       <div class="flex flex-col gap-8">
-        
         <div class="panel">
           <h2 class="panel-title">Live Transmissions</h2>
-          <div id="activeEventsContainer">
-             <p style="font-size: 11px; color: var(--text-secondary); font-style: italic;">Scanning for open registrations...</p>
-          </div>
+          <div id="activeEventsContainer"><p style="font-size: 11px; color: var(--text-secondary); font-style: italic;">Scanning for open registrations...</p></div>
         </div>
 
         <div class="panel">
           <h2 class="panel-title">Secured Clearances</h2>
-          <div id="myTicketsContainer">
-             <p style="font-size: 11px; color: var(--text-secondary); font-style: italic;">Accessing ledger...</p>
-          </div>
+          <div id="myTicketsContainer"><p style="font-size: 11px; color: var(--text-secondary); font-style: italic;">Accessing ledger...</p></div>
         </div>
       </div>
-
     </div>
 
     <div id="phantomTerminal">
@@ -269,13 +219,11 @@
         </div>
         <div style="font-size: 9px; color: var(--accent-gold); letter-spacing: 3px; opacity: 0.8;">ENCRYPTED_LINK.ACTIVE</div>
       </div>
-      
       <div id="phantomOutput">
         <div style="color: var(--text-secondary); opacity: 0.7;">> Boot sequence initialized...</div>
         <div style="color: var(--text-secondary); opacity: 0.7;">> Accessing Alfaaz Lore...</div>
         <div style="color: var(--accent-gold); margin-top: 1rem;">Awaiting query from the collective...</div>
       </div>
-      
       <div class="phantom-input-wrapper">
         <input type="text" id="phantomInput" placeholder="INQUIRE ABOUT ART, CINEMA, OR THE COLLECTIVE...">
         <button onclick="askPhantom()" class="phantom-btn magnetic">EXECUTE</button>
@@ -284,96 +232,70 @@
   </div>
 
   <script>
-    // ========================================
     // CURSOR & PRELOADER LOGIC
-    // ========================================
     const cursor = document.getElementById('cursor');
     let mX = 0, mY = 0, cX = 0, cY = 0;
     document.addEventListener('mousemove', e => { mX = e.clientX; mY = e.clientY; });
-    function animCursor() {
-      cX += (mX - cX) * 0.15; cY += (mY - cY) * 0.15;
-      cursor.style.left = cX + 'px'; cursor.style.top = cY + 'px';
-      requestAnimationFrame(animCursor);
-    }
+    function animCursor() { cX += (mX - cX) * 0.15; cY += (mY - cY) * 0.15; cursor.style.left = cX + 'px'; cursor.style.top = cY + 'px'; requestAnimationFrame(animCursor); }
     animCursor();
+    document.querySelectorAll('.magnetic, a, button').forEach(el => { el.addEventListener('mouseenter', () => cursor.classList.add('hover')); el.addEventListener('mouseleave', () => cursor.classList.remove('hover')); });
+    document.querySelectorAll('.magnetic').forEach(element => { element.addEventListener('mousemove', (e) => { const rect = element.getBoundingClientRect(); const x = e.clientX - rect.left - rect.width / 2; const y = e.clientY - rect.top - rect.height / 2; element.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`; }); element.addEventListener('mouseleave', () => element.style.transform = 'translate(0, 0)'); });
 
-    const hoverElements = document.querySelectorAll('.magnetic, a, button');
-    hoverElements.forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-    });
-
-    document.querySelectorAll('.magnetic').forEach(element => {
-      element.addEventListener('mousemove', (e) => {
-        const rect = element.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        element.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
-      });
-      element.addEventListener('mouseleave', () => element.style.transform = 'translate(0, 0)');
-    });
-
-    const ldr = document.getElementById('loader');
-    const cnt = document.getElementById('preloaderCounter');
-    const lin = document.getElementById('preloaderLine');
+    const ldr = document.getElementById('loader'), cnt = document.getElementById('preloaderCounter'), lin = document.getElementById('preloaderLine');
     let val = 0;
-    function updateLdr() {
-      val += 2; cnt.textContent = val;
-      if (val === 30) cnt.classList.add('loading');
-      if (val >= 100) {
-        setTimeout(() => { lin.classList.remove('animate'); ldr.classList.add('fade-out'); }, 300);
-      } else { setTimeout(updateLdr, 15); }
-    }
+    function updateLdr() { val += 2; cnt.textContent = val; if (val === 30) cnt.classList.add('loading'); if (val >= 100) { setTimeout(() => { lin.classList.remove('animate'); ldr.classList.add('fade-out'); }, 300); } else { setTimeout(updateLdr, 15); } }
     setTimeout(() => { lin.classList.add('animate'); updateLdr(); }, 300);
 
-
-    // ========================================
     // APPLICATION LOGIC
-    // ========================================
     if (window.lucide) lucide.createIcons();
-
     const API_URL = "https://alfaaz-project.onrender.com";
     const token = localStorage.getItem('alfaaz_token');
     const userData = localStorage.getItem('alfaaz_user');
-    
-    if (!userData || !token || token === "undefined") {
-      window.location.href = 'login.html';
-    }
-
+    if (!userData || !token || token === "undefined") window.location.href = 'login.html';
     const user = JSON.parse(userData);
+    
     document.getElementById('dashEmail').textContent = user.email.toUpperCase();
     document.getElementById('dashStatus').textContent = user.status; 
     document.getElementById('userGreeting').textContent = `[ ${user.email.split('@')[0]} ]`;
+    if (user.status === 'ADMIN') document.getElementById('adminLink').style.display = 'inline-block';
 
-    if (user.status === 'ADMIN') {
-      document.getElementById('adminLink').style.display = 'inline-block';
-    }
-
-    const HEADERS = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    };
-
+    const HEADERS = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
     async function apiFetch(endpoint, options = {}) {
         const res = await fetch(`${API_URL}${endpoint}`, { ...options, headers: HEADERS });
-        if (res.status === 401 || res.status === 403) {
-            localStorage.clear();
-            alert("Clearance Expired. Please reconnect.");
-            window.location.href = 'login.html';
-        }
+        if (res.status === 401 || res.status === 403) { localStorage.clear(); window.location.href = 'login.html'; }
         return res;
     }
+    document.getElementById('logoutBtn').addEventListener('click', () => { localStorage.clear(); window.location.href = 'login.html'; });
 
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.clear();
-      window.location.href = 'login.html';
-    });
-
-    // INIT
     async function initDashboard() {
+        loadExhibitionStatus();
         loadClubStatus();
         loadActiveEvents();
         loadMyTickets();
+    }
+
+    // NEW: EXHIBITION STATUS
+    async function loadExhibitionStatus() {
+        try {
+            const res = await apiFetch('/exhibitions/my-status');
+            const data = await res.json();
+            const viewStatus = document.getElementById('exhibStatusView');
+            const viewApply = document.getElementById('exhibApplyView');
+
+            if (data.status === "NONE") {
+                viewStatus.style.display = "none"; viewApply.style.display = "block";
+            } else {
+                viewApply.style.display = "none"; viewStatus.style.display = "block";
+                let badgeClass = data.status === 'PENDING' ? 'badge-gold' : data.status === 'APPROVED' ? 'badge-green' : 'badge-red';
+                document.getElementById('myExhibBadge').innerHTML = `<span class="badge ${badgeClass}" style="font-size: 14px; padding: 5px 15px;">${data.status}</span>`;
+                
+                if (data.status === "PENDING") {
+                    document.getElementById('myExhibNote').textContent = "Your portfolio is currently under review by the Curator. Further details will follow via email.";
+                } else if (data.curator_note) {
+                    document.getElementById('myExhibNote').innerHTML = `<span style="color:var(--text-primary);">Curator Note:</span><br>"${data.curator_note}"`;
+                }
+            }
+        } catch (e) { console.error("Exhibition query failed."); }
     }
 
     // CLUBS
@@ -393,31 +315,19 @@
                 document.getElementById('myClubBadge').innerHTML = `<span class="badge ${badgeClass}">${data.status}</span>`;
                 if (data.admin_note) document.getElementById('myClubNote').textContent = `Curator: "${data.admin_note}"`;
             }
-        } catch (e) { console.error("Signal lost on club query."); }
+        } catch (e) { console.error("Club query failed."); }
     }
 
     async function submitClubApplication() {
-        const club = document.getElementById('clubSelect').value;
-        const note = document.getElementById('clubNote').value;
-        const btn = document.getElementById('clubSubmitBtn');
-        const msg = document.getElementById('clubMsg');
-
+        const club = document.getElementById('clubSelect').value; const note = document.getElementById('clubNote').value;
+        const btn = document.getElementById('clubSubmitBtn'); const msg = document.getElementById('clubMsg');
         btn.textContent = "Transmitting..."; btn.disabled = true;
-
         try {
             const res = await apiFetch('/clubs/apply', { method: 'POST', body: JSON.stringify({ club_name: club, note: note }) });
             const data = await res.json();
-            if (res.ok) {
-                msg.style.color = "var(--accent-green)"; msg.textContent = "Application secured.";
-                setTimeout(() => loadClubStatus(), 1500);
-            } else {
-                msg.style.color = "var(--accent-red)"; msg.textContent = data.detail;
-                btn.textContent = "Submit Application"; btn.disabled = false;
-            }
-        } catch (e) {
-            msg.style.color = "var(--accent-red)"; msg.textContent = "Transmission failed.";
-            btn.textContent = "Submit Application"; btn.disabled = false;
-        }
+            if (res.ok) { msg.style.color = "var(--accent-green)"; msg.textContent = "Application secured."; setTimeout(() => loadClubStatus(), 1500); } 
+            else { msg.style.color = "var(--accent-red)"; msg.textContent = data.detail; btn.textContent = "Submit Application"; btn.disabled = false; }
+        } catch (e) { msg.style.color = "var(--accent-red)"; msg.textContent = "Transmission failed."; btn.textContent = "Submit Application"; btn.disabled = false; }
     }
 
     // EVENTS
@@ -426,12 +336,7 @@
         try {
             const res = await apiFetch('/events/active');
             const events = await res.json();
-            
-            if (!events.length) {
-                container.innerHTML = '<div style="padding: 2rem; border: 1px dashed var(--grid-border); text-align: center; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px;">[ No Signals Detected ]</div>';
-                return;
-            }
-
+            if (!events.length) { container.innerHTML = '<div style="padding: 2rem; border: 1px dashed var(--grid-border); text-align: center; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px;">[ No Signals Detected ]</div>'; return; }
             container.innerHTML = events.map(e => {
                 const capacityText = e.capacity === 0 ? "Unlimited Access" : `${e.spots_left} slots available`;
                 return `
@@ -441,20 +346,10 @@
                         <div style="font-size: 10px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;">${e.event_date || 'TBD'} &nbsp;//&nbsp; ${capacityText}</div>
                         <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">${e.description || ''}</div>
                     </div>
-                    <div>
-                        <button class="action-btn gold magnetic" style="margin-top:0; padding: 0.8rem 2rem;" ${e.full ? 'disabled' : ''} onclick="rsvpEvent(${e.id}, this)">
-                            ${e.full ? 'AT CAPACITY' : 'SECURE CLEARANCE'}
-                        </button>
-                    </div>
+                    <div><button class="action-btn gold magnetic" style="margin-top:0; padding: 0.8rem 2rem;" ${e.full ? 'disabled' : ''} onclick="rsvpEvent(${e.id}, this)">${e.full ? 'AT CAPACITY' : 'SECURE CLEARANCE'}</button></div>
                 </div>
             `}).join('');
-            
-            // Reattach cursor logic to new elements
-            container.querySelectorAll('.magnetic').forEach(el => {
-                el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-                el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-            });
-
+            container.querySelectorAll('.magnetic').forEach(el => { el.addEventListener('mouseenter', () => cursor.classList.add('hover')); el.addEventListener('mouseleave', () => cursor.classList.remove('hover')); });
         } catch (e) { container.innerHTML = '<p style="color: var(--accent-red); font-size: 11px;">[ Server Unreachable ]</p>'; }
     }
 
@@ -463,14 +358,9 @@
         try {
             const res = await apiFetch('/events/register', { method: 'POST', body: JSON.stringify({ event_id: eventId }) });
             if (res.ok) {
-                btn.style.background = "var(--accent-green)"; btn.style.color = "#000"; btn.style.borderColor = "var(--accent-green)";
-                btn.textContent = "CONFIRMED";
+                btn.style.background = "var(--accent-green)"; btn.style.color = "#000"; btn.style.borderColor = "var(--accent-green)"; btn.textContent = "CONFIRMED";
                 setTimeout(() => { loadActiveEvents(); loadMyTickets(); }, 1500);
-            } else {
-                const data = await res.json();
-                alert(data.detail);
-                btn.textContent = "SECURE CLEARANCE"; btn.disabled = false;
-            }
+            } else { const data = await res.json(); alert(data.detail); btn.textContent = "SECURE CLEARANCE"; btn.disabled = false; }
         } catch (e) { alert("Network error."); btn.textContent = "SECURE CLEARANCE"; btn.disabled = false; }
     }
 
@@ -479,21 +369,11 @@
         try {
             const res = await apiFetch('/events/my-registrations');
             const tickets = await res.json();
-            
-            if (!tickets.length) {
-                container.innerHTML = '<div style="padding: 2rem; border: 1px dashed var(--grid-border); text-align: center; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px;">[ Ledger Empty ]</div>';
-                return;
-            }
-
+            if (!tickets.length) { container.innerHTML = '<div style="padding: 2rem; border: 1px dashed var(--grid-border); text-align: center; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px;">[ Ledger Empty ]</div>'; return; }
             container.innerHTML = tickets.map(t => `
                 <div class="list-item" style="padding: 1rem 1.5rem; border-left: 2px solid var(--accent-green);">
-                    <div>
-                        <div style="font-family: 'Teko', sans-serif; font-size: 1.4rem; color: #fff; letter-spacing: 1px; line-height: 1;">${t.event_name}</div>
-                        <div style="font-size: 10px; color: var(--text-secondary); letter-spacing: 1px; margin-top: 4px;">${t.event_date || 'Date TBD'}</div>
-                    </div>
-                    <div style="align-self: center;">
-                        <span class="badge badge-green">AUTHORIZED</span>
-                    </div>
+                    <div><div style="font-family: 'Teko', sans-serif; font-size: 1.4rem; color: #fff; letter-spacing: 1px; line-height: 1;">${t.event_name}</div></div>
+                    <div style="align-self: center;"><span class="badge badge-green">AUTHORIZED</span></div>
                 </div>
             `).join('');
         } catch (e) { container.innerHTML = '<p style="color: var(--accent-red); font-size: 11px;">[ Failed to load ledger ]</p>'; }
@@ -501,45 +381,23 @@
 
     // THE PHANTOM
     async function askPhantom() {
-      const input = document.getElementById('phantomInput');
-      const output = document.getElementById('phantomOutput');
-      const query = input.value.trim();
-      
-      if (!query) return;
-      
-      input.value = '';
-      if (output.textContent.includes("Awaiting query from the collective...")) {
-          output.innerHTML = '';
-      }
-
+      const input = document.getElementById('phantomInput'), output = document.getElementById('phantomOutput'), query = input.value.trim();
+      if (!query) return; input.value = '';
+      if (output.textContent.includes("Awaiting query from the collective...")) output.innerHTML = '';
       output.innerHTML += `\n<div style="margin-top: 1rem;"><span style="color: var(--text-secondary);">> USER:</span> <span style="color: #fff;">${query}</span></div>`;
       const loadId = 'load-' + Date.now();
       output.innerHTML += `<div id="${loadId}" style="color: var(--accent-gold); margin-top: 0.5rem;">> PHANTOM: <span class="animate-pulse">[DECODING_VOID...]</span></div>\n`;
       output.scrollTop = output.scrollHeight;
-      
       try {
-        const res = await fetch(`${API_URL}/phantom/ask`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: query })
-        });
-        
+        const res = await fetch(`${API_URL}/phantom/ask`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: query }) });
         document.getElementById(loadId).remove();
-
-        if (res.ok) {
-          const data = await res.json();
-          output.innerHTML += `<div style="color: var(--accent-gold); margin-top: 0.5rem; border-left: 1px solid rgba(248,211,127,0.3); padding-left: 1rem;">${data.answer}</div>\n`;
-        } else {
-          output.innerHTML += `<div style="color: var(--accent-red); margin-top: 0.5rem;">[PROTOCOL_REJECTED]</div>\n`;
-        }
-      } catch (error) {
-        if(document.getElementById(loadId)) document.getElementById(loadId).remove();
-        output.innerHTML += `<div style="color: var(--accent-red); margin-top: 0.5rem;">[THE_ORACLE_IS_UNREACHABLE]</div>\n`;
-      }
+        if (res.ok) { const data = await res.json(); output.innerHTML += `<div style="color: var(--accent-gold); margin-top: 0.5rem; border-left: 1px solid rgba(248,211,127,0.3); padding-left: 1rem;">${data.answer}</div>\n`; } 
+        else { output.innerHTML += `<div style="color: var(--accent-red); margin-top: 0.5rem;">[PROTOCOL_REJECTED]</div>\n`; }
+      } catch (error) { if(document.getElementById(loadId)) document.getElementById(loadId).remove(); output.innerHTML += `<div style="color: var(--accent-red); margin-top: 0.5rem;">[THE_ORACLE_IS_UNREACHABLE]</div>\n`; }
       output.scrollTop = output.scrollHeight;
     }
-
     document.getElementById('phantomInput')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') askPhantom(); });
 
-    // Execute
     initDashboard();
   </script>
 </body>
