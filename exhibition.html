@@ -32,86 +32,68 @@
       overflow-x: hidden;
     }
 
-    /* Background Setup */
-    .bg-video {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      object-fit: cover; z-index: -3; filter: brightness(0.3) blur(4px);
-    }
-    .video-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: radial-gradient(circle at top, rgba(11, 13, 23, 0.6) 0%, var(--bg-primary) 100%);
-      z-index: -2;
-    }
+    .bg-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; filter: brightness(0.3) blur(4px); }
+    .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at top, rgba(11,13,23,0.6) 0%, var(--bg-primary) 100%); z-index: -2; }
 
-    /* Navigation */
-    nav {
-      padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid var(--grid-border); background: rgba(11, 13, 23, 0.7); backdrop-filter: blur(12px);
-      position: sticky; top: 0; z-index: 50;
-    }
+    nav { padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--grid-border); background: rgba(11,13,23,0.7); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50; }
     .logo { font-family: 'Teko', sans-serif; font-size: 2rem; letter-spacing: 5px; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
 
-    /* Form Container */
     .form-container { max-width: 800px; margin: 3rem auto; padding: 0 2rem; }
-    
-    .panel {
-      background: rgba(21, 25, 37, 0.7); border: 1px solid var(--grid-border); padding: 3rem;
-      position: relative; backdrop-filter: blur(10px);
-    }
+
+    .panel { background: rgba(21,25,37,0.7); border: 1px solid var(--grid-border); padding: 3rem; position: relative; backdrop-filter: blur(10px); }
     .panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--accent-gold); }
 
     .panel-title { font-family: 'Teko', sans-serif; font-size: 3rem; font-weight: 300; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem; color: var(--accent-gold); line-height: 1; }
     .panel-subtitle { font-size: 10px; color: var(--text-secondary); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 2rem; border-bottom: 1px solid var(--grid-border); padding-bottom: 1rem; }
 
-    /* Step Navigation */
+    /* Step indicators */
     .step-indicator { display: flex; gap: 1rem; margin-bottom: 3rem; }
     .step-dot { flex: 1; height: 4px; background: var(--grid-border); transition: background 0.3s; position: relative; }
-    .step-dot::after { content: attr(data-label); position: absolute; top: 10px; left: 0; font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+    .step-dot::after { content: attr(data-label); position: absolute; top: 10px; left: 0; font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }
     .step-dot.active { background: var(--accent-gold); }
     .step-dot.active::after { color: var(--accent-gold); }
+    .step-dot.done { background: var(--accent-green); }
+    .step-dot.done::after { color: var(--accent-green); }
 
-    /* Form Elements */
-    .step-section { display: none; animation: fadeIn 0.5s var(--transition-smooth); }
+    .step-section { display: none; animation: fadeIn 0.4s var(--transition-smooth); }
     .step-section.active { display: block; }
-
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
     .data-label { font-size: 9px; color: var(--text-secondary); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
-    
+
     input[type="text"], input[type="number"], select, textarea {
       width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--grid-border); color: var(--text-primary);
-      font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 1rem; margin-bottom: 1.5rem; transition: border-color 0.3s ease; outline: none;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 1rem; margin-bottom: 1.5rem;
+      transition: border-color 0.3s ease; outline: none;
     }
     input:focus, select:focus, textarea:focus { border-color: var(--accent-gold); }
 
-    /* Checkboxes */
     .checkbox-wrapper { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; cursor: pointer; }
-    .checkbox-wrapper input { width: auto; margin: 0; margin-top: 3px; accent-color: var(--accent-gold); }
+    .checkbox-wrapper input { width: auto; margin: 0; margin-top: 3px; accent-color: var(--accent-gold); flex-shrink: 0; }
     .checkbox-text { font-size: 11px; color: var(--text-secondary); line-height: 1.6; }
 
-    /* File Upload */
-    input[type="file"] { font-size: 11px; color: var(--text-secondary); margin-bottom: 1.5rem; width: 100%; }
+    input[type="file"] { font-size: 11px; color: var(--text-secondary); margin-bottom: 1.5rem; width: 100%; background: transparent; border: none; padding: 0; }
     input[type="file"]::file-selector-button {
       background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid var(--grid-border);
-      padding: 0.8rem 1.5rem; margin-right: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s;
+      padding: 0.8rem 1.5rem; margin-right: 1.5rem; font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s;
     }
     input[type="file"]::file-selector-button:hover { background: var(--text-primary); color: var(--bg-primary); }
 
-    /* Buttons */
-    .btn-group { display: flex; gap: 1rem; margin-top: 2rem; justify-content: flex-end; border-top: 1px solid var(--grid-border); padding-top: 2rem; }
-    .action-btn {
-      background: transparent; color: var(--text-primary); border: 1px solid var(--grid-border); padding: 1rem 2rem;
-      font-family: inherit; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease;
-    }
+    .btn-group { display: flex; gap: 1rem; margin-top: 2rem; justify-content: flex-end; border-top: 1px solid var(--grid-border); padding-top: 2rem; flex-wrap: wrap; }
+    .action-btn { background: transparent; color: var(--text-primary); border: 1px solid var(--grid-border); padding: 1rem 2rem; font-family: inherit; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; }
     .action-btn:hover { background: var(--text-primary); color: var(--bg-primary); }
     .action-btn.gold { color: var(--bg-primary); border-color: var(--accent-gold); background: var(--accent-gold); }
     .action-btn.gold:hover { background: transparent; color: var(--accent-gold); }
     .action-btn:disabled { opacity: 0.5; pointer-events: none; }
 
-    /* Typography for Guidelines */
     .prose { font-size: 12px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem; }
     .prose strong { color: var(--text-primary); font-weight: normal; }
-    .prose .highlight { color: var(--accent-gold); }
+    .highlight { color: var(--accent-gold); }
+
+    .info-box { border: 1px dashed var(--accent-gold); padding: 2rem; margin-bottom: 2rem; background: rgba(248,211,127,0.04); }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } .form-container { padding: 0 1rem; } nav { padding: 1rem 1.5rem; } .panel { padding: 1.5rem; } }
   </style>
 </head>
 <body>
@@ -122,16 +104,16 @@
   <div class="video-overlay"></div>
 
   <nav>
-    <a href="dashboard.html" class="logo" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.2rem; color: var(--text-secondary);">
+    <a href="dashboard.html" class="logo" style="display:flex;align-items:center;gap:0.5rem;font-size:1.2rem;color:var(--text-secondary);">
       <i data-lucide="arrow-left" class="w-5 h-5"></i> Dashboard
     </a>
-    <div id="userGreeting" style="font-size: 10px; letter-spacing: 3px; color: var(--accent-gold); text-transform: uppercase;">SYS.ACTIVE</div>
+    <div id="userGreeting" style="font-size:10px;letter-spacing:3px;color:var(--accent-gold);text-transform:uppercase;">SYS.ACTIVE</div>
   </nav>
 
   <div class="form-container">
     <div class="panel">
       <h1 class="panel-title">Exhibition Screening</h1>
-      <div class="panel-subtitle">Official Submission Gateway</div>
+      <p class="panel-subtitle">Official Submission Gateway</p>
 
       <div class="step-indicator">
         <div class="step-dot active" data-label="Guidelines" id="dot-1"></div>
@@ -140,94 +122,98 @@
       </div>
 
       <form id="exhibitionForm" onsubmit="event.preventDefault();">
-        
+
+        <!-- ========== STEP 1: Guidelines ========== -->
         <div id="step-1" class="step-section active">
-          <div style="border: 1px dashed var(--accent-gold); padding: 2rem; margin-bottom: 2rem; background: rgba(248,211,127,0.05);">
-            <h2 style="font-family: 'Teko', sans-serif; font-size: 2rem; color: var(--text-primary); text-transform: uppercase; margin-bottom: 1rem; line-height: 1;">4th Annual Art Exhibition - 2024</h2>
-            <p class="prose" style="margin-bottom: 0.5rem;"><span class="highlight">Exhibition Date:</span> 21st - 22nd Dec'24</p>
-            <p class="prose"><span class="highlight">Venue:</span> Mahatta Art Gallery, Lal Chowk, Srinagar</p>
+          <div class="info-box">
+            <h2 id="exh-title" style="font-family:'Teko',sans-serif;font-size:2rem;color:var(--text-primary);text-transform:uppercase;margin-bottom:1rem;line-height:1;">Annual Art Exhibition</h2>
+            <p class="prose" style="margin-bottom:0.5rem;" id="exh-date"><span class="highlight">Exhibition Date:</span> Loading...</p>
+            <p class="prose" id="exh-venue"><span class="highlight">Venue:</span> Loading...</p>
           </div>
 
-          <p class="prose">
-            Alfaaz has always been dedicated to promote and encourage art in the valley. We want to make it less biased and give chance and encourage new talent of the valley while sincerely appreciating our past participants.
+          <p class="prose" id="exh-about">
+            Alfaaz has always been dedicated to promote and encourage art in the valley. We want to make it less biased and give chance and encourage new talent while sincerely appreciating our past participants.
           </p>
           <p class="prose">
-            New participants will get an advantage in the process of screening/selection, while others who have been part of our journey will be deemed to our new project <strong class="highlight">"Tchanderwar"</strong>. Further details about Tchanderwar will be disclosed at the upcoming event.
+            New participants will get an advantage in the process of screening/selection, while others who have been part of our journey will be deemed to our new project <strong class="highlight">"Tchanderwar"</strong>.
           </p>
-          
-          <hr style="border-color: var(--grid-border); margin: 2rem 0;">
-          
-          <h3 style="font-size: 14px; color: #fff; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px;">How the Process Works</h3>
-          <ul class="prose" style="list-style-type: square; padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.8rem;">
-            <li><strong>Step 1:</strong> Participants will upload a PDF containing high-quality photographs of their recent works.</li>
-            <li><strong>Step 2:</strong> Uploaded artworks will be screened by the Alfaaz Curator.</li>
-            <li><strong>Step 3:</strong> Selected participants will be authorized via the Dashboard, where further details (participation fee, size, and number of artworks) will be shared.</li>
+
+          <hr style="border-color:var(--grid-border);margin:2rem 0;">
+
+          <h3 style="font-size:13px;color:#fff;margin-bottom:1rem;text-transform:uppercase;letter-spacing:1px;">How the Process Works</h3>
+          <ul class="prose" style="list-style-type:square;padding-left:1.5rem;display:flex;flex-direction:column;gap:0.8rem;">
+            <li><strong>Step 1:</strong> Participants upload a PDF containing high-quality photographs of their recent works.</li>
+            <li><strong>Step 2:</strong> Uploaded artworks are screened by the Alfaaz Curator.</li>
+            <li><strong>Step 3:</strong> Selected participants are notified via email and dashboard with payment details to complete registration.</li>
           </ul>
 
           <div class="btn-group">
-            <button type="button" class="action-btn gold" onclick="nextStep(2)">Acknowledge & Proceed</button>
+            <button type="button" class="action-btn gold" onclick="goToStep(2)">Acknowledge & Proceed →</button>
           </div>
         </div>
 
+        <!-- ========== STEP 2: Demographics ========== -->
         <div id="step-2" class="step-section">
-          <label class="data-label">Legal Identity</label>
-          <input type="text" id="fullName" placeholder="Full Name" required>
+          <label class="data-label">Full Name *</label>
+          <input type="text" id="fullName" placeholder="Your full name" required>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="two-col">
             <div>
-              <label class="data-label">Age</label>
+              <label class="data-label">Age *</label>
               <input type="number" id="age" placeholder="e.g. 21" required min="10" max="99">
             </div>
             <div>
-              <label class="data-label">WhatsApp Number</label>
-              <input type="text" id="whatsapp" placeholder="With country code (+91...)" required>
+              <label class="data-label">WhatsApp Number *</label>
+              <input type="text" id="whatsapp" placeholder="+91 XXXXX XXXXX" required>
             </div>
           </div>
 
-          <label class="data-label">Residential Address</label>
-          <textarea id="address" rows="2" placeholder="Full address..." required></textarea>
+          <label class="data-label">Residential Address *</label>
+          <textarea id="address" rows="2" placeholder="City, District, State" required></textarea>
 
           <div class="btn-group">
-            <button type="button" class="action-btn" onclick="prevStep(1)">Return</button>
-            <button type="button" class="action-btn gold" onclick="nextStep(3)">Continue to Portfolio</button>
+            <button type="button" class="action-btn" onclick="goToStep(1)">← Return</button>
+            <button type="button" class="action-btn gold" onclick="validateStep2()">Continue to Portfolio →</button>
           </div>
         </div>
 
+        <!-- ========== STEP 3: Art & Artist ========== -->
         <div id="step-3" class="step-section">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="two-col">
             <div>
-              <label class="data-label">Genre of Art</label>
+              <label class="data-label">Genre of Art *</label>
               <input type="text" id="genre" placeholder="e.g. Abstract, Realism, Calligraphy" required>
             </div>
             <div>
-              <label class="data-label">Primary Medium</label>
-              <input type="text" id="medium" placeholder="e.g. Oil on Canvas, Digital, Charcoal" required>
+              <label class="data-label">Primary Medium *</label>
+              <input type="text" id="medium" placeholder="e.g. Oil on Canvas, Charcoal" required>
             </div>
           </div>
 
-          <label class="data-label">Photographic Sample (PDF Only)</label>
-          <p style="font-size: 9px; color: var(--accent-gold); margin-bottom: 10px; text-transform: uppercase;">Upload a compiled PDF containing up to 3 recent artworks.</p>
+          <label class="data-label">Photographic Sample — PDF Only *</label>
+          <p style="font-size:9px;color:var(--accent-gold);margin-bottom:0.8rem;text-transform:uppercase;letter-spacing:1px;">Compile up to 3 recent artworks into a single PDF before uploading.</p>
           <input type="file" id="portfolioFile" accept="application/pdf" required>
+          <div id="uploadStatus" style="font-size:10px;margin-bottom:1.5rem;letter-spacing:1px;text-transform:uppercase;display:none;"></div>
 
-          <label class="data-label">Curator's Note (Optional Comments)</label>
+          <label class="data-label">Curator's Note — Optional</label>
           <textarea id="comments" rows="2" placeholder="Any context regarding your submission..."></textarea>
 
-          <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border: 1px solid var(--grid-border); margin-bottom: 1.5rem;">
+          <div style="background:rgba(0,0,0,0.3);padding:1.5rem;border:1px solid var(--grid-border);margin-bottom:1.5rem;">
             <label class="checkbox-wrapper">
-              <input type="checkbox" id="over19" required>
-              <span class="checkbox-text">I confirm that I am 19 years of age or older.</span>
+              <input type="checkbox" id="over19">
+              <span class="checkbox-text">I confirm that I am <strong style="color:var(--text-primary);">19 years of age or older</strong>.</span>
             </label>
-            <label class="checkbox-wrapper" style="margin-bottom: 0;">
-              <input type="checkbox" id="agreed" required>
+            <label class="checkbox-wrapper" style="margin-bottom:0;">
+              <input type="checkbox" id="agreed">
               <span class="checkbox-text">I allow my artworks to be screened by the organizing authority (Alfaaz) for the exhibition. I will cooperate with the judgments made by the organization regarding the screening process.</span>
             </label>
           </div>
 
-          <div id="statusMsg" style="font-size: 10px; color: var(--accent-gold); text-align: right; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;"></div>
+          <div id="statusMsg" style="font-size:10px;text-align:right;text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem;min-height:1.2em;"></div>
 
           <div class="btn-group">
-            <button type="button" class="action-btn" onclick="prevStep(2)" id="backBtn3">Return</button>
-            <button type="submit" class="action-btn gold" id="submitBtn" onclick="transmitApplication()">Transmit Portfolio</button>
+            <button type="button" class="action-btn" onclick="goToStep(2)" id="backBtn3">← Return</button>
+            <button type="button" class="action-btn gold" id="submitBtn" onclick="transmitApplication()">Transmit Portfolio</button>
           </div>
         </div>
 
@@ -238,49 +224,228 @@
   <script>
     lucide.createIcons();
 
-    const API_URL = "https://alfaaz-project.onrender.com";
-    const token = localStorage.getItem('alfaaz_token'); const userData = localStorage.getItem('alfaaz_user');
+    const API_URL   = "https://alfaaz-project.onrender.com";
+    const CLOUD_NAME    = "dmqwjpmjk";
+    const UPLOAD_PRESET = "alfaaz_vault";
+
+    // ── Auth guard ──────────────────────────────────────────
+    const token    = localStorage.getItem('alfaaz_token');
+    const userData = localStorage.getItem('alfaaz_user');
     if (!userData || !token || token === "undefined") window.location.href = 'login.html';
-    const user = JSON.parse(userData); document.getElementById('userGreeting').textContent = `[ ${user.email.split('@')[0]} ]`;
+    const user = JSON.parse(userData);
+    document.getElementById('userGreeting').textContent = `[ ${user.email.split('@')[0]} ]`;
 
-    // FETCH GLOBAL SETTINGS
+    // ── Step navigation ─────────────────────────────────────
+    let currentStep = 1;
+
+    function goToStep(n) {
+      document.getElementById(`step-${currentStep}`).classList.remove('active');
+      currentStep = n;
+      document.getElementById(`step-${n}`).classList.add('active');
+      // Update dots
+      [1, 2, 3].forEach(i => {
+        const dot = document.getElementById(`dot-${i}`);
+        dot.classList.remove('active', 'done');
+        if (i < n)  dot.classList.add('done');
+        if (i === n) dot.classList.add('active');
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function validateStep2() {
+      const name     = document.getElementById('fullName').value.trim();
+      const age      = document.getElementById('age').value;
+      const address  = document.getElementById('address').value.trim();
+      const whatsapp = document.getElementById('whatsapp').value.trim();
+      if (!name || !age || !address || !whatsapp) {
+        alert("Please fill in all required fields before continuing.");
+        return;
+      }
+      goToStep(3);
+    }
+
+    // ── Load exhibition config into Step 1 ──────────────────
     async function loadExhibitionConfig() {
-        try {
-            const res = await fetch(`${API_URL}/exhibitions/config`);
-            const cfg = await res.json();
-            
-            // Inject Admin text
-            document.getElementById('dyn-title').textContent = cfg.title;
-            document.getElementById('dyn-date').innerHTML = `<span class="highlight">Exhibition Date:</span> ${cfg.date_text}`;
-            document.getElementById('dyn-venue').innerHTML = `<span class="highlight">Venue:</span> ${cfg.venue}`;
-            document.getElementById('dyn-desc').textContent = cfg.about_text;
+      try {
+        const res = await fetch(`${API_URL}/exhibitions/config`);
+        const cfg = await res.json();
 
-            // Security Lock
-            if (!cfg.is_open) {
-                document.getElementById('exhibitionForm').innerHTML = `
-                    <div style="padding: 3rem; text-align: center; border: 1px dashed var(--accent-red); background: rgba(248,113,113,0.05);">
-                        <h2 style="font-family: 'Teko', sans-serif; font-size: 2.5rem; color: var(--accent-red); text-transform: uppercase;">TRANSMISSIONS CLOSED</h2>
-                        <p style="font-size: 11px; color: var(--text-secondary); margin-top: 1rem; letter-spacing: 1px;">The Curator is not currently accepting portfolios. Monitor the collective for updates.</p>
-                        <a href="dashboard.html" class="action-btn" style="display: inline-block; margin-top: 2rem;">Return to Dashboard</a>
-                    </div>`;
-            }
-        } catch (e) { console.error("Config missing"); }
+        if (cfg.title)      document.getElementById('exh-title').textContent = cfg.title;
+        if (cfg.date_text)  document.getElementById('exh-date').innerHTML  = `<span class="highlight">Exhibition Date:</span> ${cfg.date_text}`;
+        if (cfg.venue)      document.getElementById('exh-venue').innerHTML = `<span class="highlight">Venue:</span> ${cfg.venue}`;
+        if (cfg.about_text) document.getElementById('exh-about').textContent = cfg.about_text;
+        document.title = `${cfg.title || 'Exhibition'} — ALFAAZ`;
+
+        // Lock form if applications are closed
+        if (!cfg.is_open) {
+          document.getElementById('exhibitionForm').innerHTML = `
+            <div style="padding:3rem;text-align:center;border:1px dashed var(--accent-red);background:rgba(248,113,113,0.05);">
+              <h2 style="font-family:'Teko',sans-serif;font-size:2.5rem;color:var(--accent-red);text-transform:uppercase;">TRANSMISSIONS CLOSED</h2>
+              <p style="font-size:11px;color:var(--text-secondary);margin-top:1rem;letter-spacing:1px;line-height:1.8;">
+                The Curator is not currently accepting portfolios.<br>Monitor the collective for updates.
+              </p>
+              <a href="dashboard.html" style="display:inline-block;margin-top:2rem;padding:1rem 2rem;border:1px solid var(--grid-border);color:var(--text-secondary);text-decoration:none;font-size:10px;text-transform:uppercase;letter-spacing:2px;transition:0.3s;">Return to Dashboard</a>
+            </div>`;
+        }
+      } catch(e) {
+        console.error("Could not load exhibition config:", e);
+      }
     }
 
-    async function checkStatus() {
-        try {
-            const res = await fetch(`${API_URL}/exhibitions/my-status`, { headers: { 'Authorization': `Bearer ${token}` } });
-            const data = await res.json();
-            if (data.status === "PENDING" || data.status === "APPROVED") { alert("You already have an active exhibition clearance."); window.location.href = 'dashboard.html'; }
-            else { loadExhibitionConfig(); } // Load config only if they are allowed to apply
-        } catch (e) { console.error("Status check failed."); }
+    // ── Check if user already applied ───────────────────────
+    async function init() {
+      try {
+        const res  = await fetch(`${API_URL}/exhibitions/my-status`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.status === "PENDING" || data.status === "APPROVED") {
+          alert("You already have an active exhibition submission. Redirecting to your dashboard.");
+          window.location.href = 'dashboard.html';
+          return;
+        }
+      } catch(e) { /* proceed */ }
+      loadExhibitionConfig();
     }
-    checkStatus();
+    init();
 
-    // Make sure to add id="dyn-title", id="dyn-date", id="dyn-venue", and id="dyn-desc" 
-    // to the corresponding HTML elements in Step 1 of your exhibition.html!
-    
-    // ... Keep your existing Cloudinary Transmission Logic Here ...
+    // ── Cloudinary upload + API submit ──────────────────────
+    let uploadedPdfUrl = null;
+
+    // Auto-upload when file is selected
+    document.addEventListener('DOMContentLoaded', () => {
+      const fileInput   = document.getElementById('portfolioFile');
+      const uploadStatus = document.getElementById('uploadStatus');
+      if (!fileInput) return;
+
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+        if (file.type !== 'application/pdf') {
+          uploadStatus.style.display = 'block';
+          uploadStatus.style.color   = 'var(--accent-red)';
+          uploadStatus.textContent   = '[ Only PDF files are accepted ]';
+          fileInput.value = '';
+          return;
+        }
+        if (file.size > 15 * 1024 * 1024) {
+          uploadStatus.style.display = 'block';
+          uploadStatus.style.color   = 'var(--accent-red)';
+          uploadStatus.textContent   = '[ File exceeds 15MB limit ]';
+          fileInput.value = '';
+          return;
+        }
+
+        uploadStatus.style.display = 'block';
+        uploadStatus.style.color   = 'var(--accent-gold)';
+        uploadStatus.textContent   = `[ Uploading ${file.name}... ]`;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', UPLOAD_PRESET);
+
+        try {
+          const cloudRes  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
+            method: 'POST', body: formData
+          });
+          const cloudData = await cloudRes.json();
+          if (cloudData.secure_url) {
+            uploadedPdfUrl = cloudData.secure_url;
+            uploadStatus.style.color   = 'var(--accent-green)';
+            uploadStatus.textContent   = `[ ✓ ${file.name} uploaded successfully ]`;
+          } else {
+            throw new Error("Upload failed.");
+          }
+        } catch(e) {
+          uploadStatus.style.color   = 'var(--accent-red)';
+          uploadStatus.textContent   = '[ Upload failed — please try again ]';
+          uploadedPdfUrl = null;
+        }
+      });
+    });
+
+    async function transmitApplication() {
+      const btn       = document.getElementById('submitBtn');
+      const statusMsg = document.getElementById('statusMsg');
+      const over19    = document.getElementById('over19').checked;
+      const agreed    = document.getElementById('agreed').checked;
+
+      // Validate consents
+      if (!over19 || !agreed) {
+        statusMsg.style.color = 'var(--accent-red)';
+        statusMsg.textContent = '[ You must agree to both declarations ]';
+        return;
+      }
+
+      // Validate required fields
+      const fullName = document.getElementById('fullName').value.trim();
+      const age      = parseInt(document.getElementById('age').value);
+      const address  = document.getElementById('address').value.trim();
+      const whatsapp = document.getElementById('whatsapp').value.trim();
+      const genre    = document.getElementById('genre').value.trim();
+      const medium   = document.getElementById('medium').value.trim();
+
+      if (!fullName || !age || !address || !whatsapp || !genre || !medium) {
+        statusMsg.style.color = 'var(--accent-red)';
+        statusMsg.textContent = '[ Please fill in all required fields ]';
+        return;
+      }
+
+      if (!uploadedPdfUrl) {
+        statusMsg.style.color = 'var(--accent-red)';
+        statusMsg.textContent = '[ Please upload your portfolio PDF first ]';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Transmitting...';
+      statusMsg.style.color   = 'var(--accent-gold)';
+      statusMsg.textContent   = '[ Transmitting to Vault... ]';
+
+      const payload = {
+        full_name:           fullName,
+        age:                 age,
+        address:             address,
+        whatsapp:            whatsapp,
+        genre:               genre,
+        medium:              medium,
+        portfolio_url:       uploadedPdfUrl,
+        over_19:             over19,
+        agreed_to_screening: agreed,
+        applicant_note:      document.getElementById('comments').value.trim() || null
+      };
+
+      try {
+        const res  = await fetch(`${API_URL}/exhibitions/apply`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body:    JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          statusMsg.style.color = 'var(--accent-green)';
+          statusMsg.textContent = '[ ✓ Transmission Successful — Check your email ]';
+          btn.textContent       = '✓ Transmitted';
+          btn.style.background  = 'var(--accent-green)';
+          btn.style.color       = '#000';
+          btn.style.borderColor = 'var(--accent-green)';
+          setTimeout(() => window.location.href = 'dashboard.html', 2500);
+        } else {
+          if (res.status === 401 || res.status === 403) {
+            localStorage.clear();
+            window.location.href = 'login.html';
+            return;
+          }
+          throw new Error(data.detail || 'Submission failed.');
+        }
+      } catch(e) {
+        statusMsg.style.color = 'var(--accent-red)';
+        statusMsg.textContent = `[ Error: ${e.message} ]`;
+        btn.disabled          = false;
+        btn.textContent       = 'Transmit Portfolio';
+      }
+    }
   </script>
 </body>
 </html>
