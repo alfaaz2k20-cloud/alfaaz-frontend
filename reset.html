@@ -121,6 +121,31 @@
       background: var(--accent-gold);
       border-color: var(--accent-gold);
     }
+
+    .password-wrap { position: relative; }
+    .password-wrap .auth-input { padding-right: 2.5rem; }
+    .toggle-pw {
+      position: absolute; right: 0; bottom: 0.5rem;
+      background: none; border: none; color: var(--text-secondary);
+      cursor: pointer; font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+      padding: 0; transition: color 0.3s ease;
+    }
+    .toggle-pw:hover { color: var(--accent-gold); }
+
+    .strength-bar-wrap { margin-top: 8px; height: 2px; background: var(--grid-border); }
+    .strength-bar { height: 100%; width: 0%; transition: width 0.4s ease, background 0.4s ease; }
+    .strength-label { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; color: var(--text-secondary); min-height: 12px; }
+    .match-indicator { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; min-height: 12px; }
+
+    /* Token-expired overlay */
+    #expiredOverlay {
+      display: none; position: absolute; inset: 0;
+      background: rgba(11,13,23,0.95); z-index: 10;
+      align-items: center; justify-content: center; flex-direction: column;
+      text-align: center; padding: 2rem;
+    }
+    #expiredOverlay.show { display: flex; }
   </style>
 </head>
 <body>
@@ -131,18 +156,35 @@
   <div class="video-overlay"></div>
 
   <div class="auth-card">
+    <!-- Token-expired overlay (shown if link is stale) -->
+    <div id="expiredOverlay">
+      <div style="font-size: 2rem; margin-bottom: 1rem; color: var(--accent-red);">⊘</div>
+      <p style="font-family:'Teko',sans-serif; font-size: 1.6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-primary); margin-bottom: 0.5rem;">Transmission Decayed</p>
+      <p style="font-size: 10px; color: var(--text-secondary); letter-spacing: 1px; margin-bottom: 2rem;">This reset link has expired or is invalid.<br>Request a new one from the login page.</p>
+      <a href="login.html" style="padding: 0.8rem 2rem; background: var(--accent-gold); color: var(--bg-primary); font-family:'JetBrains Mono',monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; text-decoration: none;">Return to Login</a>
+    </div>
+
     <h1 class="auth-title">Forge Key</h1>
     <p class="auth-subtitle">Establish a new security sequence</p>
 
     <form id="resetForm" onsubmit="event.preventDefault();">
       <div class="input-group">
         <label class="input-label" for="newPassword">New Passkey</label>
-        <input type="password" id="newPassword" class="auth-input" required>
+        <div class="password-wrap">
+          <input type="password" id="newPassword" class="auth-input" required autocomplete="new-password">
+          <button type="button" class="toggle-pw" id="toggleNew" tabindex="-1">show</button>
+        </div>
+        <div class="strength-bar-wrap"><div class="strength-bar" id="strengthBar"></div></div>
+        <div class="strength-label" id="strengthLabel"></div>
       </div>
       
       <div class="input-group">
         <label class="input-label" for="confirmPassword">Confirm Passkey</label>
-        <input type="password" id="confirmPassword" class="auth-input" required>
+        <div class="password-wrap">
+          <input type="password" id="confirmPassword" class="auth-input" required autocomplete="new-password">
+          <button type="button" class="toggle-pw" id="toggleConfirm" tabindex="-1">show</button>
+        </div>
+        <div class="match-indicator" id="matchIndicator"></div>
       </div>
 
       <button type="submit" class="submit-btn">Commit to Vault</button>
@@ -152,29 +194,101 @@
  <script>
     lucide.createIcons();
 
-    // 1. Grab the secure token from the URL bar (e.g. ?token=xxxxx)
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
 
-    // If they just navigated here without an email link, kick them to login
-    if (!token) {
-        window.location.href = 'login.html';
+    // Validate token exists and hasn't obviously expired (basic JWT exp check client-side)
+    function isTokenLikelyExpired(t) {
+      try {
+        const payload = JSON.parse(atob(t.split('.')[1]));
+        return payload.exp && (payload.exp * 1000 < Date.now());
+      } catch { return false; }
     }
 
-    const form = document.getElementById('resetForm');
-    const submitBtn = document.querySelector('.submit-btn');
+    if (!token || isTokenLikelyExpired(token)) {
+      document.getElementById('expiredOverlay').classList.add('show');
+    }
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault(); 
-      
-      const newPassword = document.getElementById('newPassword').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-      
-      if (newPassword !== confirmPassword) {
-          alert("Sequence mismatch. Passkeys must be identical.");
-          return;
+    const form          = document.getElementById('resetForm');
+    const submitBtn     = document.querySelector('.submit-btn');
+    const newPwInput    = document.getElementById('newPassword');
+    const confirmInput  = document.getElementById('confirmPassword');
+    const strengthBar   = document.getElementById('strengthBar');
+    const strengthLabel = document.getElementById('strengthLabel');
+    const matchIndicator = document.getElementById('matchIndicator');
+
+    // --- SHOW / HIDE TOGGLES ---
+    document.getElementById('toggleNew').addEventListener('click', () => {
+      const hidden = newPwInput.type === 'password';
+      newPwInput.type = hidden ? 'text' : 'password';
+      document.getElementById('toggleNew').textContent = hidden ? 'hide' : 'show';
+    });
+    document.getElementById('toggleConfirm').addEventListener('click', () => {
+      const hidden = confirmInput.type === 'password';
+      confirmInput.type = hidden ? 'text' : 'password';
+      document.getElementById('toggleConfirm').textContent = hidden ? 'hide' : 'show';
+    });
+
+    // --- STRENGTH METER ---
+    function getStrength(pw) {
+      let s = 0;
+      if (pw.length >= 8) s++;
+      if (pw.length >= 12) s++;
+      if (/[A-Z]/.test(pw)) s++;
+      if (/[0-9]/.test(pw)) s++;
+      if (/[^A-Za-z0-9]/.test(pw)) s++;
+      return s;
+    }
+    const levels = [
+      { label: '',              color: 'transparent',         pct: '0%'   },
+      { label: 'WEAK',          color: 'var(--accent-red)',   pct: '20%'  },
+      { label: 'WEAK',          color: 'var(--accent-red)',   pct: '35%'  },
+      { label: 'MODERATE',      color: 'var(--accent-gold)',  pct: '60%'  },
+      { label: 'STRONG',        color: 'var(--accent-green)', pct: '80%'  },
+      { label: 'UNBREACHABLE',  color: 'var(--accent-green)', pct: '100%' },
+    ];
+    newPwInput.addEventListener('input', () => {
+      const pw = newPwInput.value;
+      const score = pw.length === 0 ? 0 : Math.max(1, getStrength(pw));
+      const lv = levels[score];
+      strengthBar.style.width = lv.pct;
+      strengthBar.style.background = lv.color;
+      strengthLabel.textContent = lv.label;
+      strengthLabel.style.color = lv.color;
+      checkMatch();
+    });
+
+    function checkMatch() {
+      const cf = confirmInput.value;
+      if (!cf) { matchIndicator.textContent = ''; return; }
+      if (newPwInput.value === cf) {
+        matchIndicator.textContent = '✓ Sequences Match';
+        matchIndicator.style.color = 'var(--accent-green)';
+      } else {
+        matchIndicator.textContent = '✗ Mismatch Detected';
+        matchIndicator.style.color = 'var(--accent-red)';
       }
-      
+    }
+    confirmInput.addEventListener('input', checkMatch);
+
+    // --- SUBMIT ---
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newPassword     = newPwInput.value;
+      const confirmPassword = confirmInput.value;
+
+      if (newPassword.length < 8) {
+        matchIndicator.textContent = '✗ Passkey must be at least 8 characters.';
+        matchIndicator.style.color = 'var(--accent-red)';
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        matchIndicator.textContent = '✗ Sequences must be identical.';
+        matchIndicator.style.color = 'var(--accent-red)';
+        confirmInput.focus();
+        return;
+      }
+
       submitBtn.textContent = "Forging Key...";
       submitBtn.disabled = true;
 
@@ -184,22 +298,21 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token: token, new_password: newPassword })
         });
-
         const data = await response.json();
 
         if (response.ok) {
           submitBtn.textContent = "Key Forged";
           submitBtn.style.background = "var(--accent-gold)";
+          submitBtn.style.borderColor = "var(--accent-gold)";
           submitBtn.style.color = "var(--bg-primary)";
-          
-          alert("Passkey successfully updated. Returning to login.");
-          setTimeout(() => {
-             window.location.href = 'login.html';
-          }, 1500);
+          setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+        } else if (response.status === 401) {
+          // Token expired on server side — show the overlay
+          document.getElementById('expiredOverlay').classList.add('show');
         } else {
           submitBtn.textContent = "Commit to Vault";
           submitBtn.disabled = false;
-          alert("Access Denied: " + data.detail);
+          alert("Error: " + (data.detail || "Unknown error."));
         }
       } catch (error) {
         submitBtn.textContent = "Commit to Vault";

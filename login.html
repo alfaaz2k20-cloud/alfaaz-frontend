@@ -181,6 +181,44 @@
       transition: color 0.3s ease;
     }
     .recovery-link:hover { color: var(--accent-gold); }
+
+    /* Password field wrapper for show/hide toggle */
+    .password-wrap {
+      position: relative;
+    }
+    .password-wrap .auth-input {
+      padding-right: 2rem;
+    }
+    .toggle-pw {
+      position: absolute;
+      right: 0;
+      bottom: 0.5rem;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 0;
+      transition: color 0.3s ease;
+    }
+    .toggle-pw:hover { color: var(--accent-gold); }
+
+    /* Forgot hint */
+    .forgot-hint {
+      font-size: 8px;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+      margin-top: 4px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .forgot-hint.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -206,10 +244,14 @@
       
       <div class="input-group">
         <label class="input-label" for="password">Passkey</label>
-        <input type="password" id="password" class="auth-input" required>
+        <div class="password-wrap">
+          <input type="password" id="password" class="auth-input" required autocomplete="current-password">
+          <button type="button" class="toggle-pw" id="togglePw" tabindex="-1">show</button>
+        </div>
       </div>
 
       <a href="#" id="forgotBtn" class="recovery-link">Lost Passkey?</a>
+      <div class="forgot-hint" id="forgotHint">↑ Enter your email above, then click "Lost Passkey?"</div>
 
       <button type="submit" class="submit-btn">Initialize Session</button>
     </form>
@@ -222,17 +264,36 @@
  <script>
     lucide.createIcons();
 
-    const form = document.getElementById('authForm');
-    const submitBtn = document.querySelector('.submit-btn');
-    const forgotBtn = document.getElementById('forgotBtn');
+    const form       = document.getElementById('authForm');
+    const submitBtn  = document.querySelector('.submit-btn');
+    const forgotBtn  = document.getElementById('forgotBtn');
     const emailInput = document.getElementById('email');
+    const pwInput    = document.getElementById('password');
+    const togglePw   = document.getElementById('togglePw');
+    const forgotHint = document.getElementById('forgotHint');
 
-    // LOGIN
+    // --- SHOW / HIDE PASSKEY ---
+    togglePw.addEventListener('click', () => {
+      const hidden = pwInput.type === 'password';
+      pwInput.type = hidden ? 'text' : 'password';
+      togglePw.textContent = hidden ? 'hide' : 'show';
+    });
+
+    // --- FORGOT HINT: reveal when email is empty and link is hovered ---
+    forgotBtn.addEventListener('mouseenter', () => {
+      if (!emailInput.value.trim()) forgotHint.classList.add('visible');
+    });
+    forgotBtn.addEventListener('mouseleave', () => {
+      forgotHint.classList.remove('visible');
+    });
+
+    // --- LOGIN ---
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const emailValue = emailInput.value;
-      const passwordValue = document.getElementById('password').value;
+      const emailValue    = emailInput.value.trim();
+      const passwordValue = pwInput.value;
       submitBtn.textContent = "Connecting...";
+      submitBtn.disabled = true;
       try {
         const response = await fetch('https://alfaaz-project.onrender.com/auth/login', {
           method: 'POST',
@@ -247,31 +308,35 @@
           localStorage.setItem('alfaaz_user', JSON.stringify(data.user));
           localStorage.setItem('alfaaz_token', data.token);
           setTimeout(() => {
-            if (data.user.status === 'ADMIN') {
-              window.location.href = 'admin.html';
-            } else {
-              window.location.href = 'dashboard.html';
-            }
+            window.location.href = data.user.status === 'ADMIN' ? 'admin.html' : 'dashboard.html';
           }, 800);
         } else {
           submitBtn.textContent = "Initialize Session";
-          alert("Access Denied: " + data.detail);
+          submitBtn.disabled = false;
+          // Flash the card border red briefly
+          const card = document.querySelector('.auth-card');
+          card.style.borderColor = 'var(--accent-red)';
+          setTimeout(() => card.style.borderColor = '', 1200);
+          alert("Access Denied: " + (data.detail || "Invalid credentials."));
         }
       } catch (error) {
         submitBtn.textContent = "Initialize Session";
+        submitBtn.disabled = false;
         alert("Cannot reach the server. Is your Python engine running?");
       }
     });
 
-    // FORGOT PASSWORD
+    // --- FORGOT PASSWORD ---
     forgotBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      const emailValue = emailInput.value;
+      const emailValue = emailInput.value.trim();
       if (!emailValue) {
-        alert("Enter your Email Sequence above first.");
+        forgotHint.classList.add('visible');
         emailInput.focus();
+        setTimeout(() => forgotHint.classList.remove('visible'), 3000);
         return;
       }
+      const original = submitBtn.textContent;
       submitBtn.textContent = "Transmitting Request...";
       submitBtn.disabled = true;
       try {
@@ -281,11 +346,15 @@
           body: JSON.stringify({ email: emailValue })
         });
         const data = await response.json();
-        alert(data.message);
+        if (response.ok) {
+          alert(data.message);
+        } else {
+          alert("Transmission failed: " + (data.detail || "Unknown error."));
+        }
       } catch (error) {
         alert("Signal lost. Cannot reach the server.");
       } finally {
-        submitBtn.textContent = "Initialize Session";
+        submitBtn.textContent = original;
         submitBtn.disabled = false;
       }
     });
