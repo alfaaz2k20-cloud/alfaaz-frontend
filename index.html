@@ -195,6 +195,17 @@
       margin-top: 1rem;
     }
 
+    .preloader-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-top: 1.5rem;
+      opacity: 0.8;
+      min-height: 14px;
+    }
+
     /* ========================================
        BACKGROUND - DARK THEME WITH VIDEO
     ======================================== */
@@ -1123,6 +1134,7 @@
     <div class="preloader-counter" id="preloaderCounter">0</div>
     <div class="preloader-line" id="preloaderLine"></div>
     <div class="preloader-text">ALFAAZ — Collective</div>
+    <div class="preloader-status" id="preloaderStatus"></div>
   </div>
 
   <!-- Light Background -->
@@ -1159,7 +1171,7 @@
   <!-- Social Sidebar -->
   <div class="social-sidebar">
     <a href="https://www.instagram.com/alfaaz.2020" target="_blank" class="social-link magnetic">Instagram</a>
-    <a href="mailto:alfaaz2k20@gmail.com" class="social-link magnetic">Email</a>
+    <a href="/cdn-cgi/l/email-protection#f594999394948fc79ec7c5b59298949c99db969a98" class="social-link magnetic">Email</a>
     <a href="https://wa.me/917006613891" target="_blank" class="social-link magnetic">WhatsApp</a>
   </div>
 
@@ -1405,7 +1417,7 @@
     <div class="footer-content">
       <div class="footer-logo">ALFAAZ</div>
       <div class="footer-social">
-        <a href="mailto:alfaaz2k20@gmail.com" class="magnetic">Email</a>
+        <a href="/cdn-cgi/l/email-protection#0465686265657e366f3634446369656d682a676b69" class="magnetic">Email</a>
         <a href="https://www.instagram.com/alfaaz.2020" target="_blank" class="magnetic">Instagram</a>
         <a href="https://wa.me/917006613891" target="_blank" class="magnetic">WhatsApp</a>
       </div>
@@ -1421,7 +1433,7 @@
     <i data-lucide="arrow-up" class="w-5 h-5"></i>
   </button>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // ========================================
     // CUSTOM CURSOR
     // ========================================
@@ -1453,12 +1465,40 @@
     });
 
     // ========================================
-    // PRELOADER
+    // SERVER PRE-WARM + INTEGRATED PRELOADER
     // ========================================
     const preloader = document.getElementById('loader');
     const preloaderCounter = document.getElementById('preloaderCounter');
     const preloaderLine = document.getElementById('preloaderLine');
+    const preloaderStatus = document.getElementById('preloaderStatus');
     let count = 0;
+    let preloaderStarted = false;
+
+    // Preloader status messages during warming
+    const warmingMessages = [
+      'Waking server...',
+      'Establishing connection...',
+      'Almost ready...',
+      'Loading content...'
+    ];
+    let warmingIndex = 0;
+    let statusInterval = null;
+
+    function startPreloaderStatus() {
+      preloaderStatus.textContent = warmingMessages[0];
+      statusInterval = setInterval(() => {
+        warmingIndex = (warmingIndex + 1) % warmingMessages.length;
+        preloaderStatus.textContent = warmingMessages[warmingIndex];
+      }, 3000);
+    }
+
+    function stopPreloaderStatus() {
+      if (statusInterval) {
+        clearInterval(statusInterval);
+        statusInterval = null;
+      }
+      preloaderStatus.textContent = '';
+    }
 
     function updatePreloader() {
       count++;
@@ -1475,17 +1515,32 @@
       }
     }
 
-    setTimeout(() => {
-      preloaderLine.classList.add('animate');
-      updatePreloader();
-    }, 500);
-
     function revealHero() {
       const heroTitle = document.querySelector('.hero-title');
       const heroSubtitle = document.querySelector('.hero-subtitle');
       if (heroTitle) heroTitle.classList.add('visible');
       if (heroSubtitle) setTimeout(() => heroSubtitle.classList.add('visible'), 500);
     }
+
+    // Main entry point: wait for server, then animate preloader
+    async function initWithServer() {
+      // Start warming status display
+      startPreloaderStatus();
+
+      // Wait for server to be ready (from api.js)
+      // If api.js hasn't loaded, server might already be warm or we'll handle it
+      if (typeof serverReadyPromise !== 'undefined') {
+        await serverReadyPromise;
+      }
+
+      // Stop warming status and start the counter animation
+      stopPreloaderStatus();
+      preloaderLine.classList.add('animate');
+      updatePreloader();
+    }
+
+    // Start the process after a brief initial delay (page resources loading)
+    setTimeout(initWithServer, 300);
 
     // ========================================
     // MAGNETIC EFFECT
@@ -1883,55 +1938,17 @@
       });
     }
 
-    // ── Animated status ticker ─────────────────────────────────────────────
-    // Cycles through messages while the pre-warm ping is running so the
-    // user knows something is happening rather than seeing a frozen card.
-    let _tickerTimer = null;
-    function startWarmTicker() {
-      const messages = [
-        'Waking server\u2026',
-        'Still warming up\u2026',
-        'Almost there\u2026',
-        'Fetching notices\u2026'
-      ];
-      let i = 0;
-      setLoadingMessage(messages[i]);
-      _tickerTimer = setInterval(() => {
-        i = (i + 1) % messages.length;
-        setLoadingMessage(messages[i]);
-      }, 4000);
-    }
-    function stopWarmTicker() {
-      if (_tickerTimer) { clearInterval(_tickerTimer); _tickerTimer = null; }
-    }
-
     // ── Main loader ────────────────────────────────────────────────────────
     async function loadLiveNotices() {
       const grid = document.getElementById('noticesGrid');
       if (!grid) return;
-
-      // Start the ticker immediately so the card looks alive
-      startWarmTicker();
-
-      // Wait for the global pre-warm promise from api.js
-      // If api.js hasn't loaded yet (shouldn't happen) we fall through safely.
-      const wasReady = (typeof serverReadyPromise !== 'undefined')
-        ? await serverReadyPromise
-        : true;
-
-      stopWarmTicker();
-
-      if (!wasReady) {
-        showRetryButton(grid);
-        return;
-      }
 
       setLoadingMessage('Loading notices\u2026');
 
       const isLoggedIn = !!localStorage.getItem('alfaaz_token');
       const cards = [];
 
-      // Use warmFetch from api.js (already waited above, but keeps retry logic)
+      // Use warmFetch from api.js (handles retry logic for mid-session 502/504)
       const fetcher = (typeof warmFetch !== 'undefined') ? warmFetch : fetch;
 
       const [evResult, exResult] = await Promise.allSettled([
@@ -2000,6 +2017,7 @@
       loadLiveNotices();
     };
 
+    // Start loading notices (server is already warm from preloader phase)
     loadLiveNotices();
   })();
 </script>
