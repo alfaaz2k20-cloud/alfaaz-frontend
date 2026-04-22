@@ -75,11 +75,9 @@
       .panel-title { font-size: 1.7rem; margin-bottom: 1.25rem; }
       nav { padding: 1rem 1.25rem; }
       .logo { font-size: 1.5rem; }
-      /* RSVP modal full-width on mobile */
       #rsvpModal > div { max-width: 100% !important; width: 100% !important;
         border-left: none; border-right: none; border-bottom: none;
         position: fixed; bottom: 0; left: 0; border-radius: 0; padding: 2rem 1.5rem; }
-      /* Suggestion chips wrap cleanly */
       #phantomSuggests { gap: 0.4rem !important; }
       #phantomSuggests button { font-size: 8px !important; padding: 0.35rem 0.6rem !important; }
     }
@@ -165,7 +163,6 @@
     }
     .phantom-btn:hover { background: #fff; }
 
-    /* ── PHANTOM MOBILE ── */
     @media (max-width: 640px) {
       #phantomTerminal { padding: 1.5rem; margin-top: 2rem; }
       .phantom-header { margin-bottom: 1.25rem; padding-bottom: 1rem; }
@@ -263,18 +260,99 @@
 
         <div class="panel" id="exhibitionPanel" style="display: none;">
           <h2 class="panel-title">Exhibition Screening</h2>
-          
-          <div id="exhibStatusView" style="display: none; padding: 2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--grid-border); text-align: center;">
-             <div class="data-label" style="margin-bottom: 15px;">Clearance Status</div>
-             <div id="myExhibBadge" style="margin-top: 5px; margin-bottom: 15px;"></div>
-             <p id="myExhibNote" style="font-size: 10px; color: var(--text-secondary); margin-top: 15px; font-style: italic; border-top: 1px dashed var(--grid-border); padding-top: 15px; line-height: 1.6;"></p>
-          </div>
 
           <div id="exhibApplyView" style="display: none;">
             <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
               Transmit your portfolios directly to the Curator's encrypted network for the upcoming major exhibition.
             </p>
             <a href="exhibition.html" class="action-btn gold magnetic">Initiate Transmission</a>
+          </div>
+
+          <div id="exhibPendingView" style="display: none; padding: 2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--grid-border); text-align: center;">
+            <div class="data-label" style="margin-bottom: 15px;">Clearance Status</div>
+            <span class="badge badge-gold" style="font-size:14px;padding:5px 15px;">PENDING</span>
+            <p style="font-size: 10px; color: var(--text-secondary); margin-top: 20px; font-style: italic; line-height: 1.6;">Your portfolio is currently under review by the Curator. Further details will follow via email.</p>
+          </div>
+
+          <div id="exhibRejectedView" style="display: none; padding: 2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--grid-border); text-align: center;">
+            <div class="data-label" style="margin-bottom: 15px;">Clearance Status</div>
+            <span class="badge badge-red" style="font-size:14px;padding:5px 15px;">NOT SELECTED</span>
+            <p id="exhibRejectedNote" style="font-size: 10px; color: var(--text-secondary); margin-top: 20px; font-style: italic; line-height: 1.6; border-top: 1px dashed var(--grid-border); padding-top: 15px;"></p>
+          </div>
+
+          <div id="exhibApprovedView" style="display: none;">
+            <div style="border: 1px solid var(--accent-green); padding: 1.5rem; background: rgba(74,222,128,0.05); margin-bottom: 2rem;">
+              <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;">
+                <span class="badge badge-green" style="font-size:13px;padding:4px 14px;">APPROVED</span>
+                <span style="font-size:9px;letter-spacing:2px;color:var(--accent-green);text-transform:uppercase;">Clearance Granted</span>
+              </div>
+              <p id="exhibApprovedNote" style="font-size:10px;color:var(--text-secondary);line-height:1.6;font-style:italic;"></p>
+            </div>
+
+            <div id="exhibConfirmedView" style="display:none; padding:2rem; text-align:center; border:1px solid var(--accent-green); background:rgba(74,222,128,0.04);">
+              <div style="font-family:'Teko',sans-serif;font-size:2rem;color:var(--accent-green);letter-spacing:2px;margin-bottom:0.5rem;">SPOT CONFIRMED</div>
+              <p style="font-size:10px;color:var(--text-secondary);line-height:1.6;">Your payment has been verified. Your exhibition spot is secured. Welcome to the collective.</p>
+            </div>
+
+            <div id="exhibSubmittedView" style="display:none; padding:1.5rem; border:1px dashed var(--accent-gold); background:rgba(248,211,127,0.04); text-align:center; margin-bottom:1.5rem;">
+              <span class="badge badge-gold">PAYMENT SUBMITTED</span>
+              <p style="font-size:10px;color:var(--text-secondary);margin-top:1rem;line-height:1.6;">Your payment proof has been received. The Curator will verify and confirm your spot shortly.</p>
+            </div>
+
+            <div id="exhibRegForm">
+              <div style="font-size:10px;color:var(--text-secondary);letter-spacing:2px;text-transform:uppercase;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--grid-border);">
+                Complete Your Registration — Step 2 of 2
+              </div>
+
+              <div style="background:rgba(0,0,0,0.3);padding:1.5rem;border:1px solid var(--grid-border);margin-bottom:2rem;">
+                <div class="data-label">Confirmed Details from Application</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem 2rem;margin-top:0.75rem;" id="exhibPrefilledSummary"></div>
+              </div>
+
+              <div id="tncSection" style="margin-bottom:2rem;display:none;">
+                <div class="data-label">Terms & Conditions</div>
+                <div style="border:1px solid var(--grid-border);padding:1rem;background:rgba(0,0,0,0.3);margin-bottom:1rem;display:flex;align-items:center;gap:1rem;">
+                  <span style="font-size:10px;color:var(--text-secondary);">Official T&C Document</span>
+                  <a id="tncPdfLink" href="#" target="_blank" style="font-size:9px;letter-spacing:2px;color:var(--accent-gold);text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--accent-gold);">View PDF →</a>
+                </div>
+                <label style="display:flex;align-items:flex-start;gap:1rem;cursor:pointer;">
+                  <input type="checkbox" id="tncCheck" style="margin-top:3px;accent-color:var(--accent-gold);flex-shrink:0;">
+                  <span style="font-size:11px;color:var(--text-secondary);line-height:1.6;">I have read and agree to the Terms & Conditions set by Alfaaz Collective for this exhibition.</span>
+                </label>
+              </div>
+
+              <div id="paymentSection" style="margin-bottom:2rem;">
+                <div class="data-label">Registration Fee & Payment</div>
+                <div style="border:1px solid var(--accent-gold);padding:1.5rem;background:rgba(248,211,127,0.04);margin-bottom:1.5rem;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+                    <div>
+                      <div style="font-size:9px;color:var(--text-secondary);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Amount Due</div>
+                      <div id="feeDisplay" style="font-family:'Teko',sans-serif;font-size:2rem;color:var(--accent-gold);letter-spacing:2px;">—</div>
+                    </div>
+                    <div id="qrSection" style="display:none;">
+                      <img id="paymentQr" src="" alt="Payment QR" style="width:120px;height:120px;border:1px solid var(--grid-border);">
+                    </div>
+                  </div>
+                  <div id="paymentInstructionsDisplay" style="font-size:11px;color:var(--text-secondary);margin-top:1rem;line-height:1.8;white-space:pre-line;border-top:1px solid var(--grid-border);padding-top:1rem;"></div>
+                </div>
+
+                <div class="data-label">Upload Payment Proof *</div>
+                <p style="font-size:9px;color:var(--accent-gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:0.75rem;">Screenshot or photo of your payment confirmation</p>
+                <input type="file" id="paymentProofFile" accept="image/*,application/pdf"
+                  style="width:100%;font-size:11px;color:var(--text-secondary);margin-bottom:0.5rem;background:transparent;border:none;padding:0;">
+                <div id="paymentUploadStatus" style="font-size:10px;letter-spacing:1px;text-transform:uppercase;min-height:1.2em;margin-bottom:1.5rem;"></div>
+              </div>
+
+              <div class="data-label">Note to Curator — Optional</div>
+              <textarea id="regNote" rows="2" placeholder="Any additional information..." style="width:100%;background:rgba(0,0,0,0.5);border:1px solid var(--grid-border);color:var(--text-primary);font-family:'JetBrains Mono',monospace;font-size:12px;padding:1rem;margin-bottom:1.5rem;outline:none;transition:border-color 0.3s;" onfocus="this.style.borderColor='var(--accent-gold)'" onblur="this.style.borderColor='var(--grid-border)'"></textarea>
+
+              <div id="regStatusMsg" style="font-size:10px;text-transform:uppercase;letter-spacing:2px;text-align:right;margin-bottom:1rem;min-height:1.2em;"></div>
+              <div style="display:flex;justify-content:flex-end;">
+                <button id="submitRegBtn" onclick="submitRegistration()" class="action-btn gold magnetic" style="padding:1rem 2.5rem;">
+                  Submit Registration
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -365,7 +443,7 @@
     function updateLdr() { val += 2; cnt.textContent = val; if (val === 30) cnt.classList.add('loading'); if (val >= 100) { setTimeout(() => { lin.classList.remove('animate'); ldr.classList.add('fade-out'); }, 300); } else { setTimeout(updateLdr, 15); } }
     setTimeout(() => { lin.classList.add('animate'); updateLdr(); }, 300);
 
-    // ── TOAST SYSTEM (replaces all alert() calls) ──
+    // ── TOAST SYSTEM ──
     function showToast(message, type = 'info', duration = 3500) {
       const container = document.getElementById('toastContainer');
       const t = document.createElement('div');
@@ -376,14 +454,13 @@
       setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, duration);
     }
 
-    // ── AUTH — defensive: guard every step so a bad localStorage value can't crash the page ──
+    // ── AUTH GUARD ──
     if (window.lucide) lucide.createIcons();
     const API_URL = "https://alfaaz-project.onrender.com";
 
     const token    = localStorage.getItem('alfaaz_token');
     const userData = localStorage.getItem('alfaaz_user');
 
-    // Parse user safely — if anything is missing or malformed, redirect to login
     let user = null;
     try {
       if (!token || token === 'undefined' || token === 'null' || !userData || userData === 'undefined' || userData === 'null') {
@@ -394,7 +471,6 @@
     } catch (_) {
       localStorage.clear();
       window.location.href = 'login.html';
-      // Stop executing the rest of this script block
       throw new Error('Redirecting to login');
     }
 
@@ -452,31 +528,192 @@
       loadMyTickets();
     }
 
-    // ── EXHIBITION STATUS ──
+    // ── EXHIBITION STATUS + STAGE-2 REGISTRATION ──
+    let _exhibConfig = {}; 
+
+    function hideAllExhibViews() {
+      ['exhibApplyView','exhibPendingView','exhibRejectedView',
+       'exhibApprovedView','exhibConfirmedView','exhibSubmittedView','exhibRegForm'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+    }
+
     async function loadExhibitionStatus() {
       try {
-        const cfgRes = await fetch(`${API_URL}/exhibitions/config`);
-        const cfg = await cfgRes.json();
+        const [cfgRes, statusRes] = await Promise.all([
+          fetch(`${API_URL}/exhibitions/config`),
+          apiFetch('/exhibitions/my-status')
+        ]);
+        const cfg  = await cfgRes.json();
+        const data = await statusRes.json();
+        _exhibConfig = cfg;
+
         const masterPanel = document.getElementById('exhibitionPanel');
-        if (!cfg.is_open) { if (masterPanel) masterPanel.style.display = "none"; return; }
+        if (!cfg.is_open && data.status === "NONE") {
+          if (masterPanel) masterPanel.style.display = "none";
+          return;
+        }
         if (masterPanel) masterPanel.style.display = "block";
-        const res = await apiFetch('/exhibitions/my-status');
-        const data = await res.json();
-        const viewStatus = document.getElementById('exhibStatusView');
-        const viewApply  = document.getElementById('exhibApplyView');
+
+        hideAllExhibViews();
+
         if (data.status === "NONE") {
-          viewStatus.style.display = "none"; viewApply.style.display = "block";
-        } else {
-          viewApply.style.display = "none"; viewStatus.style.display = "block";
-          let bc = data.status === 'PENDING' ? 'badge-gold' : data.status === 'APPROVED' ? 'badge-green' : 'badge-red';
-          document.getElementById('myExhibBadge').innerHTML = `<span class="badge ${bc}" style="font-size:14px;padding:5px 15px;">${data.status}</span>`;
-          if (data.status === "PENDING") {
-            document.getElementById('myExhibNote').textContent = "Your portfolio is currently under review by the Curator. Further details will follow via email.";
-          } else if (data.curator_note) {
-            document.getElementById('myExhibNote').innerHTML = `<span style="color:var(--text-primary);">Curator Note:</span><br>"${data.curator_note}"`;
+          document.getElementById('exhibApplyView').style.display = "block";
+
+        } else if (data.status === "PENDING") {
+          document.getElementById('exhibPendingView').style.display = "block";
+
+        } else if (data.status === "REJECTED") {
+          document.getElementById('exhibRejectedView').style.display = "block";
+          if (data.curator_note) {
+            document.getElementById('exhibRejectedNote').innerHTML =
+              `<span style="color:var(--text-primary);">Curator Note:</span> "${data.curator_note}"`;
+          }
+
+        } else if (data.status === "APPROVED") {
+          document.getElementById('exhibApprovedView').style.display = "block";
+          if (data.curator_note) {
+            document.getElementById('exhibApprovedNote').textContent = `"${data.curator_note}"`;
+          }
+
+          const regStatus = data.registration_status || "NONE";
+
+          if (regStatus === "CONFIRMED") {
+            document.getElementById('exhibConfirmedView').style.display = "block";
+
+          } else if (regStatus === "SUBMITTED") {
+            document.getElementById('exhibSubmittedView').style.display = "block";
+
+          } else {
+            document.getElementById('exhibRegForm').style.display = "block";
+            populateRegistrationForm(data, cfg);
           }
         }
-      } catch (e) { console.error("Exhibition query failed."); }
+      } catch (e) { console.error("Exhibition query failed.", e); }
+    }
+
+    function populateRegistrationForm(data, cfg) {
+      const summary = document.getElementById('exhibPrefilledSummary');
+      if (summary) {
+        const fields = [
+          ['Name', data.full_name], ['Age', data.age],
+          ['WhatsApp', data.whatsapp], ['Address', data.address],
+          ['Genre', data.genre], ['Medium', data.medium],
+        ];
+        summary.innerHTML = fields.map(([label, val]) => `
+          <div>
+            <div style="font-size:8px;color:var(--text-secondary);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;">${label}</div>
+            <div style="font-size:12px;color:#fff;">${val || '—'}</div>
+          </div>`).join('');
+      }
+
+      const tncSec = document.getElementById('tncSection');
+      if (cfg.tnc_pdf_url) {
+        tncSec.style.display = 'block';
+        document.getElementById('tncPdfLink').href = cfg.tnc_pdf_url;
+      } else {
+        tncSec.style.display = 'none';
+        const cb = document.getElementById('tncCheck');
+        if (cb) cb.checked = true;
+      }
+
+      const feeEl = document.getElementById('feeDisplay');
+      if (feeEl) feeEl.textContent = cfg.registration_fee || 'See instructions';
+      const instrEl = document.getElementById('paymentInstructionsDisplay');
+      if (instrEl) instrEl.textContent = cfg.payment_instructions || '';
+      const qrSec = document.getElementById('qrSection');
+      if (cfg.payment_qr_url && qrSec) {
+        qrSec.style.display = 'block';
+        document.getElementById('paymentQr').src = cfg.payment_qr_url;
+      }
+    }
+
+    // ── Payment proof upload ──
+    let _paymentProofUrl = null;
+    document.addEventListener('DOMContentLoaded', () => {
+      const fileInput = document.getElementById('paymentProofFile');
+      if (!fileInput) return;
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+        const statusEl = document.getElementById('paymentUploadStatus');
+        statusEl.style.color = 'var(--accent-gold)';
+        statusEl.textContent = `[ Uploading ${file.name}... ]`;
+
+        // IMPORTANT: Ensure "alfaaz_vault" is an UNSIGNED upload preset in Cloudinary
+        const CLOUD_NAME    = "dmqwjpmjk";
+        const UPLOAD_PRESET = "alfaaz_vault";
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', UPLOAD_PRESET);
+
+        try {
+          // Changed endpoint to /auto/upload to natively support both Images & PDFs
+          const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, { method:'POST', body:formData });
+          const data = await res.json();
+          if (data.secure_url) {
+            _paymentProofUrl = data.secure_url;
+            statusEl.style.color = 'var(--accent-green)';
+            statusEl.textContent = `[ ✓ ${file.name} uploaded ]`;
+          } else throw new Error();
+        } catch {
+          statusEl.style.color = 'var(--accent-red)';
+          statusEl.textContent = '[ Upload failed — please try again ]';
+          _paymentProofUrl = null;
+        }
+      });
+    });
+
+    async function submitRegistration() {
+      const btn = document.getElementById('submitRegBtn');
+      const msg = document.getElementById('regStatusMsg');
+
+      const tncCheck = document.getElementById('tncCheck');
+      const tncVisible = document.getElementById('tncSection').style.display !== 'none';
+      if (tncVisible && !tncCheck.checked) {
+        msg.style.color = 'var(--accent-red)';
+        msg.textContent = '[ You must read and agree to the T&C ]';
+        return;
+      }
+      if (!_paymentProofUrl) {
+        msg.style.color = 'var(--accent-red)';
+        msg.textContent = '[ Please upload your payment proof first ]';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+      msg.style.color = 'var(--accent-gold)';
+      msg.textContent = '[ Transmitting registration... ]';
+
+      try {
+        const res = await apiFetch('/exhibitions/complete-registration', {
+          method: 'POST',
+          body: JSON.stringify({
+            agreed_to_tnc: tncCheck ? tncCheck.checked : true,
+            payment_proof_url: _paymentProofUrl,
+            participant_note_reg: document.getElementById('regNote').value.trim() || null,
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msg.style.color = 'var(--accent-green)';
+          msg.textContent = '[ ✓ Registration submitted — awaiting payment confirmation ]';
+          btn.textContent = '✓ Submitted';
+          setTimeout(() => loadExhibitionStatus(), 1800);
+        } else {
+          msg.style.color = 'var(--accent-red)';
+          msg.textContent = `[ ${data.detail || 'Submission failed'} ]`;
+          btn.disabled = false;
+          btn.textContent = 'Submit Registration';
+        }
+      } catch {
+        msg.style.color = 'var(--accent-red)';
+        msg.textContent = '[ Network error — please try again ]';
+        btn.disabled = false;
+        btn.textContent = 'Submit Registration';
+      }
     }
 
     // ── CLUBS ──
@@ -581,30 +818,24 @@
       input.value = '';
       const s = document.getElementById('phantomSuggests');
       if (s) s.remove();
-      output.innerHTML += `
-<div style="margin-top:1rem;"><span style="color:var(--text-secondary);">> USER:</span> <span style="color:#fff;">${query}</span></div>`;
+      output.innerHTML += `<div style="margin-top:1rem;"><span style="color:var(--text-secondary);">> USER:</span> <span style="color:#fff;">${query}</span></div>`;
       const loadId = 'load-' + Date.now();
-      output.innerHTML += `<div id="${loadId}" style="color:var(--accent-gold);margin-top:0.5rem;">> PHANTOM: <span style="opacity:0.6;">[DECODING_VOID...]</span></div>
-`;
+      output.innerHTML += `<div id="${loadId}" style="color:var(--accent-gold);margin-top:0.5rem;">> PHANTOM: <span style="opacity:0.6;">[DECODING_VOID...]</span></div>`;
       output.scrollTop = output.scrollHeight;
       try {
         const res = await fetch(`${API_URL}/phantom/ask`, { method: 'POST', headers: {'Content-Type':'application/json','Authorization':`Bearer ${token}`}, body: JSON.stringify({ question: query }) });
         const loadEl = document.getElementById(loadId); if (loadEl) loadEl.remove();
         if (res.ok) {
           const data = await res.json();
-          output.innerHTML += `<div style="color:var(--accent-gold);margin-top:0.5rem;border-left:1px solid rgba(248,211,127,0.3);padding-left:1rem;line-height:1.7;">${data.answer}</div>
-`;
+          output.innerHTML += `<div style="color:var(--accent-gold);margin-top:0.5rem;border-left:1px solid rgba(248,211,127,0.3);padding-left:1rem;line-height:1.7;">${data.answer}</div>`;
         } else if (res.status === 429) {
-          output.innerHTML += `<div style="color:var(--accent-red);margin-top:0.5rem;">[TRANSMISSION_LIMIT_REACHED — Rest. The Phantom needs silence.]</div>
-`;
+          output.innerHTML += `<div style="color:var(--accent-red);margin-top:0.5rem;">[TRANSMISSION_LIMIT_REACHED — Rest. The Phantom needs silence.]</div>`;
         } else {
-          output.innerHTML += `<div style="color:var(--accent-red);margin-top:0.5rem;">[PROTOCOL_REJECTED]</div>
-`;
+          output.innerHTML += `<div style="color:var(--accent-red);margin-top:0.5rem;">[PROTOCOL_REJECTED]</div>`;
         }
       } catch (err) {
         const loadEl = document.getElementById(loadId); if (loadEl) loadEl.remove();
-        output.innerHTML += `<div style="color:var(--accent-red);margin-top:0.5rem;">[THE_ORACLE_IS_UNREACHABLE]</div>
-`;
+        output.innerHTML += `<div style="color:var(--accent-red);margin-top:0.5rem;">[THE_ORACLE_IS_UNREACHABLE]</div>`;
       }
       output.scrollTop = output.scrollHeight;
     }

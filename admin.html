@@ -106,7 +106,6 @@
 
   <div id="tab-exhibitions" class="tab-panel">
 
-    <!-- ── MASTER VISIBILITY SWITCH ── -->
     <div class="toggle-master is-closed" id="exhibToggleMaster">
       <div class="toggle-master-label">
         <span class="tm-title" id="exhibToggleTitle">Exhibition Portal</span>
@@ -134,6 +133,28 @@
         </div>
       </div>
       <div class="form-group" style="margin-bottom: 1.5rem;"><label class="form-label">About / Description</label><textarea id="cfg-desc" rows="3"></textarea></div>
+      <div style="border-top:1px dashed var(--grid-border);margin:1.5rem 0;padding-top:1.5rem;">
+        <div style="font-size:10px;color:var(--accent-gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem;">[ T&C + Payment Settings ]</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">T&C PDF — Cloudinary URL</label>
+            <input type="text" id="cfg-tnc-url" placeholder="https://res.cloudinary.com/...">
+            <span style="font-size:9px;color:var(--text-secondary);margin-top:4px;">Upload your PDF to Cloudinary and paste the URL here. Participants will be shown this before completing registration.</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Registration Fee</label>
+            <input type="text" id="cfg-fee" placeholder="e.g. ₹500">
+          </div>
+          <div class="form-group" style="grid-column:1/-1;">
+            <label class="form-label">Payment Instructions</label>
+            <textarea id="cfg-payment" rows="3" placeholder="UPI ID: alfaaz@upi&#10;Bank: HDFC — Acc: 1234567890&#10;Participants must send payment to the above and upload a screenshot."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Payment QR Code — Cloudinary URL (optional)</label>
+            <input type="text" id="cfg-qr-url" placeholder="https://res.cloudinary.com/...">
+          </div>
+        </div>
+      </div>
       <button class="btn btn-gold" onclick="saveExhibConfig()">Commit Global Settings</button>
       <span id="cfg-msg" style="font-size:11px; margin-left:1rem; color: var(--accent-green);"></span>
     </div>
@@ -200,7 +221,7 @@
       if (name === 'clubs') loadClubs('ALL'); if (name === 'roster') loadRoster();
     }
 
-    // GLOBALS FOR FIXING THE "LIST" BUG
+    // GLOBALS
     let allEvents = [];
 
     // EVENTS
@@ -239,7 +260,6 @@
     async function toggleEvent(id, btn) { btn.textContent = '...'; const res = await apiFetch(`${API_URL}/admin/events/${id}/toggle`, { method: 'PATCH' }); if (res.ok) loadEvents(); }
     async function deleteEvent(id, name, btn) { if (!confirm(`Delete ${name}?`)) return; btn.textContent = '...'; const res = await apiFetch(`${API_URL}/admin/events/${id}`, { method: 'DELETE' }); if (res.ok) loadEvents(); }
     
-    // FIXED VIEW REGISTRATIONS BUG
     async function viewRegistrations(id) {
       const event = allEvents.find(e => e.id === id);
       document.getElementById('modalTitle').textContent = event.name.toUpperCase(); 
@@ -259,7 +279,7 @@
 
     // EXHIBITIONS ENGINE
     let allExhibs = [];
-    let currentExhibOpen = false; // tracks live state
+    let currentExhibOpen = false;
 
     function applyToggleUI(isOpen) {
       currentExhibOpen = isOpen;
@@ -288,10 +308,8 @@
       btn.style.pointerEvents = 'none'; // prevent double-click
       const newState = !currentExhibOpen;
 
-      // Optimistically flip UI
       applyToggleUI(newState);
 
-      // Persist: we need the full config, so patch it with only is_open changed
       const payload = {
         title:      document.getElementById('cfg-title').value || 'Upcoming Exhibition',
         date_text:  document.getElementById('cfg-date').value  || 'Dates TBD',
@@ -303,21 +321,18 @@
         method: 'POST', body: JSON.stringify(payload)
       });
       if (res && res.ok) {
-        // Also sync the hidden select in the settings form
         document.getElementById('cfg-open').value = newState ? 'true' : 'false';
         const flash = document.getElementById('cfg-msg');
         flash.textContent = newState ? '✓ Portal opened — participants can now see the exhibition.' : '✓ Portal hidden from participants.';
         flash.style.color = newState ? 'var(--accent-green)' : 'var(--accent-red)';
         setTimeout(() => { flash.textContent = ''; }, 4000);
       } else {
-        // Revert on failure
         applyToggleUI(!newState);
       }
       btn.style.pointerEvents = '';
     }
 
     async function loadExhibitions(f) {
-      // Load Config First
       const cfgRes = await fetch(`${API_URL}/exhibitions/config`);
       const cfg = await cfgRes.json();
       document.getElementById('cfg-title').value = cfg.title || '';
@@ -325,11 +340,13 @@
       document.getElementById('cfg-venue').value = cfg.venue || '';
       document.getElementById('cfg-desc').value = cfg.about_text || '';
       document.getElementById('cfg-open').value = cfg.is_open ? "true" : "false";
+      document.getElementById('cfg-tnc-url').value = cfg.tnc_pdf_url || '';
+      document.getElementById('cfg-fee').value = cfg.registration_fee || '';
+      document.getElementById('cfg-payment').value = cfg.payment_instructions || '';
+      document.getElementById('cfg-qr-url').value = cfg.payment_qr_url || '';
 
-      // Drive the toggle UI from live config
       applyToggleUI(cfg.is_open);
 
-      // Load Portfolios
       const res = await apiFetch(`${API_URL}/admin/exhibitions`);
       allExhibs = await res.json(); renderExhibitions(f);
     }
@@ -341,14 +358,17 @@
         date_text: document.getElementById('cfg-date').value,
         venue: document.getElementById('cfg-venue').value,
         about_text: document.getElementById('cfg-desc').value,
-        is_open: isOpen
+        is_open: isOpen,
+        tnc_pdf_url: document.getElementById('cfg-tnc-url').value.trim() || null,
+        registration_fee: document.getElementById('cfg-fee').value.trim(),
+        payment_instructions: document.getElementById('cfg-payment').value.trim(),
+        payment_qr_url: document.getElementById('cfg-qr-url').value.trim() || null,
       };
       document.getElementById('cfg-msg').textContent = "Saving...";
       const res = await apiFetch(`${API_URL}/admin/exhibitions/config`, { method: 'POST', body: JSON.stringify(payload) });
       if (res.ok) {
         document.getElementById('cfg-msg').textContent = "✓ Settings Synced Globally";
         setTimeout(() => document.getElementById('cfg-msg').textContent = "", 3000);
-        // Keep the toggle UI in sync with the select value
         applyToggleUI(isOpen);
       }
     }
@@ -362,22 +382,91 @@
       apps.forEach(a => {
         const card = document.createElement('div'); card.className = 'data-card exhib-card';
         const badge = a.status === 'PENDING' ? 'badge-pending' : a.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected';
+        const regStatus = a.registration_status || 'NONE';
+        const regBadge = regStatus === 'CONFIRMED' ? 'badge-approved'
+          : regStatus === 'SUBMITTED' ? 'badge-pending' : 'badge-closed';
+        const regLabel = regStatus === 'CONFIRMED' ? 'PAYMENT CONFIRMED'
+          : regStatus === 'SUBMITTED' ? 'PAYMENT PENDING' : 'AWAITING REGISTRATION';
+
         card.innerHTML = `
-          <div><div class="label">Artist</div><div class="data-display">${a.full_name}</div><div style="font-size:10px; color:var(--text-secondary);">Age: ${a.age} | WA: ${a.whatsapp}</div><div style="font-size:10px; color:var(--text-secondary);">${a.user_email}</div></div>
-          <div><div class="label">Art Profile</div><div class="data-display" style="font-size:12px;">${a.genre}</div><div style="font-size:10px; color:var(--text-secondary);">Medium: ${a.medium}</div>${a.applicant_note ? `<div style="font-size:9px; font-style:italic; color:var(--accent-gold);">"${a.applicant_note}"</div>` : ''}</div>
-          <div><div class="label">Status</div><span class="badge ${badge}">${a.status}</span>${a.curator_note ? `<div style="font-size:9px; color:var(--text-secondary);">Note sent.</div>` : ''}</div>
-          <div style="display:flex; flex-direction:column; gap:0.4rem;">
-            <a href="${a.portfolio_url}" target="_blank" class="btn btn-ghost btn-sm btn-full" style="border-color:var(--accent-gold); color:var(--accent-gold);">View Portfolio</a>
-            ${a.status === 'PENDING' ? `<button class="btn btn-green btn-sm" onclick="reviewExhibition(${a.id}, 'APPROVED', this)">Approve</button><button class="btn btn-red btn-sm" onclick="reviewExhibition(${a.id}, 'REJECTED', this)">Reject</button>` : ''}
+          <div>
+            <div class="label">Artist</div>
+            <div class="data-display">${a.full_name}</div>
+            <div style="font-size:10px;color:var(--text-secondary);">Age: ${a.age} | WA: ${a.whatsapp}</div>
+            <div style="font-size:10px;color:var(--text-secondary);">${a.user_email}</div>
+            ${a.applicant_note ? `<div style="font-size:9px;font-style:italic;color:var(--accent-gold);margin-top:4px;">"${a.applicant_note}"</div>` : ''}
+          </div>
+          <div>
+            <div class="label">Art Profile</div>
+            <div class="data-display" style="font-size:12px;">${a.genre}</div>
+            <div style="font-size:10px;color:var(--text-secondary);">Medium: ${a.medium}</div>
+          </div>
+          <div>
+            <div class="label">Status</div>
+            <span class="badge ${badge}" style="margin-bottom:6px;">${a.status}</span>
+            ${a.status === 'APPROVED' ? `<div style="margin-top:6px;"><span class="badge ${regBadge}" style="font-size:8px;">${regLabel}</span></div>` : ''}
+            ${a.curator_note ? `<div style="font-size:9px;color:var(--text-secondary);margin-top:4px;">Note sent.</div>` : ''}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.4rem;">
+            <a href="${a.portfolio_url}" target="_blank" class="btn btn-ghost btn-sm btn-full" style="border-color:var(--accent-gold);color:var(--accent-gold);">View Portfolio</a>
+            ${a.status === 'PENDING' ? `
+              <button class="btn btn-green btn-sm" onclick="reviewExhibition(${a.id}, 'APPROVED', this)">Approve</button>
+              <button class="btn btn-red btn-sm" onclick="reviewExhibition(${a.id}, 'REJECTED', this)">Reject</button>` : ''}
+            ${a.status === 'APPROVED' && regStatus === 'SUBMITTED' ? `
+              <button class="btn btn-ghost btn-sm" onclick="viewPaymentProof(${a.id})" style="border-color:var(--accent-gold);color:var(--accent-gold);">View Payment</button>
+              <button class="btn btn-green btn-sm" onclick="confirmPayment(${a.id}, this)">Confirm Payment</button>` : ''}
+            ${a.status === 'APPROVED' && regStatus === 'CONFIRMED' ? `
+              <button class="btn btn-ghost btn-sm" onclick="viewPaymentProof(${a.id})">View Receipt</button>` : ''}
           </div>`;
         container.appendChild(card);
       });
     }
+    
+    // FIXED: Removed the redundant payment link prompt
     async function reviewExhibition(id, status, btn) {
-      let paymentLink = null; if (status === 'APPROVED') { paymentLink = prompt("Enter the secure payment/registration link to email to the artist:"); if (!paymentLink) return; }
-      const note = prompt('Optional Curator Note (this will be shown on their dashboard):'); btn.textContent = '...';
-      const res = await apiFetch(`${API_URL}/admin/exhibitions/review`, { method: 'POST', body: JSON.stringify({ application_id: id, status: status, curator_note: note, payment_link: paymentLink }) });
+      const note = prompt('Optional Curator Note (this will be shown on their dashboard):'); 
+      btn.textContent = '...';
+      const res = await apiFetch(`${API_URL}/admin/exhibitions/review`, { 
+        method: 'POST', 
+        body: JSON.stringify({ application_id: id, status: status, curator_note: note }) 
+      });
       if (res.ok) { loadExhibitions('ALL'); filterExhibitions('ALL'); }
+    }
+
+    // EXHIBITION PAYMENT MANAGEMENT
+    async function confirmPayment(id, btn) {
+      if (!confirm('Confirm payment for this participant? This will finalise their exhibition spot and send them a confirmation email.')) return;
+      btn.textContent = '...'; btn.disabled = true;
+      const res = await apiFetch(`${API_URL}/admin/exhibitions/${id}/confirm-payment`, { method: 'PATCH' });
+      if (res && res.ok) {
+        loadExhibitions('ALL'); filterExhibitions('ALL');
+      } else {
+        btn.textContent = 'Confirm Payment'; btn.disabled = false;
+        alert('Failed to confirm payment.');
+      }
+    }
+
+    async function viewPaymentProof(id) {
+      const res = await apiFetch(`${API_URL}/admin/exhibitions/${id}/registration`);
+      if (!res) return;
+      const data = await res.json();
+      document.getElementById('modalTitle').textContent = `${data.full_name.toUpperCase()} — REGISTRATION`;
+      document.getElementById('modalBody').innerHTML = `
+        <div style="display:grid;gap:1rem;">
+          <div><div class="label">Email</div><div class="data-display" style="font-size:12px;">${data.user_email}</div></div>
+          <div><div class="label">WhatsApp</div><div class="data-display" style="font-size:12px;">${data.whatsapp}</div></div>
+          <div><div class="label">Genre / Medium</div><div class="data-display" style="font-size:12px;">${data.genre} / ${data.medium}</div></div>
+          <div><div class="label">Registration Status</div><div class="data-display" style="font-size:12px;">${data.registration_status}</div></div>
+          <div><div class="label">Agreed to T&C</div><div class="data-display" style="font-size:12px;">${data.agreed_to_tnc ? '✓ Yes' : '✗ No'}</div></div>
+          ${data.participant_note_reg ? `<div><div class="label">Participant Note</div><div class="data-display" style="font-size:12px;">${data.participant_note_reg}</div></div>` : ''}
+          ${data.payment_proof_url ? `
+            <div>
+              <div class="label">Payment Proof</div>
+              <a href="${data.payment_proof_url}" target="_blank" class="btn btn-gold btn-sm" style="margin-top:0.5rem;display:inline-block;">Open Proof →</a>
+            </div>` : '<div><div class="label">Payment Proof</div><div style="color:var(--accent-red);font-size:12px;">Not submitted</div></div>'}
+          ${data.payment_confirmed_at ? `<div><div class="label">Confirmed At</div><div class="data-display" style="font-size:11px;">${new Date(data.payment_confirmed_at).toLocaleString()}</div></div>` : ''}
+        </div>`;
+      document.getElementById('regModal').classList.add('open');
     }
 
     // CLUBS
