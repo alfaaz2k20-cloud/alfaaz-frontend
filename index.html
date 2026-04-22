@@ -1857,7 +1857,7 @@
   </script>
 <script>
   // ========================================
-  // LIVE NOTICES — Direct Neon Connection via Vercel Edge (Cache-Busted)
+  // LIVE NOTICES — Bfcache & Cold Start Fixed
   // ========================================
   (function () {
     let isUpdating = false;
@@ -1867,7 +1867,7 @@
 
       if (!cards || !cards.length) {
         grid.innerHTML = `
-          <div class="update-card fade-in">
+          <div class="update-card fade-in visible">
             <p class="update-date">Alfaaz Collective</p>
             <p class="update-text">No active events at the moment — follow
               <a href="https://www.instagram.com/alfaaz.2020" target="_blank"
@@ -1877,7 +1877,8 @@
       } else {
         cards.forEach(c => {
           const div = document.createElement('div');
-          div.className = 'update-card fade-in';
+          // Note: 'visible' class added directly so it pops in instantly
+          div.className = 'update-card fade-in visible';
           div.innerHTML = `
             <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
               <span style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border:1px solid ${c.tagColor};color:${c.tagColor};opacity:${c.disabled?'0.5':'1'};">${c.tag}</span>
@@ -1890,10 +1891,6 @@
           grid.appendChild(div);
         });
       }
-
-      grid.querySelectorAll('.fade-in').forEach(el => {
-        if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
-      });
     }
 
     function parseToCards(data) {
@@ -1928,8 +1925,16 @@
       if (!grid || isUpdating) return;
       isUpdating = true;
 
+      // VISUAL FIX: If the grid is empty, show a loading state instead of a blank hole
+      if (grid.innerHTML.trim() === '') {
+        grid.innerHTML = `
+          <div class="update-card fade-in visible" style="border: 1px dashed rgba(248, 211, 127, 0.3); text-align: center;">
+            <p class="update-date" style="color: var(--accent-gold); opacity: 0.8;">Establishing Link...</p>
+            <p class="update-text" style="font-size: 11px; opacity: 0.6;">Scanning for active transmissions.</p>
+          </div>`;
+      }
+
       try {
-        // THE FIX: Appending the current timestamp forces the browser to bypass its cache
         const cacheBuster = new Date().getTime();
         const res = await fetch(`/api/notices?t=${cacheBuster}`, {
           headers: {
@@ -1945,19 +1950,22 @@
         }
       } catch (err) {
         console.error("Neon Transmission failed.", err);
-        // Only render empty state if the grid is completely empty
-        if (grid.innerHTML.trim() === '') {
-          renderCards(grid, []); 
-        }
+        renderCards(grid, []); 
       } finally {
         isUpdating = false;
       }
     }
 
-    // 1. Start loading immediately on page load
-    loadLiveNotices();
+    // 1. GUARANTEE START: Fire instantly when the page loads
+    document.addEventListener('DOMContentLoaded', loadLiveNotices);
 
-    // 2. Set a silent background heartbeat to refresh every 30 seconds
+    // 2. BACK BUTTON FIX: Break the "Bfcache" lock when returning from dashboard
+    window.addEventListener('pageshow', function (event) {
+      isUpdating = false; 
+      loadLiveNotices();
+    });
+
+    // 3. IDLE FIX: Auto-refresh data quietly in the background
     setInterval(loadLiveNotices, 30000);
   })();
   </script>
