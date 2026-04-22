@@ -1857,10 +1857,11 @@
   </script>
 <script>
   // ========================================
-  // LIVE NOTICES — Direct Neon Connection via Vercel Edge
+  // LIVE NOTICES — Direct Neon Connection via Vercel Edge (Cache-Busted)
   // ========================================
   (function () {
-    // Render the cards dynamically
+    let isUpdating = false;
+
     function renderCards(grid, cards) {
       grid.innerHTML = '';
 
@@ -1895,7 +1896,6 @@
       });
     }
 
-    // Convert the database JSON into UI cards
     function parseToCards(data) {
       const cards = [];
       const isLoggedIn = !!localStorage.getItem('alfaaz_token');
@@ -1923,30 +1923,42 @@
       return cards;
     }
 
-    // Load instantly from Vercel API
     async function loadLiveNotices() {
       const grid = document.getElementById('noticesGrid');
-      if (!grid) return;
+      if (!grid || isUpdating) return;
+      isUpdating = true;
 
       try {
-        // Fetch from the local Vercel Serverless Function
-        const res = await fetch('/api/notices');
+        // THE FIX: Appending the current timestamp forces the browser to bypass its cache
+        const cacheBuster = new Date().getTime();
+        const res = await fetch(`/api/notices?t=${cacheBuster}`, {
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
         
         if (res.ok) {
           const data = await res.json();
           const freshCards = parseToCards(data);
           renderCards(grid, freshCards);
-        } else {
-          throw new Error("API Route Failed");
         }
       } catch (err) {
         console.error("Neon Transmission failed.", err);
-        renderCards(grid, []); 
+        // Only render empty state if the grid is completely empty
+        if (grid.innerHTML.trim() === '') {
+          renderCards(grid, []); 
+        }
+      } finally {
+        isUpdating = false;
       }
     }
 
-    // Start loading immediately
+    // 1. Start loading immediately on page load
     loadLiveNotices();
+
+    // 2. Set a silent background heartbeat to refresh every 30 seconds
+    setInterval(loadLiveNotices, 30000);
   })();
   </script>
 </body>

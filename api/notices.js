@@ -2,17 +2,19 @@ import { Pool } from 'pg';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false } // Required for Neon
+  ssl: { rejectUnauthorized: false } 
 });
 
 export default async function handler(req, res) {
-  // Allow CORS just in case
+  // 1. FORBID ALL CACHING (The Fix)
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
 
   try {
     const client = await pool.connect();
     
-    // 1. Fetch Active Events & Count Registrations
     const eventsResult = await client.query(`
       SELECT e.id, e.name, e.event_date, e.description, e.capacity,
              (SELECT COUNT(*) FROM event_registrations r WHERE r.event_id = e.id) as registered_count
@@ -32,7 +34,6 @@ export default async function handler(req, res) {
         };
     });
 
-    // 2. Fetch Exhibition Config
     const exhResult = await client.query(`SELECT * FROM exhibition_config LIMIT 1`);
     let exhibition = null;
     if (exhResult.rows.length > 0) {
@@ -46,8 +47,6 @@ export default async function handler(req, res) {
     }
     
     client.release();
-
-    // 3. Return the exact JSON format your frontend expects
     res.status(200).json({ events, exhibition });
 
   } catch (error) {
