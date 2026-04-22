@@ -1211,14 +1211,11 @@
         <p class="section-label">Latest Updates</p>
         <h2 class="section-title">Notices</h2>
       </div>
-      <div class="updates-grid">
-        <div class="update-card fade-in">
-          <p class="update-date">January 01, 2026</p>
-          <p class="update-text">Dates of new exhibition of Alfaaz will be soon updated.</p>
-        </div>
-        <div class="update-card fade-in">
-          <p class="update-date">January 01, 2026</p>
-          <p class="update-text">Upcoming exhibition <a href="exhibition.html" style="color:var(--accent-gold);text-decoration:underline;text-underline-offset:3px;">Absence</a> — applications now open.</p>
+      <div id="noticesGrid" class="updates-grid">
+        <!-- Populated dynamically by JS — static fallback cards shown while loading -->
+        <div class="update-card fade-in" id="noticeLoading" style="grid-column: 1 / -1;">
+          <p class="update-date" style="opacity:0.4;">Scanning transmissions...</p>
+          <p class="update-text" style="opacity:0.4;">—</p>
         </div>
       </div>
     </section>
@@ -1824,6 +1821,101 @@
     // Hover effect for input
     pIn.addEventListener('focus', () => { pIn.style.borderColor = '#f8d37f'; });
     pIn.addEventListener('blur', () => { pIn.style.borderColor = 'rgba(230, 238, 246, 0.1)'; });
+  </script>
+
+  <script>
+    // ========================================
+    // LIVE NOTICES — pulls active events + exhibition config from API
+    // ========================================
+    (async function loadLiveNotices() {
+      const API = "https://alfaaz-project.onrender.com";
+      const grid = document.getElementById('noticesGrid');
+      if (!grid) return;
+
+      const cards = [];
+
+      try {
+        // 1. Fetch active standard events
+        const evRes = await fetch(`${API}/events/active`);
+        if (evRes.ok) {
+          const events = await evRes.json();
+          events.forEach(e => {
+            const capText = e.capacity === 0
+              ? 'Open registration'
+              : e.full
+                ? 'At capacity'
+                : `${e.spots_left} spot${e.spots_left === 1 ? '' : 's'} remaining`;
+            cards.push({
+              tag: 'EVENT',
+              tagColor: 'var(--accent-green)',
+              date: e.event_date || 'Date TBD',
+              title: e.name,
+              body: (e.description ? e.description + ' — ' : '') + capText + '.',
+              link: null,
+              linkLabel: null,
+              disabled: e.full,
+            });
+          });
+        }
+      } catch (_) { /* non-critical — API may be sleeping */ }
+
+      try {
+        // 2. Fetch exhibition config
+        const exRes = await fetch(`${API}/exhibitions/config`);
+        if (exRes.ok) {
+          const cfg = await exRes.json();
+          if (cfg.is_open) {
+            cards.push({
+              tag: 'EXHIBITION',
+              tagColor: 'var(--accent-gold)',
+              date: cfg.date_text || 'Dates TBD',
+              title: cfg.title || 'Upcoming Exhibition',
+              body: cfg.about_text
+                ? cfg.about_text.substring(0, 120) + (cfg.about_text.length > 120 ? '…' : '')
+                : 'Applications now open. Submit your portfolio for curatorial review.',
+              link: 'exhibition.html',
+              linkLabel: 'Apply Now →',
+              disabled: false,
+            });
+          }
+        }
+      } catch (_) { /* non-critical */ }
+
+      // Clear loading state
+      grid.innerHTML = '';
+
+      if (!cards.length) {
+        // Fallback: show a generic static notice if no live data
+        grid.innerHTML = `
+          <div class="update-card fade-in">
+            <p class="update-date">Alfaaz Collective</p>
+            <p class="update-text">No active events at the moment — follow <a href="https://www.instagram.com/alfaaz.2020" target="_blank" style="color:var(--accent-gold);">@alfaaz.2020</a> for announcements.</p>
+          </div>`;
+      } else {
+        cards.forEach(c => {
+          const div = document.createElement('div');
+          div.className = 'update-card fade-in';
+          div.innerHTML = `
+            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.75rem;">
+              <span style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; padding:2px 8px; border:1px solid ${c.tagColor}; color:${c.tagColor}; opacity:${c.disabled ? '0.5' : '1'};">${c.tag}</span>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2px; color:${c.tagColor}; text-transform:uppercase; ${c.disabled ? 'opacity:0.5;' : ''}">${c.date}</span>
+            </div>
+            <p class="update-text" style="${c.disabled ? 'opacity:0.5;' : ''}">${c.title}</p>
+            ${c.body ? `<p style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-secondary); line-height:1.6; margin-top:0.5rem; ${c.disabled ? 'opacity:0.5;' : ''}">${c.body}</p>` : ''}
+            ${c.link && !c.disabled ? `<a href="${c.link}" style="display:inline-block; margin-top:0.75rem; font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:${c.tagColor}; text-decoration:none; border-bottom:1px solid ${c.tagColor}; padding-bottom:1px; transition:opacity 0.2s;">${c.linkLabel}</a>` : ''}
+          `;
+          grid.appendChild(div);
+        });
+      }
+
+      // Re-run fade-in observer on new cards
+      const newFadeEls = grid.querySelectorAll('.fade-in');
+      newFadeEls.forEach(el => {
+        if (el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('visible');
+        }
+      });
+    })();
   </script>
 </body>
 </html>
