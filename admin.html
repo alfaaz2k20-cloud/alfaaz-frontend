@@ -175,9 +175,11 @@
       <button class="btn btn-ghost btn-sm" onclick="filterClubs('ALL')" id="filter-ALL">All</button>
       <button class="btn btn-ghost btn-sm" onclick="filterClubs('PENDING')" id="filter-PENDING">Pending</button>
       <button class="btn btn-ghost btn-sm" onclick="filterClubs('APPROVED')" id="filter-APPROVED">Approved</button>
+      <button class="btn btn-ghost btn-sm" onclick="filterClubs('REJECTED')" id="filter-REJECTED">Rejected</button>
     </div>
     <div id="clubsContainer"><div class="empty-state">Loading applications...</div></div>
   </div>
+  
   <div id="tab-roster" class="tab-panel">
     <div class="section-title">[ Collective Roster ]</div>
     <div id="rosterContainer"><div class="empty-state">Loading roster...</div></div>
@@ -224,7 +226,7 @@
     // GLOBALS
     let allEvents = [];
 
-    // EVENTS
+    // ── EVENTS ──
     async function loadEvents() {
       const container = document.getElementById('eventsContainer');
       try {
@@ -277,7 +279,7 @@
     }
     function closeModal() { document.getElementById('regModal').classList.remove('open'); }
 
-    // EXHIBITIONS ENGINE
+    // ── EXHIBITIONS ENGINE ──
     let allExhibs = [];
     let currentExhibOpen = false;
 
@@ -305,7 +307,7 @@
 
     async function toggleExhibVisibility() {
       const btn = document.getElementById('exhibPillBtn');
-      btn.style.pointerEvents = 'none'; // prevent double-click
+      btn.style.pointerEvents = 'none'; 
       const newState = !currentExhibOpen;
 
       applyToggleUI(newState);
@@ -374,6 +376,7 @@
     }
 
     function filterExhibitions(f) { document.querySelectorAll('[id^="filt-"]').forEach(b => b.classList.remove('btn-gold')); document.getElementById(`filt-${f}`).classList.add('btn-gold'); renderExhibitions(f); }
+    
     function renderExhibitions(f) {
       const container = document.getElementById('exhibitionsContainer');
       const apps = f === 'ALL' ? allExhibs : allExhibs.filter(a => a.status === f);
@@ -412,6 +415,8 @@
             ${a.status === 'PENDING' ? `
               <button class="btn btn-green btn-sm" onclick="reviewExhibition(${a.id}, 'APPROVED', this)">Approve</button>
               <button class="btn btn-red btn-sm" onclick="reviewExhibition(${a.id}, 'REJECTED', this)">Reject</button>` : ''}
+            ${a.status === 'REJECTED' ? `
+              <button class="btn btn-ghost btn-sm" onclick="revertExhibition(${a.id}, this)" style="border-color:var(--text-secondary);color:var(--text-secondary);">Undo Rejection</button>` : ''}
             ${a.status === 'APPROVED' && regStatus === 'SUBMITTED' ? `
               <button class="btn btn-ghost btn-sm" onclick="viewPaymentProof(${a.id})" style="border-color:var(--accent-gold);color:var(--accent-gold);">View Payment</button>
               <button class="btn btn-green btn-sm" onclick="confirmPayment(${a.id}, this)">Confirm Payment</button>` : ''}
@@ -422,7 +427,6 @@
       });
     }
     
-    // FIXED: Removed the redundant payment link prompt
     async function reviewExhibition(id, status, btn) {
       const note = prompt('Optional Curator Note (this will be shown on their dashboard):'); 
       btn.textContent = '...';
@@ -431,6 +435,14 @@
         body: JSON.stringify({ application_id: id, status: status, curator_note: note }) 
       });
       if (res.ok) { loadExhibitions('ALL'); filterExhibitions('ALL'); }
+    }
+
+    async function revertExhibition(id, btn) {
+      if (!confirm('Undo rejection and move back to PENDING?')) return;
+      btn.textContent = '...'; btn.disabled = true;
+      const res = await apiFetch(`${API_URL}/admin/exhibitions/${id}/revert`, { method: 'PATCH' });
+      if (res && res.ok) { loadExhibitions('ALL'); filterExhibitions('ALL'); }
+      else { btn.textContent = 'Undo Rejection'; btn.disabled = false; alert('Failed to revert.'); }
     }
 
     // EXHIBITION PAYMENT MANAGEMENT
@@ -469,22 +481,53 @@
       document.getElementById('regModal').classList.add('open');
     }
 
-    // CLUBS
+    // ── CLUBS ──
     let allClubApps = [];
     async function loadClubs(f) { const res = await apiFetch(`${API_URL}/admin/club-applications`); allClubApps = await res.json(); renderClubs(f); }
     function filterClubs(f) { document.querySelectorAll('[id^="filter-"]').forEach(b => b.classList.remove('btn-gold')); document.getElementById(`filter-${f}`).classList.add('btn-gold'); renderClubs(f); }
+    
     function renderClubs(f) {
       const container = document.getElementById('clubsContainer'); const apps = f === 'ALL' ? allClubApps : allClubApps.filter(a => a.status === f); container.innerHTML = '';
       if (!apps.length) { container.innerHTML = '<div class="empty-state">No apps found.</div>'; return; }
       apps.forEach(a => {
         const card = document.createElement('div'); card.className = 'data-card club-card'; const badge = a.status === 'PENDING' ? 'badge-pending' : a.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected';
-        card.innerHTML = `<div><div class="label">User</div><div class="data-display">${a.user_email}</div></div><div><div class="label">Club</div><div class="data-display">${a.club_name}</div></div><div><div class="label">Status</div><span class="badge ${badge}">${a.status}</span></div><div style="display:flex; flex-direction:column; gap:0.4rem;">${a.status === 'PENDING' ? `<button class="btn btn-green btn-sm" onclick="reviewClub(${a.id}, 'APPROVED', this)">Approve</button><button class="btn btn-red btn-sm" onclick="reviewClub(${a.id}, 'REJECTED', this)">Reject</button>` : '<span style="font-size:10px;">Reviewed</span>'}</div>`;
+        card.innerHTML = `
+          <div><div class="label">User</div><div class="data-display">${a.user_email}</div></div>
+          <div><div class="label">Club</div><div class="data-display">${a.club_name}</div></div>
+          <div><div class="label">Status</div><span class="badge ${badge}">${a.status}</span></div>
+          <div style="display:flex; flex-direction:column; gap:0.4rem;">
+            ${a.status === 'PENDING' ? `
+              <button class="btn btn-green btn-sm" onclick="reviewClub(${a.id}, 'APPROVED', this)">Approve</button>
+              <button class="btn btn-red btn-sm" onclick="reviewClub(${a.id}, 'REJECTED', this)">Reject</button>
+            ` : ''}
+            ${a.status === 'REJECTED' ? `
+              <button class="btn btn-ghost btn-sm" onclick="revertClub(${a.id}, this)">Undo Rejection</button>
+            ` : ''}
+            ${a.status === 'APPROVED' ? `
+              <span style="font-size:10px; color:var(--accent-green); text-transform:uppercase;">Approved</span>
+            ` : ''}
+          </div>
+        `;
         container.appendChild(card);
       });
     }
-    async function reviewClub(id, status, btn) { const note = status === 'REJECTED' ? prompt('Note:') : null; btn.textContent = '...'; const res = await apiFetch(`${API_URL}/admin/club-applications/review`, { method: 'POST', body: JSON.stringify({ application_id: id, status, admin_note: note }) }); if (res.ok) loadClubs('ALL'); }
+    
+    async function reviewClub(id, status, btn) { 
+      const note = status === 'REJECTED' ? prompt('Note:') : null; 
+      btn.textContent = '...'; 
+      const res = await apiFetch(`${API_URL}/admin/club-applications/review`, { method: 'POST', body: JSON.stringify({ application_id: id, status, admin_note: note }) }); 
+      if (res.ok) loadClubs('ALL'); 
+    }
 
-    // ROSTER
+    async function revertClub(id, btn) {
+      if (!confirm('Undo rejection and move back to PENDING?')) return;
+      btn.textContent = '...'; btn.disabled = true;
+      const res = await apiFetch(`${API_URL}/admin/club-applications/${id}/revert`, { method: 'PATCH' });
+      if (res && res.ok) { loadClubs('ALL'); filterClubs('ALL'); }
+      else { btn.textContent = 'Undo Rejection'; btn.disabled = false; alert('Failed to revert.'); }
+    }
+
+    // ── ROSTER ──
     async function loadRoster() {
       const container = document.getElementById('rosterContainer'); const res = await apiFetch(`${API_URL}/admin/users`); const users = await res.json(); container.innerHTML = '';
       users.forEach((u, i) => {
