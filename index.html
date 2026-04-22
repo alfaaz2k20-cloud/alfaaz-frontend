@@ -1825,97 +1825,207 @@
 
   <script>
     // ========================================
-    // LIVE NOTICES — pulls active events + exhibition config from API
+    // LIVE NOTICES — with wake-ping, retry backoff, and animated loading state
     // ========================================
-    (async function loadLiveNotices() {
+    (function() {
       const API = "https://alfaaz-project.onrender.com";
-      const grid = document.getElementById('noticesGrid');
-      if (!grid) return;
 
-      const cards = [];
+      // ── Helpers ──────────────────────────────────────────────────────────
 
-      try {
-        // 1. Fetch active standard events
-        const evRes = await fetch(`${API}/events/active`);
-        if (evRes.ok) {
-          const events = await evRes.json();
-          events.forEach(e => {
-            const capText = e.capacity === 0
-              ? 'Open registration'
-              : e.full
-                ? 'At capacity'
-                : `${e.spots_left} spot${e.spots_left === 1 ? '' : 's'} remaining`;
-            const isLoggedIn = !!localStorage.getItem('alfaaz_token');
-            cards.push({
-              tag: 'EVENT',
-              tagColor: 'var(--accent-green)',
-              date: e.event_date || 'Date TBD',
-              title: e.name,
-              body: (e.description ? e.description + ' — ' : '') + capText + '.',
-              link: e.full ? null : (isLoggedIn ? 'dashboard.html' : 'login.html'),
-              linkLabel: e.full ? null : (isLoggedIn ? 'Secure Clearance →' : 'Login to Register →'),
-              disabled: e.full,
-            });
+      // fetchWithTimeout: wraps fetch with a hard timeout
+      function fetchWithTimeout(url, opts = {}, ms = 12000) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), ms);
+        return fetch(url, { ...opts, signal: controller.signal })
+          .finally(() => clearTimeout(timer));
+      }
+
+      // sleep helper
+      const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+      // Animated dot counter shown while waiting for cold-start
+      let dotFrame = null;
+      function showWaking(grid) {
+        let dots = 0;
+        const loadingCard = document.getElementById('noticeLoading');
+        const dateEl  = loadingCard ? loadingCard.querySelector('.update-date') : null;
+        const textEl  = loadingCard ? loadingCard.querySelector('.update-text') : null;
+        if (dateEl) dateEl.style.opacity = '0.6';
+        dotFrame = setInterval(() => {
+          dots = (dots + 1) % 4;
+          if (dateEl) dateEl.textContent = 'Waking the server' + '.'.repeat(dots + 1);
+          if (textEl) textEl.textContent  = 'The server may be in sleep mode — this takes up to 30 seconds on first load.';
+          if (textEl) textEl.style.opacity = '0.4';
+          if (textEl) textEl.style.fontSize = '11px';
+        }, 500);
+      }
+      function stopWaking() {
+        if (dotFrame) { clearInterval(dotFrame); dotFrame = null; }
+      }
+
+      // Render cards into the grid
+      function renderCards(grid, cards) {
+        grid.innerHTML = '';
+        if (!cards.length) {
+          grid.innerHTML = `
+            <div class="update-card fade-in">
+              <p class="update-date">Alfaaz Collective</p>
+              <p class="update-text">No active events at the moment — follow
+                <a href="https://www.instagram.com/alfaaz.2020" target="_blank"
+                   style="color:var(--accent-gold);">@alfaaz.2020</a> for announcements.
+              </p>
+            </div>`;
+        } else {
+          cards.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'update-card fade-in';
+            div.innerHTML = `
+              <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border:1px solid ${c.tagColor};color:${c.tagColor};opacity:${c.disabled?'0.5':'1'};">${c.tag}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:${c.tagColor};text-transform:uppercase;${c.disabled?'opacity:0.5;':''}">${c.date}</span>
+              </div>
+              <p class="update-text" style="${c.disabled?'opacity:0.5;':''}">${c.title}</p>
+              ${c.body ? `<p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-secondary);line-height:1.6;margin-top:0.5rem;${c.disabled?'opacity:0.5;':''}">${c.body}</p>` : ''}
+              ${c.link && !c.disabled ? `<a href="${c.link}" style="display:inline-block;margin-top:0.75rem;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${c.tagColor};text-decoration:none;border-bottom:1px solid ${c.tagColor};padding-bottom:1px;">${c.linkLabel}</a>` : ''}
+            `;
+            grid.appendChild(div);
           });
         }
-      } catch (_) { /* non-critical — API may be sleeping */ }
-
-      try {
-        // 2. Fetch exhibition config
-        const exRes = await fetch(`${API}/exhibitions/config`);
-        if (exRes.ok) {
-          const cfg = await exRes.json();
-          if (cfg.is_open) {
-            cards.push({
-              tag: 'EXHIBITION',
-              tagColor: 'var(--accent-gold)',
-              date: cfg.date_text || 'Dates TBD',
-              title: cfg.title || 'Upcoming Exhibition',
-              body: cfg.about_text
-                ? cfg.about_text.substring(0, 120) + (cfg.about_text.length > 120 ? '…' : '')
-                : 'Applications now open. Submit your portfolio for curatorial review.',
-              link: 'exhibition.html',
-              linkLabel: 'Apply Now →',
-              disabled: false,
-            });
-          }
-        }
-      } catch (_) { /* non-critical */ }
-
-      // Clear loading state
-      grid.innerHTML = '';
-
-      if (!cards.length) {
-        // Fallback: show a generic static notice if no live data
-        grid.innerHTML = `
-          <div class="update-card fade-in">
-            <p class="update-date">Alfaaz Collective</p>
-            <p class="update-text">No active events at the moment — follow <a href="https://www.instagram.com/alfaaz.2020" target="_blank" style="color:var(--accent-gold);">@alfaaz.2020</a> for announcements.</p>
-          </div>`;
-      } else {
-        cards.forEach(c => {
-          const div = document.createElement('div');
-          div.className = 'update-card fade-in';
-          div.innerHTML = `
-            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.75rem;">
-              <span style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; padding:2px 8px; border:1px solid ${c.tagColor}; color:${c.tagColor}; opacity:${c.disabled ? '0.5' : '1'};">${c.tag}</span>
-              <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2px; color:${c.tagColor}; text-transform:uppercase; ${c.disabled ? 'opacity:0.5;' : ''}">${c.date}</span>
-            </div>
-            <p class="update-text" style="${c.disabled ? 'opacity:0.5;' : ''}">${c.title}</p>
-            ${c.body ? `<p style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-secondary); line-height:1.6; margin-top:0.5rem; ${c.disabled ? 'opacity:0.5;' : ''}">${c.body}</p>` : ''}
-            ${c.link && !c.disabled ? `<a href="${c.link}" style="display:inline-block; margin-top:0.75rem; font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:${c.tagColor}; text-decoration:none; border-bottom:1px solid ${c.tagColor}; padding-bottom:1px; transition:opacity 0.2s;">${c.linkLabel}</a>` : ''}
-          `;
-          grid.appendChild(div);
+        // Trigger fade-in for visible cards
+        grid.querySelectorAll('.fade-in').forEach(el => {
+          if (el.getBoundingClientRect().top < window.innerHeight)
+            el.classList.add('visible');
         });
       }
 
-      // Re-run fade-in observer on new cards
-      const newFadeEls = grid.querySelectorAll('.fade-in');
-      newFadeEls.forEach(el => {
-        if (el.getBoundingClientRect().top < window.innerHeight) {
-          el.classList.add('visible');
+      function showRetryButton(grid) {
+        grid.innerHTML = `
+          <div class="update-card fade-in visible" style="grid-column:1/-1;text-align:center;">
+            <p class="update-date" style="color:var(--accent-red);opacity:0.8;">Server Unreachable</p>
+            <p class="update-text" style="font-size:1rem;opacity:0.6;margin-bottom:1rem;">Could not load live updates.</p>
+            <button onclick="window.__retryNotices()" style="background:transparent;border:1px solid var(--accent-gold);color:var(--accent-gold);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:0.6rem 1.5rem;cursor:pointer;transition:all 0.2s ease;" onmouseover="this.style.background='var(--accent-gold)';this.style.color='var(--bg-primary)'" onmouseout="this.style.background='transparent';this.style.color='var(--accent-gold)'">
+              Retry
+            </button>
+          </div>`;
+      }
+
+      // ── Core fetch logic ─────────────────────────────────────────────────
+
+      async function fetchNotices() {
+        const cards = [];
+        const isLoggedIn = !!localStorage.getItem('alfaaz_token');
+
+        // Run both fetches in parallel — each has its own 12s timeout
+        const [evResult, exResult] = await Promise.allSettled([
+          fetchWithTimeout(`${API}/events/active`, {}, 12000),
+          fetchWithTimeout(`${API}/exhibitions/config`, {}, 12000),
+        ]);
+
+        // Events
+        if (evResult.status === 'fulfilled' && evResult.value.ok) {
+          try {
+            const events = await evResult.value.json();
+            events.forEach(e => {
+              const capText = e.capacity === 0
+                ? 'Open registration'
+                : e.full ? 'At capacity'
+                : `${e.spots_left} spot${e.spots_left === 1 ? '' : 's'} remaining`;
+              cards.push({
+                tag: 'EVENT', tagColor: 'var(--accent-green)',
+                date: e.event_date || 'Date TBD', title: e.name,
+                body: (e.description ? e.description + ' — ' : '') + capText + '.',
+                link: e.full ? null : (isLoggedIn ? 'dashboard.html' : 'login.html'),
+                linkLabel: e.full ? null : (isLoggedIn ? 'Secure Clearance →' : 'Login to Register →'),
+                disabled: e.full,
+              });
+            });
+          } catch (_) {}
         }
-      });
+
+        // Exhibition config
+        if (exResult.status === 'fulfilled' && exResult.value.ok) {
+          try {
+            const cfg = await exResult.value.json();
+            if (cfg.is_open) {
+              cards.push({
+                tag: 'EXHIBITION', tagColor: 'var(--accent-gold)',
+                date: cfg.date_text || 'Dates TBD',
+                title: cfg.title || 'Upcoming Exhibition',
+                body: cfg.about_text
+                  ? cfg.about_text.substring(0, 120) + (cfg.about_text.length > 120 ? '…' : '')
+                  : 'Applications now open. Submit your portfolio for curatorial review.',
+                link: 'exhibition.html', linkLabel: 'Apply Now →', disabled: false,
+              });
+            }
+          } catch (_) {}
+        }
+
+        // Both failed = throw so the retry loop kicks in
+        if (evResult.status === 'rejected' && exResult.status === 'rejected') {
+          throw new Error('both_failed');
+        }
+
+        return cards;
+      }
+
+      // ── Main: ping → fetch with up to 3 retries ───────────────────────
+
+      async function loadLiveNotices() {
+        const grid = document.getElementById('noticesGrid');
+        if (!grid) return;
+
+        showWaking(grid);
+
+        // Step 1: Wake the server with /ping (fast, light endpoint)
+        // Give it up to 35s — Render cold starts can take that long
+        let awake = false;
+        for (let attempt = 0; attempt < 4; attempt++) {
+          try {
+            const pong = await fetchWithTimeout(`${API}/ping`, {}, 9000);
+            if (pong.ok) { awake = true; break; }
+          } catch (_) {}
+          if (attempt < 3) await sleep(3000); // wait 3s between ping attempts
+        }
+
+        stopWaking();
+
+        if (!awake) {
+          // Server is genuinely down — show retry button
+          showRetryButton(grid);
+          return;
+        }
+
+        // Step 2: Now fetch the actual data (server is awake, should be fast)
+        let cards = [];
+        let succeeded = false;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          try {
+            cards = await fetchNotices();
+            succeeded = true;
+            break;
+          } catch (_) {
+            if (attempt < 2) await sleep(2000);
+          }
+        }
+
+        if (!succeeded) {
+          showRetryButton(grid);
+          return;
+        }
+
+        renderCards(grid, cards);
+      }
+
+      // Expose retry globally for the retry button
+      window.__retryNotices = function() {
+        const grid = document.getElementById('noticesGrid');
+        if (grid) {
+          grid.innerHTML = `<div class="update-card fade-in visible" id="noticeLoading" style="grid-column:1/-1;"><p class="update-date" style="opacity:0.4;">Scanning transmissions...</p><p class="update-text" style="opacity:0.4;">—</p></div>`;
+        }
+        loadLiveNotices();
+      };
+
+      loadLiveNotices();
     })();
   </script>
 </body>
