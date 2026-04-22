@@ -359,5 +359,57 @@
       }
     });
   </script>
+  <script src="api.js"></script>
+
+<script>
+    // Make sure your form in the HTML has id="loginForm"
+    // and your button has id="submitBtn"
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Stop the page from reloading
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const emailInput = document.getElementById('email').value;
+        const passwordInput = document.getElementById('password').value;
+
+        // Visual feedback: Lock the button and change text
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Accessing the Vault...";
+
+        // If it takes more than 5 seconds, warn the user about the cold start
+        const coldStartWarningId = setTimeout(() => {
+            submitBtn.innerText = "Waking up the Vault... this may take up to 30 seconds.";
+        }, 5000);
+
+        try {
+            // Use the fetchWithRetry function from api.js
+            const response = await fetchWithRetry("https://your-render-url.onrender.com/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: emailInput, password: passwordInput })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Success! Save the JWT token so the user stays logged in
+                localStorage.setItem("alfaaz_token", data.token);
+                
+                // Redirect to the dashboard or index page
+                window.location.href = "index.html"; 
+            } else {
+                // Handle normal errors (wrong password, etc.)
+                alert(data.detail || "Login failed.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Transmission failed. The server is unreachable.");
+        } finally {
+            // Clean up: stop the timer, unlock the button, reset text
+            clearTimeout(coldStartWarningId);
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Enter Vault"; // Or whatever your original text was
+        }
+    });
+</script>
 </body>
 </html>
