@@ -1171,7 +1171,7 @@
   <!-- Social Sidebar -->
   <div class="social-sidebar">
     <a href="https://www.instagram.com/alfaaz.2020" target="_blank" class="social-link magnetic">Instagram</a>
-    <a href="/cdn-cgi/l/email-protection#f594999394948fc79ec7c5b59298949c99db969a98" class="social-link magnetic">Email</a>
+    <a href="/cdn-cgi/l/email-protection#5534393334342f673e6765153238343c397b363a38" class="social-link magnetic">Email</a>
     <a href="https://wa.me/917006613891" target="_blank" class="social-link magnetic">WhatsApp</a>
   </div>
 
@@ -1224,10 +1224,10 @@
         <h2 class="section-title">Notices</h2>
       </div>
       <div id="noticesGrid" class="updates-grid">
-        <!-- Populated dynamically by JS — static fallback cards shown while loading -->
-        <div class="update-card fade-in" id="noticeLoading" style="grid-column: 1 / -1;">
-          <p class="update-date" style="opacity:0.4;">Scanning transmissions...</p>
-          <p class="update-text" style="opacity:0.4;">—</p>
+        <!-- Static fallback - always visible immediately while JS loads -->
+        <div class="update-card fade-in visible" id="noticeLoading">
+          <p class="update-date" style="color: var(--accent-gold); opacity: 0.8;">Fetching updates...</p>
+          <p class="update-text">Connecting to CDN...</p>
         </div>
       </div>
     </section>
@@ -1417,7 +1417,7 @@
     <div class="footer-content">
       <div class="footer-logo">ALFAAZ</div>
       <div class="footer-social">
-        <a href="/cdn-cgi/l/email-protection#0465686265657e366f3634446369656d682a676b69" class="magnetic">Email</a>
+        <a href="/cdn-cgi/l/email-protection#e1808d8780809bd38ad3d1a1868c80888dcf828e8c" class="magnetic">Email</a>
         <a href="https://www.instagram.com/alfaaz.2020" target="_blank" class="magnetic">Instagram</a>
         <a href="https://wa.me/917006613891" target="_blank" class="magnetic">WhatsApp</a>
       </div>
@@ -1465,40 +1465,13 @@
     });
 
     // ========================================
-    // SERVER PRE-WARM + INTEGRATED PRELOADER
+    // SIMPLE PRELOADER
     // ========================================
     const preloader = document.getElementById('loader');
     const preloaderCounter = document.getElementById('preloaderCounter');
     const preloaderLine = document.getElementById('preloaderLine');
     const preloaderStatus = document.getElementById('preloaderStatus');
     let count = 0;
-    let preloaderStarted = false;
-
-    // Preloader status messages during warming
-    const warmingMessages = [
-      'Waking server...',
-      'Establishing connection...',
-      'Almost ready...',
-      'Loading content...'
-    ];
-    let warmingIndex = 0;
-    let statusInterval = null;
-
-    function startPreloaderStatus() {
-      preloaderStatus.textContent = warmingMessages[0];
-      statusInterval = setInterval(() => {
-        warmingIndex = (warmingIndex + 1) % warmingMessages.length;
-        preloaderStatus.textContent = warmingMessages[warmingIndex];
-      }, 3000);
-    }
-
-    function stopPreloaderStatus() {
-      if (statusInterval) {
-        clearInterval(statusInterval);
-        statusInterval = null;
-      }
-      preloaderStatus.textContent = '';
-    }
 
     function updatePreloader() {
       count++;
@@ -1522,25 +1495,30 @@
       if (heroSubtitle) setTimeout(() => heroSubtitle.classList.add('visible'), 500);
     }
 
-    // Main entry point: wait for server, then animate preloader
-    async function initWithServer() {
-      // Start warming status display
-      startPreloaderStatus();
+    // Start preloader with status message
+    function startPreloader() {
+      const messages = ['Initializing...', 'Loading assets...', 'Almost there...'];
+      let idx = 0;
+      preloaderStatus.textContent = messages[0];
+      const msgInterval = setInterval(() => {
+        idx = (idx + 1) % messages.length;
+        preloaderStatus.textContent = messages[idx];
+      }, 2500);
 
-      // Wait for server to be ready (from api.js)
-      // If api.js hasn't loaded, server might already be warm or we'll handle it
-      if (typeof serverReadyPromise !== 'undefined') {
-        await serverReadyPromise;
-      }
-
-      // Stop warming status and start the counter animation
-      stopPreloaderStatus();
       preloaderLine.classList.add('animate');
       updatePreloader();
+
+      // Clear message interval when done
+      const clearIntervalWhenDone = setInterval(() => {
+        if (count >= 100) {
+          clearInterval(msgInterval);
+          clearIntervalWhenDone();
+          preloaderStatus.textContent = '';
+        }
+      }, 100);
     }
 
-    // Start the process after a brief initial delay (page resources loading)
-    setTimeout(initWithServer, 300);
+    setTimeout(startPreloader, 500);
 
     // ========================================
     // MAGNETIC EFFECT
@@ -1880,42 +1858,58 @@
 <script src="api.js"></script>
   <script>
   // ========================================
-  // LIVE NOTICES — pre-warm aware
+  // LIVE NOTICES — Cloudinary JSON (No Cold Start!)
+  // ========================================
+  // Architecture:
+  // 1. Primary: Fetch notices.json from Cloudinary (never sleeps, instant updates)
+  // 2. Fallback: localStorage cache (works even if Cloudinary fails)
+  // 3. Admin updates JSON file via Cloudinary API or dashboard
   // ========================================
   (function () {
-    const API = "https://alfaaz-project.onrender.com";
+    // Cloudinary URL - auto-updated by backend when admin saves changes
+    const CLOUDINARY_NOTICES_URL = 'https://res.cloudinary.com/dmqwjpmjk/raw/upload/alfaaz/notices.json';
 
-    // ── Loading state helpers ──────────────────────────────────────────────
-    function setLoadingMessage(msg) {
-      const el = document.querySelector('#noticeLoading .update-date');
-      if (el) el.textContent = msg;
+    const CACHE_KEY = 'alfaaz_notices_cache';
+    const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days cache validity
+    let isUpdating = false;
+
+    // ── Cache helpers ──────────────────────────────────────────────────────
+    function getCachedNotices() {
+      try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (!cached) return null;
+        const { data, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp < CACHE_TTL_MS) {
+          return data;
+        }
+      } catch (_) {}
+      return null;
     }
 
-    function showRetryButton(grid) {
-      grid.innerHTML = `
-        <div class="update-card fade-in visible" style="grid-column:1/-1;text-align:center;">
-          <p class="update-date" style="color:var(--accent-red);opacity:0.8;">Server Unreachable</p>
-          <p class="update-text" style="font-size:1rem;opacity:0.6;margin-bottom:1.25rem;">Could not load live updates after multiple attempts.</p>
-          <button onclick="window.__retryNotices()"
-            style="background:transparent;border:1px solid var(--accent-gold);color:var(--accent-gold);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:0.6rem 1.5rem;cursor:pointer;transition:all 0.2s ease;"
-            onmouseover="this.style.background='var(--accent-gold)';this.style.color='var(--bg-primary)'"
-            onmouseout="this.style.background='transparent';this.style.color='var(--accent-gold)'"
-          >[ Retry ]</button>
-        </div>`;
+    function setCachedNotices(data) {
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+          data: data,
+          timestamp: Date.now()
+        }));
+      } catch (_) {}
     }
 
     // ── Card renderer ──────────────────────────────────────────────────────
     function renderCards(grid, cards) {
       grid.innerHTML = '';
-      if (!cards.length) {
-        grid.innerHTML = `
-          <div class="update-card fade-in">
-            <p class="update-date">Alfaaz Collective</p>
-            <p class="update-text">No active events at the moment — follow
-              <a href="https://www.instagram.com/alfaaz.2020" target="_blank"
-                 style="color:var(--accent-gold);">@alfaaz.2020</a> for announcements.
-            </p>
-          </div>`;
+
+      if (!cards || !cards.length) {
+        const emptyCard = document.createElement('div');
+        emptyCard.className = 'update-card fade-in';
+        emptyCard.innerHTML = `
+          <p class="update-date">Alfaaz Collective</p>
+          <p class="update-text">No active events at the moment — follow
+            <a href="https://www.instagram.com/alfaaz.2020" target="_blank"
+               style="color:var(--accent-gold);">@alfaaz.2020</a> for announcements.
+          </p>
+        `;
+        grid.appendChild(emptyCard);
       } else {
         cards.forEach(c => {
           const div = document.createElement('div');
@@ -1932,10 +1926,65 @@
           grid.appendChild(div);
         });
       }
+
       grid.querySelectorAll('.fade-in').forEach(el => {
         if (el.getBoundingClientRect().top < window.innerHeight)
           el.classList.add('visible');
       });
+    }
+
+    // ── Parse Cloudinary JSON to cards ─────────────────────────────────────
+    function parseToCards(data) {
+      const cards = [];
+      const isLoggedIn = !!localStorage.getItem('alfaaz_token');
+
+      // Handle events array
+      if (data.events && Array.isArray(data.events)) {
+        data.events.forEach(e => {
+          const capText = e.capacity === 0
+            ? 'Open registration'
+            : e.full ? 'At capacity'
+            : `${e.spots_left} spot${e.spots_left === 1 ? '' : 's'} remaining`;
+          cards.push({
+            tag: 'EVENT', tagColor: 'var(--accent-green)',
+            date: e.event_date || 'Date TBD', title: e.name,
+            body: (e.description ? e.description + ' — ' : '') + capText + '.',
+            link: e.full ? null : (isLoggedIn ? 'dashboard.html' : 'login.html'),
+            linkLabel: e.full ? null : (isLoggedIn ? 'Secure Clearance →' : 'Login to Register →'),
+            disabled: e.full,
+          });
+        });
+      }
+
+      // Handle exhibition
+      if (data.exhibition && data.exhibition.is_open) {
+        const ex = data.exhibition;
+        cards.push({
+          tag: 'EXHIBITION', tagColor: 'var(--accent-gold)',
+          date: ex.date_text || 'Dates TBD',
+          title: ex.title || 'Upcoming Exhibition',
+          body: ex.about_text
+            ? ex.about_text.substring(0, 120) + (ex.about_text.length > 120 ? '…' : '')
+            : 'Applications now open. Submit your portfolio for curatorial review.',
+          link: 'exhibition.html', linkLabel: 'Apply Now →', disabled: false,
+        });
+      }
+
+      return cards;
+    }
+
+    // ── Fetch with timeout ─────────────────────────────────────────────────
+    async function fetchWithTimeout(url, timeoutMs = 8000) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeout);
+        return res;
+      } catch (err) {
+        clearTimeout(timeout);
+        throw err;
+      }
     }
 
     // ── Main loader ────────────────────────────────────────────────────────
@@ -1943,82 +1992,48 @@
       const grid = document.getElementById('noticesGrid');
       if (!grid) return;
 
-      setLoadingMessage('Loading notices\u2026');
-
-      const isLoggedIn = !!localStorage.getItem('alfaaz_token');
-      const cards = [];
-
-      // Use warmFetch from api.js (handles retry logic for mid-session 502/504)
-      const fetcher = (typeof warmFetch !== 'undefined') ? warmFetch : fetch;
-
-      const [evResult, exResult] = await Promise.allSettled([
-        fetcher(`${API}/events/active`),
-        fetcher(`${API}/exhibitions/config`),
-      ]);
-
-      // Process events
-      if (evResult.status === 'fulfilled' && evResult.value.ok) {
-        try {
-          const events = await evResult.value.json();
-          events.forEach(e => {
-            const capText = e.capacity === 0
-              ? 'Open registration'
-              : e.full ? 'At capacity'
-              : `${e.spots_left} spot${e.spots_left === 1 ? '' : 's'} remaining`;
-            cards.push({
-              tag: 'EVENT', tagColor: 'var(--accent-green)',
-              date: e.event_date || 'Date TBD', title: e.name,
-              body: (e.description ? e.description + ' — ' : '') + capText + '.',
-              link: e.full ? null : (isLoggedIn ? 'dashboard.html' : 'login.html'),
-              linkLabel: e.full ? null : (isLoggedIn ? 'Secure Clearance →' : 'Login to Register →'),
-              disabled: e.full,
-            });
-          });
-        } catch (_) {}
+      // 1. Show cached data immediately (instant, no waiting)
+      const cachedData = getCachedNotices();
+      if (cachedData) {
+        renderCards(grid, cachedData);
       }
 
-      // Process exhibition config
-      if (exResult.status === 'fulfilled' && exResult.value.ok) {
-        try {
-          const cfg = await exResult.value.json();
-          if (cfg.is_open) {
-            cards.push({
-              tag: 'EXHIBITION', tagColor: 'var(--accent-gold)',
-              date: cfg.date_text || 'Dates TBD',
-              title: cfg.title || 'Upcoming Exhibition',
-              body: cfg.about_text
-                ? cfg.about_text.substring(0, 120) + (cfg.about_text.length > 120 ? '\u2026' : '')
-                : 'Applications now open. Submit your portfolio for curatorial review.',
-              link: 'exhibition.html', linkLabel: 'Apply Now →', disabled: false,
-            });
-          }
-        } catch (_) {}
-      }
+      // 2. If already updating, skip
+      if (isUpdating) return;
+      isUpdating = true;
 
-      // If both hard-failed after all retries, show retry button
-      if (evResult.status === 'rejected' && exResult.status === 'rejected') {
-        showRetryButton(grid);
-        return;
-      }
+      // 3. Fetch fresh data from Cloudinary (fast CDN, no cold start!)
+      try {
+        const res = await fetchWithTimeout(CLOUDINARY_NOTICES_URL, 10000);
 
-      renderCards(grid, cards);
+        if (res.ok) {
+          const data = await res.json();
+          const freshCards = parseToCards(data);
+          setCachedNotices(freshCards);
+          renderCards(grid, freshCards);
+        }
+      } catch (err) {
+        // Cloudinary failed — keep showing cached data
+        // No error shown to user, just silent fallback
+      } finally {
+        isUpdating = false;
+      }
     }
 
-    // ── Retry button handler ───────────────────────────────────────────────
+    // ── Manual retry ──────────────────────────────────────────────────────
     window.__retryNotices = function () {
-      const grid = document.getElementById('noticesGrid');
-      if (grid) {
-        grid.innerHTML = `
-          <div class="update-card fade-in visible" id="noticeLoading" style="grid-column:1/-1;">
-            <p class="update-date" style="opacity:0.5;">Scanning transmissions\u2026</p>
-            <p class="update-text" style="opacity:0.3;">\u2014</p>
-          </div>`;
-      }
+      try {
+        localStorage.removeItem(CACHE_KEY);
+      } catch (_) {}
+      isUpdating = false;
       loadLiveNotices();
     };
 
-    // Start loading notices (server is already warm from preloader phase)
+    // ── Start loading immediately ─────────────────────────────────────────
     loadLiveNotices();
+
+    // ── Refresh every 2 minutes ───────────────────────────────────────────
+    setInterval(loadLiveNotices, 2 * 60 * 1000);
   })();
 </script>
 </body>
