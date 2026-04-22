@@ -1421,6 +1421,8 @@
     <i data-lucide="arrow-up" class="w-5 h-5"></i>
   </button>
 
+  <script src="api.js"></script>
+
   <script>
     // ========================================
     // CUSTOM CURSOR
@@ -1445,7 +1447,6 @@
     }
     animateCursor();
 
-    // Cursor hover effects
     const hoverElements = document.querySelectorAll('.magnetic, a, button, .update-card, .club-card, .feature-item');
     hoverElements.forEach(el => {
       el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
@@ -1528,7 +1529,6 @@
       const dotsContainer = document.getElementById('dots');
       let index = 0, timer = null, startX = 0, isDragging = false;
 
-      // Create dots
       for (let i = 0; i < total; i++) {
         const dot = document.createElement('button');
         dot.className = 'dot magnetic';
@@ -1634,7 +1634,6 @@
           } else {
             navbar.classList.remove('hidden');
           }
-          // Add frosted-glass backdrop once user scrolls past hero
           if (currentY > 80) {
             navbar.classList.add('scrolled');
           } else {
@@ -1681,9 +1680,38 @@
     marquee?.addEventListener('mouseleave', () => {
       marquee.style.animationPlayState = 'running';
     });
-  </script>
-  <div id="phantomMiniOverlay" style="position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; font-family: 'JetBrains Mono', monospace;">
 
+    // ========================================
+    // SMART ROUTING — session-aware nav & club button
+    // ========================================
+    (function() {
+      const isLoggedIn = !!localStorage.getItem('alfaaz_token') && !!localStorage.getItem('alfaaz_user');
+      const navLoginBtn = document.getElementById('navLoginBtn');      
+      const joinClubBtn = document.getElementById('joinClubBtn');      
+      const mobileLoginLink = document.querySelector('.mobile-only-link'); 
+
+      if (isLoggedIn) {
+        if (navLoginBtn) {
+          navLoginBtn.textContent = 'My Dashboard';
+          navLoginBtn.href = 'dashboard.html';
+          navLoginBtn.style.color = 'var(--accent-gold)';
+        }
+        if (mobileLoginLink) {
+          mobileLoginLink.textContent = 'My Dashboard';
+          mobileLoginLink.href = 'dashboard.html';
+        }
+        if (joinClubBtn) {
+          joinClubBtn.textContent = 'Apply for a Club';
+          joinClubBtn.href = 'dashboard.html';
+          joinClubBtn.style.background = 'var(--accent-gold)';
+          joinClubBtn.style.borderColor = 'var(--accent-gold)';
+          joinClubBtn.style.color = 'var(--bg-primary)';
+        }
+      }
+    })();
+  </script>
+
+  <div id="phantomMiniOverlay" style="position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; font-family: 'JetBrains Mono', monospace;">
     <div id="phantomMiniBox" style="display: none; width: 320px; background: rgba(11, 13, 23, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(230, 238, 246, 0.1); border-left: 2px solid #f8d37f; margin-bottom: 1rem; padding: 1.5rem; transform: translateY(10px); opacity: 0; transition: all 0.3s ease;">
       <div style="font-family: 'Teko', sans-serif; font-size: 1.5rem; color: #f8d37f; letter-spacing: 2px; margin-bottom: 1rem; border-bottom: 1px solid rgba(230, 238, 246, 0.1); padding-bottom: 0.5rem; line-height: 1;">THE PHANTOM</div>
       
@@ -1700,55 +1728,16 @@
   </div>
 
   <script>
-    // ========================================
-    // SMART ROUTING — session-aware nav & club button
-    // ========================================
-    (function() {
-      const isLoggedIn = !!localStorage.getItem('alfaaz_token') && !!localStorage.getItem('alfaaz_user');
-      // IDs are now set on the correct elements in the HTML
-      const navLoginBtn = document.getElementById('navLoginBtn');      // desktop nav link
-      const joinClubBtn = document.getElementById('joinClubBtn');      // clubs section CTA
-      const mobileLoginLink = document.querySelector('.mobile-only-link'); // mobile menu link
-
-      if (isLoggedIn) {
-        // Update desktop nav link → Dashboard
-        if (navLoginBtn) {
-          navLoginBtn.textContent = 'My Dashboard';
-          navLoginBtn.href = 'dashboard.html';
-          navLoginBtn.style.color = 'var(--accent-gold)';
-        }
-        // Update mobile menu link too
-        if (mobileLoginLink) {
-          mobileLoginLink.textContent = 'My Dashboard';
-          mobileLoginLink.href = 'dashboard.html';
-        }
-        // Update clubs CTA → goes straight to dashboard club panel
-        if (joinClubBtn) {
-          joinClubBtn.textContent = 'Apply for a Club';
-          joinClubBtn.href = 'dashboard.html';
-          joinClubBtn.style.background = 'var(--accent-gold)';
-          joinClubBtn.style.borderColor = 'var(--accent-gold)';
-          joinClubBtn.style.color = 'var(--bg-primary)';
-        }
-      }
-    })();
-  </script>
-
-  <script>
-    // 1. Point to your Render Backend
     const MINI_API_URL = "https://alfaaz-project.onrender.com";
     
-    // 2. Element Selection
     const pBox = document.getElementById('phantomMiniBox');
     const pOut = document.getElementById('phantomMiniOutput');
     const pIn = document.getElementById('phantomMiniInput');
     const pTrig = document.getElementById('phantomMiniTrigger');
 
-    // 3. The Toggle Animation Logic
     function togglePhantomMini() {
       if (pBox.style.display === 'none') {
         pBox.style.display = 'block';
-        // Tiny timeout to allow CSS transition to catch the opacity change
         setTimeout(() => {
           pBox.style.opacity = '1';
           pBox.style.transform = 'translateY(0)';
@@ -1771,7 +1760,6 @@
       }
     }
 
-    // 4. The Query Execution
     pIn.addEventListener('keypress', async (e) => {
       if (e.key === 'Enter') {
         const query = pIn.value.trim();
@@ -1779,93 +1767,112 @@
 
         pIn.value = '';
         
-        // Clear initial text
         if (pOut.innerHTML.includes("Whisper your query")) {
           pOut.innerHTML = '';
         }
 
-        // Add User Query
         pOut.innerHTML += `<div><span style="color: #a0aec0; opacity: 0.5;">> </span> <span style="opacity: 0.8;">${query}</span></div>`;
         
-        // Add Loading Indicator
         const loadId = 'load-' + Date.now();
         pOut.innerHTML += `<div id="${loadId}" style="color: #f8d37f; font-size: 10px;">[CONSULTING_VOID...]</div>`;
         pOut.scrollTop = pOut.scrollHeight;
 
-        // Fetch from Backend
+        const coldStartWarningId = setTimeout(() => {
+          const loadEl = document.getElementById(loadId);
+          if (loadEl) loadEl.innerHTML = '[WAKING_THE_VOID_SERVER... THIS_MAY_TAKE_30S]';
+        }, 5000);
+
         try {
-          const response = await fetch(`${MINI_API_URL}/phantom/ask`, {
+          if (typeof fetchWithRetry === 'undefined') {
+            throw new Error("api_missing");
+          }
+
+          const response = await fetchWithRetry(`${MINI_API_URL}/phantom/ask`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: query })
           });
           
-          document.getElementById(loadId).remove();
+          clearTimeout(coldStartWarningId);
+          if (document.getElementById(loadId)) document.getElementById(loadId).remove();
           
           if (response.ok) {
             const data = await response.json();
             pOut.innerHTML += `<div style="color: #f8d37f; border-left: 1px solid rgba(248, 211, 127, 0.3); padding-left: 10px; margin-bottom: 8px;">${data.answer}</div>`;
           } else if (response.status === 429) {
-            pOut.innerHTML += `<div style="color: #f8d37f; font-size: 10px; opacity: 0.7;">[TRANSMISSION LIMIT REACHED — The Phantom needs silence. Try again shortly.]</div>`;
+            pOut.innerHTML += `<div style="color: #f8d37f; font-size: 10px; opacity: 0.7;">[TRANSMISSION LIMIT REACHED — Try again shortly.]</div>`;
           } else {
             pOut.innerHTML += `<div style="color: #ff5555; font-size: 10px;">[ERROR: SIGNAL REJECTED]</div>`;
           }
         } catch (error) {
+          console.error("Phantom Error:", error);
+          clearTimeout(coldStartWarningId);
           if(document.getElementById(loadId)) document.getElementById(loadId).remove();
-          pOut.innerHTML += `<div style="color: #ff5555; font-size: 10px;">[ERROR: SERVER OFFLINE]</div>`;
+          
+          if (error.message === "api_missing") {
+            pOut.innerHTML += `<div style="color: #ff5555; font-size: 10px;">[CRITICAL ERROR: api.js file is missing or not linked properly.]</div>`;
+          } else {
+            pOut.innerHTML += `<div style="color: #ff5555; font-size: 10px;">[ERROR: SERVER OFFLINE OR UNREACHABLE]</div>`;
+          }
         }
         pOut.scrollTop = pOut.scrollHeight;
       }
     });
 
-    // Hover effect for input
     pIn.addEventListener('focus', () => { pIn.style.borderColor = '#f8d37f'; });
     pIn.addEventListener('blur', () => { pIn.style.borderColor = 'rgba(230, 238, 246, 0.1)'; });
   </script>
 
   <script>
-    // ========================================
-    // LIVE NOTICES — with wake-ping, retry backoff, and animated loading state
-    // ========================================
     (function() {
       const API = "https://alfaaz-project.onrender.com";
 
-      // ── Helpers ──────────────────────────────────────────────────────────
-
-      // fetchWithTimeout: wraps fetch with a hard timeout
-      function fetchWithTimeout(url, opts = {}, ms = 12000) {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), ms);
-        return fetch(url, { ...opts, signal: controller.signal })
-          .finally(() => clearTimeout(timer));
-      }
-
-      // sleep helper
-      const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-      // Animated dot counter shown while waiting for cold-start
+      // ── UI Helpers ──────────────────────────────────────────────────────────
       let dotFrame = null;
-      function showWaking(grid) {
+      function showWaking() {
+        const grid = document.getElementById('noticesGrid');
+        if (!grid) return;
+        
         let dots = 0;
         const loadingCard = document.getElementById('noticeLoading');
         const dateEl  = loadingCard ? loadingCard.querySelector('.update-date') : null;
         const textEl  = loadingCard ? loadingCard.querySelector('.update-text') : null;
+        
         if (dateEl) dateEl.style.opacity = '0.6';
+        if (textEl) {
+          textEl.style.opacity = '0.4';
+          textEl.style.fontSize = '11px';
+        }
+        
         dotFrame = setInterval(() => {
           dots = (dots + 1) % 4;
-          if (dateEl) dateEl.textContent = 'Waking the server' + '.'.repeat(dots + 1);
-          if (textEl) textEl.textContent  = 'The server may be in sleep mode — this takes up to 30 seconds on first load.';
-          if (textEl) textEl.style.opacity = '0.4';
-          if (textEl) textEl.style.fontSize = '11px';
+          if (dateEl) dateEl.textContent = 'Waking the server' + '.'.repeat(dots);
+          if (textEl) textEl.textContent  = 'The vault is unlocking. This usually takes around 30 to 45 seconds...';
         }, 500);
       }
+
       function stopWaking() {
         if (dotFrame) { clearInterval(dotFrame); dotFrame = null; }
       }
 
-      // Render cards into the grid
-      function renderCards(grid, cards) {
+      function showRetryButton() {
+        const grid = document.getElementById('noticesGrid');
+        if (!grid) return;
+        grid.innerHTML = `
+          <div class="update-card fade-in visible" style="grid-column:1/-1;text-align:center;">
+            <p class="update-date" style="color:var(--accent-red);opacity:0.8;">Server Unreachable</p>
+            <p class="update-text" style="font-size:1rem;opacity:0.6;margin-bottom:1rem;">Could not load live updates.</p>
+            <button onclick="window.__retryNotices()" style="background:transparent;border:1px solid var(--accent-gold);color:var(--accent-gold);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:0.6rem 1.5rem;cursor:pointer;transition:all 0.2s ease;" onmouseover="this.style.background='var(--accent-gold)';this.style.color='var(--bg-primary)'" onmouseout="this.style.background='transparent';this.style.color='var(--accent-gold)'">
+              Retry
+            </button>
+          </div>`;
+      }
+
+      function renderCards(cards) {
+        const grid = document.getElementById('noticesGrid');
+        if (!grid) return;
         grid.innerHTML = '';
+        
         if (!cards.length) {
           grid.innerHTML = `
             <div class="update-card fade-in">
@@ -1891,132 +1898,71 @@
             grid.appendChild(div);
           });
         }
-        // Trigger fade-in for visible cards
         grid.querySelectorAll('.fade-in').forEach(el => {
-          if (el.getBoundingClientRect().top < window.innerHeight)
-            el.classList.add('visible');
+          if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
         });
       }
 
-      function showRetryButton(grid) {
-        grid.innerHTML = `
-          <div class="update-card fade-in visible" style="grid-column:1/-1;text-align:center;">
-            <p class="update-date" style="color:var(--accent-red);opacity:0.8;">Server Unreachable</p>
-            <p class="update-text" style="font-size:1rem;opacity:0.6;margin-bottom:1rem;">Could not load live updates.</p>
-            <button onclick="window.__retryNotices()" style="background:transparent;border:1px solid var(--accent-gold);color:var(--accent-gold);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:0.6rem 1.5rem;cursor:pointer;transition:all 0.2s ease;" onmouseover="this.style.background='var(--accent-gold)';this.style.color='var(--bg-primary)'" onmouseout="this.style.background='transparent';this.style.color='var(--accent-gold)'">
-              Retry
-            </button>
-          </div>`;
-      }
+      // ── Core Fetch Logic ─────────────────────────────────────────────────
+      async function loadLiveNotices() {
+        showWaking();
 
-      // ── Core fetch logic ─────────────────────────────────────────────────
+        try {
+          if (typeof fetchWithRetry === 'undefined') {
+            throw new Error("api_missing");
+          }
 
-      async function fetchNotices() {
-        const cards = [];
-        const isLoggedIn = !!localStorage.getItem('alfaaz_token');
+          // 1. Wake the server using the shared retry engine (up to 40 seconds)
+          await fetchWithRetry(`${API}/ping`, {}, 8, 5000);
+          
+          stopWaking();
 
-        // Run both fetches in parallel — each has its own 12s timeout
-        const [evResult, exResult] = await Promise.allSettled([
-          fetchWithTimeout(`${API}/events/active`, {}, 12000),
-          fetchWithTimeout(`${API}/exhibitions/config`, {}, 12000),
-        ]);
+          // 2. The server is awake! Now fetch the actual data in parallel.
+          const isLoggedIn = !!localStorage.getItem('alfaaz_token');
+          const cards = [];
 
-        // Events
-        if (evResult.status === 'fulfilled' && evResult.value.ok) {
-          try {
+          const [evResult, exResult] = await Promise.allSettled([
+            fetch(`${API}/events/active`),
+            fetch(`${API}/exhibitions/config`)
+          ]);
+
+          // Process Events
+          if (evResult.status === 'fulfilled' && evResult.value.ok) {
             const events = await evResult.value.json();
             events.forEach(e => {
-              const capText = e.capacity === 0
-                ? 'Open registration'
-                : e.full ? 'At capacity'
-                : `${e.spots_left} spot${e.spots_left === 1 ? '' : 's'} remaining`;
+              const capText = e.capacity === 0 ? 'Open registration' : e.full ? 'At capacity' : `${e.spots_left} spot${e.spots_left === 1 ? '' : 's'} remaining`;
               cards.push({
-                tag: 'EVENT', tagColor: 'var(--accent-green)',
-                date: e.event_date || 'Date TBD', title: e.name,
+                tag: 'EVENT', tagColor: 'var(--accent-green)', date: e.event_date || 'Date TBD', title: e.name,
                 body: (e.description ? e.description + ' — ' : '') + capText + '.',
                 link: e.full ? null : (isLoggedIn ? 'dashboard.html' : 'login.html'),
                 linkLabel: e.full ? null : (isLoggedIn ? 'Secure Clearance →' : 'Login to Register →'),
                 disabled: e.full,
               });
             });
-          } catch (_) {}
-        }
+          }
 
-        // Exhibition config
-        if (exResult.status === 'fulfilled' && exResult.value.ok) {
-          try {
+          // Process Exhibition
+          if (exResult.status === 'fulfilled' && exResult.value.ok) {
             const cfg = await exResult.value.json();
             if (cfg.is_open) {
               cards.push({
-                tag: 'EXHIBITION', tagColor: 'var(--accent-gold)',
-                date: cfg.date_text || 'Dates TBD',
-                title: cfg.title || 'Upcoming Exhibition',
-                body: cfg.about_text
-                  ? cfg.about_text.substring(0, 120) + (cfg.about_text.length > 120 ? '…' : '')
-                  : 'Applications now open. Submit your portfolio for curatorial review.',
+                tag: 'EXHIBITION', tagColor: 'var(--accent-gold)', date: cfg.date_text || 'Dates TBD', title: cfg.title || 'Upcoming Exhibition',
+                body: cfg.about_text ? cfg.about_text.substring(0, 120) + (cfg.about_text.length > 120 ? '…' : '') : 'Applications now open.',
                 link: 'exhibition.html', linkLabel: 'Apply Now →', disabled: false,
               });
             }
-          } catch (_) {}
-        }
-
-        // Both failed = throw so the retry loop kicks in
-        if (evResult.status === 'rejected' && exResult.status === 'rejected') {
-          throw new Error('both_failed');
-        }
-
-        return cards;
-      }
-
-      // ── Main: ping → fetch with up to 3 retries ───────────────────────
-
-      async function loadLiveNotices() {
-        const grid = document.getElementById('noticesGrid');
-        if (!grid) return;
-
-        showWaking(grid);
-
-        // Step 1: Wake the server with /ping (fast, light endpoint)
-        // Give it up to 35s — Render cold starts can take that long
-        let awake = false;
-        for (let attempt = 0; attempt < 4; attempt++) {
-          try {
-            const pong = await fetchWithTimeout(`${API}/ping`, {}, 9000);
-            if (pong.ok) { awake = true; break; }
-          } catch (_) {}
-          if (attempt < 3) await sleep(3000); // wait 3s between ping attempts
-        }
-
-        stopWaking();
-
-        if (!awake) {
-          // Server is genuinely down — show retry button
-          showRetryButton(grid);
-          return;
-        }
-
-        // Step 2: Now fetch the actual data (server is awake, should be fast)
-        let cards = [];
-        let succeeded = false;
-        for (let attempt = 0; attempt < 3; attempt++) {
-          try {
-            cards = await fetchNotices();
-            succeeded = true;
-            break;
-          } catch (_) {
-            if (attempt < 2) await sleep(2000);
           }
-        }
 
-        if (!succeeded) {
-          showRetryButton(grid);
-          return;
-        }
+          renderCards(cards);
 
-        renderCards(grid, cards);
+        } catch (error) {
+          stopWaking();
+          console.error("Live Notices Error:", error);
+          showRetryButton();
+        }
       }
 
-      // Expose retry globally for the retry button
+      // Expose retry globally for the button click
       window.__retryNotices = function() {
         const grid = document.getElementById('noticesGrid');
         if (grid) {
@@ -2025,6 +1971,7 @@
         loadLiveNotices();
       };
 
+      // Start the sequence on load
       loadLiveNotices();
     })();
   </script>
