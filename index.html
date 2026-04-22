@@ -14,7 +14,8 @@
   <meta property="og:title" content="Alfaaz — Collective of Art" />
   <meta property="og:description" content="Celebrating art and literature from the valley — exhibitions, clubs and curated shows by Alfaaz." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://placehold.co/1200x630/0b0d17/f8d37f?text=Alfaaz" />
+  <meta property="og:url" content="https://alfaazcollective.vercel.app" />
+  <meta property="og:image" content="https://res.cloudinary.com/dmqwjpmjk/image/upload/v1761507594/portal-bg_oribvr.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
 
   <script type="application/ld+json">
@@ -22,8 +23,8 @@
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Alfaaz",
-    "url": "https://alfaazcollective.neocities.org",
-    "logo": "https://placehold.co/1200x630/0b0d17/f8d37f?text=Alfaaz",
+    "url": "https://alfaazcollective.vercel.app",
+    "logo": "https://res.cloudinary.com/dmqwjpmjk/image/upload/v1761507594/portal-bg_oribvr.jpg",
     "description": "A collective of art, literature & culture from the valley. Exhibitions and curated community events."
   }
   </script>
@@ -233,10 +234,19 @@
       align-items: center;
       z-index: 1000;
       mix-blend-mode: normal;
-      transition: transform 0.4s var(--transition-smooth);
+      transition: transform 0.4s var(--transition-smooth), background 0.4s ease, backdrop-filter 0.4s ease, padding 0.3s ease;
     }
-    
+
     nav.hidden { transform: translateY(-100%); }
+
+    nav.scrolled {
+      background: rgba(11, 13, 23, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--grid-border);
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
 
     .logo {
       font-family: 'Teko', sans-serif;
@@ -303,6 +313,9 @@
       background: none;
       border: none;
     }
+    #menuToggle .hamburger-close { display: none; }
+    #menuToggle.active .hamburger-open { display: none; }
+    #menuToggle.active .hamburger-close { display: block; }
 
 /* ========================================
        NEW NAV ACTIONS & LOGIN STYLES
@@ -1081,6 +1094,7 @@
       .footer-content { flex-direction: column; align-items: start; gap: 2rem; }
       .footer-bottom { flex-direction: column; align-items: start; gap: 1rem; }
       #scrollToTopBtn { bottom: 2rem; right: 2rem; width: 40px; height: 40px; }
+      #phantomMiniOverlay { bottom: 5rem; right: 1rem; }
       .slider-arrow { width: 40px; height: 40px; }
     }
 
@@ -1095,7 +1109,7 @@
   <!-- Background Video -->
   <video class="bg-video" autoplay loop muted playsinline preload="auto">
     <source src="https://res.cloudinary.com/dmqwjpmjk/video/upload/v1761507594/portal-bg_oribvr.mp4" type="video/mp4">
-    <img src="https://placehold.co/1920x1080/0b0d17/f8d37f?text=Art+Inspiration" alt="Fallback background">
+    <img src="https://res.cloudinary.com/dmqwjpmjk/image/upload/v1761507594/portal-bg_oribvr.jpg" alt="Fallback background">
   </video>
   
   <!-- Video Overlay for better text readability -->
@@ -1129,7 +1143,7 @@
     </div>
 
     <div class="nav-actions">
-      <a href="login.html" class="nav-login magnetic">Login / Sign Up</a>
+      <a id="navLoginBtn" href="login.html" class="nav-login magnetic">Login / Sign Up</a>
       
       <button id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
         <i data-lucide="menu" class="w-6 h-6 hamburger-open"></i>
@@ -1204,7 +1218,7 @@
         </div>
         <div class="update-card fade-in">
           <p class="update-date">January 01, 2026</p>
-          <p class="update-text">Upcoming exhibition "Absence" — click on the link here.</p>
+          <p class="update-text">Upcoming exhibition <a href="exhibition.html" style="color:var(--accent-gold);text-decoration:underline;text-underline-offset:3px;">Absence</a> — applications now open.</p>
         </div>
       </div>
     </section>
@@ -1370,7 +1384,7 @@
         </div>
       </div>
       <div class="text-center mt-12 fade-in" id="joinClubContainer">
-        <a href="https://forms.gle/YOUR_FORM_LINK" target="_blank" class="cta-btn magnetic">Join a Club</a>
+        <a id="joinClubBtn" href="dashboard.html" class="cta-btn magnetic">Join a Club</a>
       </div>
     </section>
 
@@ -1400,7 +1414,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p class="footer-copyright">© 2025 Alfaaz Collective</p>
+      <p class="footer-copyright">© 2026 Alfaaz Collective</p>
       <p class="footer-copyright">Designed with Purpose</p>
     </div>
   </footer>
@@ -1623,6 +1637,12 @@
           } else {
             navbar.classList.remove('hidden');
           }
+          // Add frosted-glass backdrop once user scrolls past hero
+          if (currentY > 80) {
+            navbar.classList.add('scrolled');
+          } else {
+            navbar.classList.remove('scrolled');
+          }
           lastY = currentY;
           ticking = false;
         });
@@ -1659,10 +1679,10 @@
     // ========================================
     const marquee = document.querySelector('.marquee');
     marquee?.addEventListener('mouseenter', () => {
-      marquee.style.animationDuration = '60s';
+      marquee.style.animationPlayState = 'paused';
     });
     marquee?.addEventListener('mouseleave', () => {
-      marquee.style.animationDuration = '25s';
+      marquee.style.animationPlayState = 'running';
     });
   </script>
   <div id="phantomMiniOverlay" style="position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; font-family: 'JetBrains Mono', monospace;">
@@ -1688,14 +1708,24 @@
     // ========================================
     (function() {
       const isLoggedIn = !!localStorage.getItem('alfaaz_token') && !!localStorage.getItem('alfaaz_user');
-      const navLoginBtn = document.getElementById('navLoginBtn');
-      const joinClubBtn = document.getElementById('joinClubBtn');
+      // IDs are now set on the correct elements in the HTML
+      const navLoginBtn = document.getElementById('navLoginBtn');      // desktop nav link
+      const joinClubBtn = document.getElementById('joinClubBtn');      // clubs section CTA
+      const mobileLoginLink = document.querySelector('.mobile-only-link'); // mobile menu link
+
       if (isLoggedIn) {
+        // Update desktop nav link → Dashboard
         if (navLoginBtn) {
           navLoginBtn.textContent = 'My Dashboard';
           navLoginBtn.href = 'dashboard.html';
           navLoginBtn.style.color = 'var(--accent-gold)';
         }
+        // Update mobile menu link too
+        if (mobileLoginLink) {
+          mobileLoginLink.textContent = 'My Dashboard';
+          mobileLoginLink.href = 'dashboard.html';
+        }
+        // Update clubs CTA → goes straight to dashboard club panel
         if (joinClubBtn) {
           joinClubBtn.textContent = 'Apply for a Club';
           joinClubBtn.href = 'dashboard.html';
@@ -1778,6 +1808,8 @@
           if (response.ok) {
             const data = await response.json();
             pOut.innerHTML += `<div style="color: #f8d37f; border-left: 1px solid rgba(248, 211, 127, 0.3); padding-left: 10px; margin-bottom: 8px;">${data.answer}</div>`;
+          } else if (response.status === 429) {
+            pOut.innerHTML += `<div style="color: #f8d37f; font-size: 10px; opacity: 0.7;">[TRANSMISSION LIMIT REACHED — The Phantom needs silence. Try again shortly.]</div>`;
           } else {
             pOut.innerHTML += `<div style="color: #ff5555; font-size: 10px;">[ERROR: SIGNAL REJECTED]</div>`;
           }
@@ -1792,11 +1824,6 @@
     // Hover effect for input
     pIn.addEventListener('focus', () => { pIn.style.borderColor = '#f8d37f'; });
     pIn.addEventListener('blur', () => { pIn.style.borderColor = 'rgba(230, 238, 246, 0.1)'; });
-    // FORCE BROWSER TO BYPASS CACHE FOR LIVE NOTICES
-        const [eventsRes, configRes] = await Promise.all([
-            fetch('https://alfaaz-project.onrender.com/events/active', { cache: 'no-store' }),
-            fetch('https://alfaaz-project.onrender.com/exhibitions/config', { cache: 'no-store' })
-        ]);
   </script>
 </body>
 </html>
