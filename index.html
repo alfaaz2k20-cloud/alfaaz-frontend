@@ -2002,24 +2002,30 @@
       if (isUpdating) return;
       isUpdating = true;
 
-      // 3. Fetch fresh data from Cloudinary (fast CDN, no cold start!)
+      // 3. Fetch fresh data from Cloudinary
       try {
-        const res = await fetchWithTimeout(CLOUDINARY_NOTICES_URL, 10000);
+        // Added cache buster so Cloudinary doesn't serve a stale 404 error
+        const cacheBuster = new Date().getTime();
+        const res = await fetchWithTimeout(`${CLOUDINARY_NOTICES_URL}?t=${cacheBuster}`, 10000);
 
         if (res.ok) {
           const data = await res.json();
           const freshCards = parseToCards(data);
           setCachedNotices(freshCards);
           renderCards(grid, freshCards);
+        } else {
+          throw new Error("File not found on CDN yet.");
         }
       } catch (err) {
-        // Cloudinary failed — keep showing cached data
-        // No error shown to user, just silent fallback
+        // CRITICAL FIX: If Cloudinary fails AND there is no local cache, 
+        // clear the "Fetching" text and show the empty state card.
+        if (!cachedData) {
+          renderCards(grid, []);
+        }
       } finally {
         isUpdating = false;
       }
     }
-
     // ── Manual retry ──────────────────────────────────────────────────────
     window.__retryNotices = function () {
       try {
