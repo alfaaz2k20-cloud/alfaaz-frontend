@@ -1855,61 +1855,24 @@
     pIn.addEventListener('focus', () => { pIn.style.borderColor = '#f8d37f'; });
     pIn.addEventListener('blur', () => { pIn.style.borderColor = 'rgba(230, 238, 246, 0.1)'; });
   </script>
-<script src="api.js"></script>
-  <script>
+<script>
   // ========================================
-  // LIVE NOTICES — Cloudinary JSON (No Cold Start!)
-  // ========================================
-  // Architecture:
-  // 1. Primary: Fetch notices.json from Cloudinary (never sleeps, instant updates)
-  // 2. Fallback: localStorage cache (works even if Cloudinary fails)
-  // 3. Admin updates JSON file via Cloudinary API or dashboard
+  // LIVE NOTICES — Direct Neon Connection via Vercel Edge
   // ========================================
   (function () {
-    // Cloudinary URL - auto-updated by backend when admin saves changes
-    const CLOUDINARY_NOTICES_URL = 'https://res.cloudinary.com/dmqwjpmjk/raw/upload/alfaaz/notices.json';
-
-    const CACHE_KEY = 'alfaaz_notices_cache';
-    const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days cache validity
-    let isUpdating = false;
-
-    // ── Cache helpers ──────────────────────────────────────────────────────
-    function getCachedNotices() {
-      try {
-        const cached = localStorage.getItem(CACHE_KEY);
-        if (!cached) return null;
-        const { data, timestamp } = JSON.parse(cached);
-        if (Date.now() - timestamp < CACHE_TTL_MS) {
-          return data;
-        }
-      } catch (_) {}
-      return null;
-    }
-
-    function setCachedNotices(data) {
-      try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify({
-          data: data,
-          timestamp: Date.now()
-        }));
-      } catch (_) {}
-    }
-
-    // ── Card renderer ──────────────────────────────────────────────────────
+    // Render the cards dynamically
     function renderCards(grid, cards) {
       grid.innerHTML = '';
 
       if (!cards || !cards.length) {
-        const emptyCard = document.createElement('div');
-        emptyCard.className = 'update-card fade-in';
-        emptyCard.innerHTML = `
-          <p class="update-date">Alfaaz Collective</p>
-          <p class="update-text">No active events at the moment — follow
-            <a href="https://www.instagram.com/alfaaz.2020" target="_blank"
-               style="color:var(--accent-gold);">@alfaaz.2020</a> for announcements.
-          </p>
-        `;
-        grid.appendChild(emptyCard);
+        grid.innerHTML = `
+          <div class="update-card fade-in">
+            <p class="update-date">Alfaaz Collective</p>
+            <p class="update-text">No active events at the moment — follow
+              <a href="https://www.instagram.com/alfaaz.2020" target="_blank"
+                 style="color:var(--accent-gold);">@alfaaz.2020</a> for announcements.
+            </p>
+          </div>`;
       } else {
         cards.forEach(c => {
           const div = document.createElement('div');
@@ -1928,119 +1891,63 @@
       }
 
       grid.querySelectorAll('.fade-in').forEach(el => {
-        if (el.getBoundingClientRect().top < window.innerHeight)
-          el.classList.add('visible');
+        if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
       });
     }
 
-    // ── Parse Cloudinary JSON to cards ─────────────────────────────────────
+    // Convert the database JSON into UI cards
     function parseToCards(data) {
       const cards = [];
       const isLoggedIn = !!localStorage.getItem('alfaaz_token');
 
-      // Handle events array
       if (data.events && Array.isArray(data.events)) {
         data.events.forEach(e => {
-          const capText = e.capacity === 0
-            ? 'Open registration'
-            : e.full ? 'At capacity'
-            : `${e.spots_left} spot${e.spots_left === 1 ? '' : 's'} remaining`;
+          const capText = e.capacity === 0 ? 'Open registration' : e.full ? 'At capacity' : `${e.spots_left} spot${e.spots_left === 1 ? '' : 's'} remaining`;
           cards.push({
-            tag: 'EVENT', tagColor: 'var(--accent-green)',
-            date: e.event_date || 'Date TBD', title: e.name,
+            tag: 'EVENT', tagColor: 'var(--accent-green)', date: e.event_date || 'Date TBD', title: e.name,
             body: (e.description ? e.description + ' — ' : '') + capText + '.',
             link: e.full ? null : (isLoggedIn ? 'dashboard.html' : 'login.html'),
-            linkLabel: e.full ? null : (isLoggedIn ? 'Secure Clearance →' : 'Login to Register →'),
-            disabled: e.full,
+            linkLabel: e.full ? null : (isLoggedIn ? 'Secure Clearance →' : 'Login to Register →'), disabled: e.full,
           });
         });
       }
 
-      // Handle exhibition
       if (data.exhibition && data.exhibition.is_open) {
         const ex = data.exhibition;
         cards.push({
-          tag: 'EXHIBITION', tagColor: 'var(--accent-gold)',
-          date: ex.date_text || 'Dates TBD',
-          title: ex.title || 'Upcoming Exhibition',
-          body: ex.about_text
-            ? ex.about_text.substring(0, 120) + (ex.about_text.length > 120 ? '…' : '')
-            : 'Applications now open. Submit your portfolio for curatorial review.',
+          tag: 'EXHIBITION', tagColor: 'var(--accent-gold)', date: ex.date_text || 'Dates TBD', title: ex.title || 'Upcoming Exhibition',
+          body: ex.about_text ? ex.about_text.substring(0, 120) + (ex.about_text.length > 120 ? '…' : '') : 'Applications now open. Submit your portfolio for curatorial review.',
           link: 'exhibition.html', linkLabel: 'Apply Now →', disabled: false,
         });
       }
-
       return cards;
     }
 
-    // ── Fetch with timeout ─────────────────────────────────────────────────
-    async function fetchWithTimeout(url, timeoutMs = 8000) {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), timeoutMs);
-      try {
-        const res = await fetch(url, { signal: controller.signal });
-        clearTimeout(timeout);
-        return res;
-      } catch (err) {
-        clearTimeout(timeout);
-        throw err;
-      }
-    }
-
-    // ── Main loader ────────────────────────────────────────────────────────
+    // Load instantly from Vercel API
     async function loadLiveNotices() {
       const grid = document.getElementById('noticesGrid');
       if (!grid) return;
 
-      // 1. Show cached data immediately (instant, no waiting)
-      const cachedData = getCachedNotices();
-      if (cachedData) {
-        renderCards(grid, cachedData);
-      }
-
-      // 2. If already updating, skip
-      if (isUpdating) return;
-      isUpdating = true;
-
-      // 3. Fetch fresh data from Cloudinary
       try {
-        // Added cache buster so Cloudinary doesn't serve a stale 404 error
-        const cacheBuster = new Date().getTime();
-        const res = await fetchWithTimeout(`${CLOUDINARY_NOTICES_URL}?t=${cacheBuster}`, 10000);
-
+        // Fetch from the local Vercel Serverless Function
+        const res = await fetch('/api/notices');
+        
         if (res.ok) {
           const data = await res.json();
           const freshCards = parseToCards(data);
-          setCachedNotices(freshCards);
           renderCards(grid, freshCards);
         } else {
-          throw new Error("File not found on CDN yet.");
+          throw new Error("API Route Failed");
         }
       } catch (err) {
-        // CRITICAL FIX: If Cloudinary fails AND there is no local cache, 
-        // clear the "Fetching" text and show the empty state card.
-        if (!cachedData) {
-          renderCards(grid, []);
-        }
-      } finally {
-        isUpdating = false;
+        console.error("Neon Transmission failed.", err);
+        renderCards(grid, []); 
       }
     }
-    // ── Manual retry ──────────────────────────────────────────────────────
-    window.__retryNotices = function () {
-      try {
-        localStorage.removeItem(CACHE_KEY);
-      } catch (_) {}
-      isUpdating = false;
-      loadLiveNotices();
-    };
 
-    // ── Start loading immediately ─────────────────────────────────────────
+    // Start loading immediately
     loadLiveNotices();
-
-    // ── Refresh every 2 minutes ───────────────────────────────────────────
-    setInterval(loadLiveNotices, 2 * 60 * 1000);
   })();
-</script>
+  </script>
 </body>
 </html>
