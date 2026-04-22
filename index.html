@@ -1845,14 +1845,15 @@
               : e.full
                 ? 'At capacity'
                 : `${e.spots_left} spot${e.spots_left === 1 ? '' : 's'} remaining`;
+            const isLoggedIn = !!localStorage.getItem('alfaaz_token');
             cards.push({
               tag: 'EVENT',
               tagColor: 'var(--accent-green)',
               date: e.event_date || 'Date TBD',
               title: e.name,
               body: (e.description ? e.description + ' — ' : '') + capText + '.',
-              link: null,
-              linkLabel: null,
+              link: e.full ? null : (isLoggedIn ? 'dashboard.html' : 'login.html'),
+              linkLabel: e.full ? null : (isLoggedIn ? 'Secure Clearance →' : 'Login to Register →'),
               disabled: e.full,
             });
           });
