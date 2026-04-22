@@ -1824,167 +1824,184 @@
   </script>
 <script src="api.js"></script>
   <script>
-    
-    // ========================================
-    // LIVE NOTICES — uses your fetchWithRetry pattern (handles Render 502/504 cold starts)
-    // ========================================
-    (function () {
-      const API = "https://alfaaz-project.onrender.com";
+  // ========================================
+  // LIVE NOTICES — pre-warm aware
+  // ========================================
+  (function () {
+    const API = "https://alfaaz-project.onrender.com";
 
-      // ── Your battle-tested retry function, adapted for notices ──────────
-      async function fetchWithRetry(url, options = {}, maxRetries = 6, delayMs = 5000) {
-        try {
-          const response = await fetch(url, options);
-          // 502 / 504 = Render cold-starting — wait and retry
-          if ((response.status === 502 || response.status === 504) && maxRetries > 0) {
-            console.warn(`[Cold Start] Server waking. Retrying in ${delayMs / 1000}s... (${maxRetries} left)`);
-            setLoadingMessage(`Server waking up\u2026 (${7 - maxRetries}/6)`);
-            await new Promise(r => setTimeout(r, delayMs));
-            return fetchWithRetry(url, options, maxRetries - 1, delayMs);
-          }
-          return response;
-        } catch (err) {
-          if (maxRetries > 0) {
-            console.warn(`[Network Error] Retrying in ${delayMs / 1000}s... (${maxRetries} left)`);
-            setLoadingMessage(`Reconnecting\u2026 (${7 - maxRetries}/6)`);
-            await new Promise(r => setTimeout(r, delayMs));
-            return fetchWithRetry(url, options, maxRetries - 1, delayMs);
-          }
-          throw err;
-        }
-      }
+    // ── Loading state helpers ──────────────────────────────────────────────
+    function setLoadingMessage(msg) {
+      const el = document.querySelector('#noticeLoading .update-date');
+      if (el) el.textContent = msg;
+    }
 
-      // ── Loading state helpers ────────────────────────────────────────────
-      function setLoadingMessage(msg) {
-        const el = document.querySelector('#noticeLoading .update-date');
-        if (el) el.textContent = msg;
-      }
+    function showRetryButton(grid) {
+      grid.innerHTML = `
+        <div class="update-card fade-in visible" style="grid-column:1/-1;text-align:center;">
+          <p class="update-date" style="color:var(--accent-red);opacity:0.8;">Server Unreachable</p>
+          <p class="update-text" style="font-size:1rem;opacity:0.6;margin-bottom:1.25rem;">Could not load live updates after multiple attempts.</p>
+          <button onclick="window.__retryNotices()"
+            style="background:transparent;border:1px solid var(--accent-gold);color:var(--accent-gold);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:0.6rem 1.5rem;cursor:pointer;transition:all 0.2s ease;"
+            onmouseover="this.style.background='var(--accent-gold)';this.style.color='var(--bg-primary)'"
+            onmouseout="this.style.background='transparent';this.style.color='var(--accent-gold)'"
+          >[ Retry ]</button>
+        </div>`;
+    }
 
-      function showRetryButton(grid) {
+    // ── Card renderer ──────────────────────────────────────────────────────
+    function renderCards(grid, cards) {
+      grid.innerHTML = '';
+      if (!cards.length) {
         grid.innerHTML = `
-          <div class="update-card fade-in visible" style="grid-column:1/-1;text-align:center;">
-            <p class="update-date" style="color:var(--accent-red);opacity:0.8;">Server Unreachable</p>
-            <p class="update-text" style="font-size:1rem;opacity:0.6;margin-bottom:1.25rem;">Could not load live updates after multiple attempts.</p>
-            <button onclick="window.__retryNotices()"
-              style="background:transparent;border:1px solid var(--accent-gold);color:var(--accent-gold);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:0.6rem 1.5rem;cursor:pointer;transition:all 0.2s ease;"
-              onmouseover="this.style.background='var(--accent-gold)';this.style.color='var(--bg-primary)'"
-              onmouseout="this.style.background='transparent';this.style.color='var(--accent-gold)'"
-            >[ Retry ]</button>
+          <div class="update-card fade-in">
+            <p class="update-date">Alfaaz Collective</p>
+            <p class="update-text">No active events at the moment — follow
+              <a href="https://www.instagram.com/alfaaz.2020" target="_blank"
+                 style="color:var(--accent-gold);">@alfaaz.2020</a> for announcements.
+            </p>
           </div>`;
-      }
-
-      // ── Card renderer ────────────────────────────────────────────────────
-      function renderCards(grid, cards) {
-        grid.innerHTML = '';
-        if (!cards.length) {
-          grid.innerHTML = `
-            <div class="update-card fade-in">
-              <p class="update-date">Alfaaz Collective</p>
-              <p class="update-text">No active events at the moment — follow
-                <a href="https://www.instagram.com/alfaaz.2020" target="_blank"
-                   style="color:var(--accent-gold);">@alfaaz.2020</a> for announcements.
-              </p>
-            </div>`;
-        } else {
-          cards.forEach(c => {
-            const div = document.createElement('div');
-            div.className = 'update-card fade-in';
-            div.innerHTML = `
-              <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
-                <span style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border:1px solid ${c.tagColor};color:${c.tagColor};opacity:${c.disabled?'0.5':'1'};">${c.tag}</span>
-                <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:${c.tagColor};text-transform:uppercase;${c.disabled?'opacity:0.5;':''}">${c.date}</span>
-              </div>
-              <p class="update-text" style="${c.disabled?'opacity:0.5;':''}">${c.title}</p>
-              ${c.body ? `<p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-secondary);line-height:1.6;margin-top:0.5rem;${c.disabled?'opacity:0.5;':''}">${c.body}</p>` : ''}
-              ${c.link && !c.disabled ? `<a href="${c.link}" style="display:inline-block;margin-top:0.75rem;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${c.tagColor};text-decoration:none;border-bottom:1px solid ${c.tagColor};padding-bottom:1px;">${c.linkLabel}</a>` : ''}
-            `;
-            grid.appendChild(div);
-          });
-        }
-        // Trigger fade-in for cards already in view
-        grid.querySelectorAll('.fade-in').forEach(el => {
-          if (el.getBoundingClientRect().top < window.innerHeight)
-            el.classList.add('visible');
+      } else {
+        cards.forEach(c => {
+          const div = document.createElement('div');
+          div.className = 'update-card fade-in';
+          div.innerHTML = `
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border:1px solid ${c.tagColor};color:${c.tagColor};opacity:${c.disabled?'0.5':'1'};">${c.tag}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:${c.tagColor};text-transform:uppercase;${c.disabled?'opacity:0.5;':''}">${c.date}</span>
+            </div>
+            <p class="update-text" style="${c.disabled?'opacity:0.5;':''}">${c.title}</p>
+            ${c.body ? `<p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-secondary);line-height:1.6;margin-top:0.5rem;${c.disabled?'opacity:0.5;':''}">${c.body}</p>` : ''}
+            ${c.link && !c.disabled ? `<a href="${c.link}" style="display:inline-block;margin-top:0.75rem;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${c.tagColor};text-decoration:none;border-bottom:1px solid ${c.tagColor};padding-bottom:1px;">${c.linkLabel}</a>` : ''}
+          `;
+          grid.appendChild(div);
         });
       }
+      grid.querySelectorAll('.fade-in').forEach(el => {
+        if (el.getBoundingClientRect().top < window.innerHeight)
+          el.classList.add('visible');
+      });
+    }
 
-      // ── Main loader ──────────────────────────────────────────────────────
-      async function loadLiveNotices() {
-        const grid = document.getElementById('noticesGrid');
-        if (!grid) return;
+    // ── Animated status ticker ─────────────────────────────────────────────
+    // Cycles through messages while the pre-warm ping is running so the
+    // user knows something is happening rather than seeing a frozen card.
+    let _tickerTimer = null;
+    function startWarmTicker() {
+      const messages = [
+        'Waking server\u2026',
+        'Still warming up\u2026',
+        'Almost there\u2026',
+        'Fetching notices\u2026'
+      ];
+      let i = 0;
+      setLoadingMessage(messages[i]);
+      _tickerTimer = setInterval(() => {
+        i = (i + 1) % messages.length;
+        setLoadingMessage(messages[i]);
+      }, 4000);
+    }
+    function stopWarmTicker() {
+      if (_tickerTimer) { clearInterval(_tickerTimer); _tickerTimer = null; }
+    }
 
-        const isLoggedIn = !!localStorage.getItem('alfaaz_token');
-        const cards = [];
+    // ── Main loader ────────────────────────────────────────────────────────
+    async function loadLiveNotices() {
+      const grid = document.getElementById('noticesGrid');
+      if (!grid) return;
 
-        // Fetch both endpoints in parallel — each retries independently on cold-start
-        const [evResult, exResult] = await Promise.allSettled([
-          fetchWithRetry(`${API}/events/active`),
-          fetchWithRetry(`${API}/exhibitions/config`),
-        ]);
+      // Start the ticker immediately so the card looks alive
+      startWarmTicker();
 
-        // Process events
-        if (evResult.status === 'fulfilled' && evResult.value.ok) {
-          try {
-            const events = await evResult.value.json();
-            events.forEach(e => {
-              const capText = e.capacity === 0
-                ? 'Open registration'
-                : e.full ? 'At capacity'
-                : `${e.spots_left} spot${e.spots_left === 1 ? '' : 's'} remaining`;
-              cards.push({
-                tag: 'EVENT', tagColor: 'var(--accent-green)',
-                date: e.event_date || 'Date TBD', title: e.name,
-                body: (e.description ? e.description + ' — ' : '') + capText + '.',
-                link: e.full ? null : (isLoggedIn ? 'dashboard.html' : 'login.html'),
-                linkLabel: e.full ? null : (isLoggedIn ? 'Secure Clearance →' : 'Login to Register →'),
-                disabled: e.full,
-              });
-            });
-          } catch (_) {}
-        }
+      // Wait for the global pre-warm promise from api.js
+      // If api.js hasn't loaded yet (shouldn't happen) we fall through safely.
+      const wasReady = (typeof serverReadyPromise !== 'undefined')
+        ? await serverReadyPromise
+        : true;
 
-        // Process exhibition config
-        if (exResult.status === 'fulfilled' && exResult.value.ok) {
-          try {
-            const cfg = await exResult.value.json();
-            if (cfg.is_open) {
-              cards.push({
-                tag: 'EXHIBITION', tagColor: 'var(--accent-gold)',
-                date: cfg.date_text || 'Dates TBD',
-                title: cfg.title || 'Upcoming Exhibition',
-                body: cfg.about_text
-                  ? cfg.about_text.substring(0, 120) + (cfg.about_text.length > 120 ? '…' : '')
-                  : 'Applications now open. Submit your portfolio for curatorial review.',
-                link: 'exhibition.html', linkLabel: 'Apply Now →', disabled: false,
-              });
-            }
-          } catch (_) {}
-        }
+      stopWarmTicker();
 
-        // If both hard-failed after all retries, show retry button
-        if (evResult.status === 'rejected' && exResult.status === 'rejected') {
-          showRetryButton(grid);
-          return;
-        }
-
-        renderCards(grid, cards);
+      if (!wasReady) {
+        showRetryButton(grid);
+        return;
       }
 
-      // ── Retry button handler ─────────────────────────────────────────────
-      window.__retryNotices = function () {
-        const grid = document.getElementById('noticesGrid');
-        if (grid) {
-          grid.innerHTML = `
-            <div class="update-card fade-in visible" id="noticeLoading" style="grid-column:1/-1;">
-              <p class="update-date" style="opacity:0.5;">Scanning transmissions…</p>
-              <p class="update-text" style="opacity:0.3;">—</p>
-            </div>`;
-        }
-        loadLiveNotices();
-      };
+      setLoadingMessage('Loading notices\u2026');
 
+      const isLoggedIn = !!localStorage.getItem('alfaaz_token');
+      const cards = [];
+
+      // Use warmFetch from api.js (already waited above, but keeps retry logic)
+      const fetcher = (typeof warmFetch !== 'undefined') ? warmFetch : fetch;
+
+      const [evResult, exResult] = await Promise.allSettled([
+        fetcher(`${API}/events/active`),
+        fetcher(`${API}/exhibitions/config`),
+      ]);
+
+      // Process events
+      if (evResult.status === 'fulfilled' && evResult.value.ok) {
+        try {
+          const events = await evResult.value.json();
+          events.forEach(e => {
+            const capText = e.capacity === 0
+              ? 'Open registration'
+              : e.full ? 'At capacity'
+              : `${e.spots_left} spot${e.spots_left === 1 ? '' : 's'} remaining`;
+            cards.push({
+              tag: 'EVENT', tagColor: 'var(--accent-green)',
+              date: e.event_date || 'Date TBD', title: e.name,
+              body: (e.description ? e.description + ' — ' : '') + capText + '.',
+              link: e.full ? null : (isLoggedIn ? 'dashboard.html' : 'login.html'),
+              linkLabel: e.full ? null : (isLoggedIn ? 'Secure Clearance →' : 'Login to Register →'),
+              disabled: e.full,
+            });
+          });
+        } catch (_) {}
+      }
+
+      // Process exhibition config
+      if (exResult.status === 'fulfilled' && exResult.value.ok) {
+        try {
+          const cfg = await exResult.value.json();
+          if (cfg.is_open) {
+            cards.push({
+              tag: 'EXHIBITION', tagColor: 'var(--accent-gold)',
+              date: cfg.date_text || 'Dates TBD',
+              title: cfg.title || 'Upcoming Exhibition',
+              body: cfg.about_text
+                ? cfg.about_text.substring(0, 120) + (cfg.about_text.length > 120 ? '\u2026' : '')
+                : 'Applications now open. Submit your portfolio for curatorial review.',
+              link: 'exhibition.html', linkLabel: 'Apply Now →', disabled: false,
+            });
+          }
+        } catch (_) {}
+      }
+
+      // If both hard-failed after all retries, show retry button
+      if (evResult.status === 'rejected' && exResult.status === 'rejected') {
+        showRetryButton(grid);
+        return;
+      }
+
+      renderCards(grid, cards);
+    }
+
+    // ── Retry button handler ───────────────────────────────────────────────
+    window.__retryNotices = function () {
+      const grid = document.getElementById('noticesGrid');
+      if (grid) {
+        grid.innerHTML = `
+          <div class="update-card fade-in visible" id="noticeLoading" style="grid-column:1/-1;">
+            <p class="update-date" style="opacity:0.5;">Scanning transmissions\u2026</p>
+            <p class="update-text" style="opacity:0.3;">\u2014</p>
+          </div>`;
+      }
       loadLiveNotices();
-    })();
-  </script>
+    };
+
+    loadLiveNotices();
+  })();
+</script>
 </body>
 </html>
