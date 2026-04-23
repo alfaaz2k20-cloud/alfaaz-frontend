@@ -1969,5 +1969,31 @@
     setInterval(loadLiveNotices, 30000);
   })();
   </script>
+  <div id="phantom-notice" style="padding: 1em; border-left: 3px solid #a55a4a; background: #f7f0e5; margin-bottom: 1em; display: none;">
+  <span style="font-weight: bold; color: #a55a4a;">New from the Archives:</span>
+  <a id="phantom-link" href="#" style="color: #333; text-decoration: none;">Loading...</a>
+</div>
+
+<script>
+  // Silently check the vault when the homepage loads
+  fetch('https://alfaazcollective.vercel.app/api/blogs')
+    .then(res => res.json())
+    .then(blogs => {
+      if (blogs && blogs.length > 0) {
+        const latestArticle = blogs[0]; // Grab the newest one
+        
+        // Populate the notice board
+        const noticeDiv = document.getElementById('phantom-notice');
+        const linkTag = document.getElementById('phantom-link');
+        
+        linkTag.innerText = latestArticle.title;
+        linkTag.href = `https://alfaazcollective.vercel.app/post.html?id=${latestArticle.id}`;
+        
+        // Reveal the notice
+        noticeDiv.style.display = 'block';
+      }
+    })
+    .catch(err => console.log("Phantom is sleeping:", err));
+</script>
 </body>
 </html>
