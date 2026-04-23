@@ -6,38 +6,38 @@ const pool = new Pool({
 });
 
 export default async function handler(req, res) {
-  // ⚠️ CRITICAL CORS CONFIGURATION: Allow Neocities to read this data
+  // CORS for Neocities
   res.setHeader('Access-Control-Allow-Origin', 'https://tchandervar.neocities.org');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
   
-  // Handle preflight requests
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
 
-  // Prevent caching so new articles appear instantly
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
+
+  const { id } = req.query;
+  if (!id) {
+    return res.status(400).json({ error: "Missing article ID" });
+  }
 
   try {
     const client = await pool.connect();
     
-    // Fetch published blogs, ordered by newest first
-    const result = await client.query(`
-      SELECT id, title, excerpt, cover_image, created_at 
-      FROM blogs 
-      WHERE is_published = true 
-      ORDER BY created_at DESC
-    `);
-    
+    // Fetch the specific blog by ID
+    const result = await client.query('SELECT * FROM blogs WHERE id = $1 AND is_published = true', [id]);
     client.release();
-    res.status(200).json(result.rows);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Article not found in the archives." });
+    }
+
+    res.status(200).json(result.rows[0]);
 
   } catch (error) {
     console.error("Database connection error:", error);
-    res.status(500).json({ error: "Failed to query the archives" });
+    res.status(500).json({ error: "Failed to read from the vault." });
   }
 }
