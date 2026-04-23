@@ -3,117 +3,149 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Blog | tchandervar</title>
-  <link href="https://fonts.googleapis.com/css2?family=Glacial+Indifference:wght@300;400;700&family=Yeseva+One&display=swap" rel="stylesheet">
+  <title>The Archives | Alfaaz Collective</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Teko:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+
   <style>
-    body {
-      font-family: 'Glacial Indifference', sans-serif; color: #333; margin: 0; padding: 0; text-align: center;
-      background-image: linear-gradient(rgba(243, 233, 219, 0.7), rgba(243, 233, 219, 0.7)), url('https://images.unsplash.com/photo-1620215926526-9a2e631df83e?auto=format&fit=crop&q=80');
-      background-repeat: no-repeat; background-position: center; background-size: cover; background-attachment: fixed;
-      background-color: #f3e9db; transition: background-color 0.3s ease, color 0.3s ease;
+    :root {
+      --bg-primary: #0b0d17;
+      --bg-secondary: #151925;
+      --text-primary: #e6eef6;
+      --text-secondary: #a0aec0;
+      --accent-gold: #f8d37f;
+      --accent-gold-dim: rgba(248, 211, 127, 0.1);
+      --grid-border: rgba(230, 238, 246, 0.1);
+      --cursor-size: 12px;
+      --cursor-hover-size: 80px;
+      --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
-    header { padding: 2em 1em; }
-    h1 { font-family: 'Yeseva One', cursive; font-size: 2.8em; margin: 0.2em 0; }
-    p.tagline { color: #555; font-weight: bold; margin-bottom: 2em; }
-
-    .top-buttons { display: flex; justify-content: center; gap: 1em; flex-wrap: wrap; margin: 1.5em auto; max-width: 900px; }
-    .top-buttons a {
-      text-decoration: none; background: #fffefb; color: #2c2c2c; padding: 0.7em 1em; border-radius: 12px;
-      font-size: 0.9em; font-weight: 600; border: 1px solid #e4d9c2; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
-    }
-    .top-buttons a:hover { transform: scale(1.02); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1); background-color: #f7f0e5; }
-    .commission-button { background-color: #a55a4a !important; color: #fff !important; border-color: #a55a4a !important; }
-    .calligraphy-button { background-color: #5a75a5 !important; color: #fff !important; border-color: #5a75a5 !important; }
-
-    main { max-width: 900px; margin: 2em auto; padding: 1em; text-align: left; min-height: 400px; }
-
-    .post-card {
-      background: #fffefb; border: 1px solid #e4d9c2; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      margin-bottom: 1.5em; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .post-card:hover { transform: scale(1.02); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1); }
-    .post-card img { width: 100%; height: 220px; object-fit: cover; }
-    .post-content { padding: 1.2em; }
-    .post-content h2 { margin-top: 0; font-family: 'Yeseva One', cursive; font-size: 1.5em; color: #2c2c2c; }
-    .post-content p.date { color: #888; font-size: 0.9em; margin-bottom: 0.8em; }
-    .post-content p.excerpt { color: #555; line-height: 1.6; font-size: 1em; }
-    .read-more { display: inline-block; margin-top: 0.8em; color: #5a75a5; text-decoration: none; font-weight: bold; }
-    .read-more:hover { text-decoration: underline; }
-
-    footer { text-align: center; padding: 2em 0; color: #777; font-size: 0.9em; }
-
-    body.dark-mode { background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1620215926526-9a2e631df83e?auto=format&fit=crop&q=80'); background-color: #1a1a1a; color: #e0e0e0; }
-    body.dark-mode header h1 { color: #f5f5f5; }
-    body.dark-mode p.tagline { color: #ccc; }
-    body.dark-mode .post-card { background: #2a2a2a; border-color: #555; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-    body.dark-mode .post-content h2 { color: #f5f5f5; }
-    body.dark-mode .post-content p.excerpt { color: #ccc; }
-    body.dark-mode .top-buttons a { background: #333; color: #e0e0e0; border-color: #555; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-    body.dark-mode .top-buttons a:hover { background: #444; color: #fff; }
-    body.dark-mode footer { color: #aaa; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     
-    .loading-state { text-align: center; padding: 3rem; color: #888; font-style: italic; }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Background Textures */
+    .bg-placeholder { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: linear-gradient(135deg, #0b0d17 0%, #151925 50%, #1a1f35 100%); }
+    .texture-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); pointer-events: none; }
+
+    /* Custom Cursor */
+    .custom-cursor { position: fixed; top: 0; left: 0; width: var(--cursor-size); height: var(--cursor-size); background: var(--accent-gold); border-radius: 50%; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, border 0.3s ease; }
+    .custom-cursor.hover { width: var(--cursor-hover-size); height: var(--cursor-hover-size); background: transparent; border: 1px solid var(--accent-gold); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 3px; color: var(--accent-gold); }
+    .custom-cursor.hover::after { content: 'READ'; }
+
+    /* Brutalist Nav */
+    nav { position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: rgba(11, 13, 23, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--grid-border); }
+    .logo { font-family: 'Teko', sans-serif; font-size: 1.8rem; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
+    .nav-cta { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--bg-primary); background: var(--accent-gold); padding: 0.6rem 1.2rem; text-decoration: none; transition: all 0.3s var(--transition-smooth); }
+    .nav-cta:hover { background: transparent; color: var(--accent-gold); border: 1px solid var(--accent-gold); }
+
+    /* Main Archive Grid */
+    main { max-width: 900px; margin: 8rem auto 4rem; padding: 0 2rem; min-height: 60vh; }
+    .page-title { font-family: 'Teko', sans-serif; font-size: clamp(3rem, 8vw, 5rem); font-weight: 300; text-transform: uppercase; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 0.5rem; line-height: 1; }
+    .page-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 4px; margin-bottom: 4rem; display: block; border-bottom: 1px solid var(--grid-border); padding-bottom: 2rem; }
+
+    .archive-grid { display: flex; flex-direction: column; gap: 1rem; }
+    .archive-card { background: var(--bg-secondary); padding: 2.5rem; position: relative; overflow: hidden; transition: all 0.4s var(--transition-smooth); border: 1px solid var(--grid-border); text-decoration: none; display: block; cursor: none; }
+    .archive-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent-gold); transform: scaleY(0); transform-origin: top; transition: transform 0.4s var(--transition-smooth); }
+    .archive-card:hover::before { transform: scaleY(1); }
+    .archive-card:hover { background: var(--accent-gold-dim); }
+
+    .archive-meta { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 1rem; }
+    .archive-title { font-family: 'Teko', sans-serif; font-size: 2.2rem; font-weight: 300; text-transform: uppercase; letter-spacing: 1px; color: var(--text-primary); line-height: 1.2; margin-bottom: 1rem; }
+    .archive-excerpt { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-secondary); line-height: 1.6; }
+
+    .loading-state { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-secondary); text-align: center; padding: 4rem; text-transform: uppercase; letter-spacing: 3px; border: 1px dashed var(--grid-border); }
+
+    footer { text-align: center; padding: 2em 0; border-top: 1px solid var(--grid-border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-secondary); letter-spacing: 2px; text-transform: uppercase; }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>Blog</h1>
-  <p class="tagline">Insights · Stories · Art & Culture</p>
+  <div class="bg-placeholder"></div>
+  <div class="texture-overlay"></div>
+  <div class="custom-cursor" id="cursor"></div>
 
-  <div class="top-buttons">
-    <a href="https://tchandervar.neocities.org" class="calligraphy-button">Back to Tchandervar</a>
-    <a href="https://alfaazcollective.vercel.app" class="commission-button">Alfaaz Collective</a>
-  </div>
-</header>
+  <nav>
+    <a href="index.html" class="logo magnetic">ALFAAZ</a>
+    <a href="index.html" class="nav-cta magnetic">Return to Base</a>
+  </nav>
 
-<main id="blogContainer">
-  <div class="loading-state">Consulting the archives...</div>
-</main>
+  <main>
+    <h1 class="page-title">The Archives</h1>
+    <span class="page-subtitle">Compiled Transmissions</span>
 
-<footer>
-  <p>© 2026 tchandervar | Part of the Alfaaz Collective</p>
-</footer>
+    <div id="blogContainer" class="archive-grid">
+      <div class="loading-state">Establishing link to the vault...</div>
+    </div>
+  </main>
 
-<script>
-  if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark-mode');
-  }
+  <footer>
+    <p>System Online // The Phantom AI</p>
+  </footer>
 
-  async function loadBlogs() {
-    const container = document.getElementById('blogContainer');
-    try {
-      // Local fetch! No CORS issues here.
-      const res = await fetch('/api/blogs');
-      if (!res.ok) throw new Error('Network response was not ok');
-      const blogs = await res.json();
-      
-      if (!blogs.length) {
-        container.innerHTML = '<div class="loading-state">The archives are currently empty.</div>';
-        return;
-      }
-
-      container.innerHTML = blogs.map(blog => `
-        <div class="post-card">
-          ${blog.cover_image ? `<img src="${blog.cover_image}" alt="${blog.title}">` : ''}
-          <div class="post-content">
-            <h2><a href="post.html?id=${blog.id}">${blog.title}</a></h2>
-            <p class="date">${new Date(blog.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-            <p class="excerpt">${blog.excerpt}</p>
-            <a href="post.html?id=${blog.id}" class="read-more">Read full research →</a>
-          </div>
-        </div>
-      `).join('');
-    } catch (error) {
-      console.error("Failed to fetch blogs:", error);
-      container.innerHTML = '<div class="loading-state" style="color: #a55a4a;">Failed to connect to the archive network.</div>';
+  <script>
+    // Cursor Logic
+    const cursor = document.getElementById('cursor');
+    let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+    document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+    function animateCursor() {
+      cursorX += (mouseX - cursorX) * 0.15;
+      cursorY += (mouseY - cursorY) * 0.15;
+      cursor.style.left = cursorX + 'px';
+      cursor.style.top = cursorY + 'px';
+      requestAnimationFrame(animateCursor);
     }
-  }
+    animateCursor();
 
-  document.addEventListener('DOMContentLoaded', loadBlogs);
-</script>
+    function attachHoverEffects() {
+      document.querySelectorAll('.archive-card, .magnetic').forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+      });
+    }
 
+    // Database Fetch Logic (Untouched!)
+    async function loadBlogs() {
+      const container = document.getElementById('blogContainer');
+      try {
+        const res = await fetch('/api/blogs');
+        if (!res.ok) throw new Error('Network response was not ok');
+        const blogs = await res.json();
+        
+        if (!blogs.length) {
+          container.innerHTML = '<div class="loading-state">The archives are currently empty.</div>';
+          return;
+        }
+
+        container.innerHTML = blogs.map(blog => `
+          <a href="post.html?id=${blog.id}" class="archive-card">
+            <div class="archive-meta">${new Date(blog.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.')} // Phantom Thread</div>
+            <h2 class="archive-title">${blog.title}</h2>
+            <p class="archive-excerpt">${blog.excerpt}</p>
+          </a>
+        `).join('');
+        
+        attachHoverEffects();
+      } catch (error) {
+        console.error("Failed to fetch blogs:", error);
+        container.innerHTML = '<div class="loading-state" style="color: var(--accent-gold);">[ERROR] Signal Intercepted.</div>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadBlogs();
+      attachHoverEffects();
+    });
+  </script>
 </body>
 </html>

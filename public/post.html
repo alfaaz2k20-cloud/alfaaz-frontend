@@ -3,139 +3,154 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Article | tchandervar</title>
-  <link href="https://fonts.googleapis.com/css2?family=Glacial+Indifference:wght@300;400;700&family=Yeseva+One&display=swap" rel="stylesheet">
+  <title>Transmission | Alfaaz Collective</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Teko:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
+    :root {
+      --bg-primary: #0b0d17;
+      --text-primary: #e6eef6;
+      --text-secondary: #a0aec0;
+      --accent-gold: #f8d37f;
+      --grid-border: rgba(230, 238, 246, 0.1);
+      --cursor-size: 12px;
+      --cursor-hover-size: 40px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
-      font-family: 'Glacial Indifference', sans-serif; color: #333; margin: 0; padding: 0; text-align: center;
-      background-image: linear-gradient(rgba(243, 233, 219, 0.7), rgba(243, 233, 219, 0.7)), url('https://images.unsplash.com/photo-1620215926526-9a2e631df83e?auto=format&fit=crop&q=80');
-      background-repeat: no-repeat; background-position: center; background-size: cover; background-attachment: fixed;
-      background-color: #f3e9db; transition: background-color 0.3s ease, color 0.3s ease;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+      cursor: none;
     }
 
-    header { padding: 2em 1em; }
-    h1 { font-family: 'Yeseva One', cursive; font-size: 2.8em; margin: 0.2em 0; }
+    /* Background */
+    .bg-placeholder { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: linear-gradient(135deg, #0b0d17 0%, #151925 50%, #1a1f35 100%); }
+    .texture-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); pointer-events: none; }
+
+    /* Custom Cursor */
+    .custom-cursor { position: fixed; top: 0; left: 0; width: var(--cursor-size); height: var(--cursor-size); background: var(--accent-gold); border-radius: 50%; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: width 0.2s ease, height 0.2s ease, background 0.2s ease; }
+    .custom-cursor.hover { background: transparent; border: 1px solid var(--accent-gold); transform: translate(-50%, -50%) scale(1.5); }
+
+    /* Brutalist Nav */
+    nav { position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: rgba(11, 13, 23, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--grid-border); }
+    .logo { font-family: 'Teko', sans-serif; font-size: 1.8rem; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
+    .nav-cta { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-primary); border: 1px solid var(--grid-border); padding: 0.6rem 1.2rem; text-decoration: none; transition: all 0.3s ease; }
+    .nav-cta:hover { color: var(--accent-gold); border-color: var(--accent-gold); }
+
+    /* Article Structure */
+    main { max-width: 750px; margin: 10rem auto 6rem; padding: 0 2rem; }
     
-    .top-buttons { display: flex; justify-content: center; gap: 1em; flex-wrap: wrap; margin: 1.5em auto; max-width: 900px; }
-    .top-buttons a {
-      text-decoration: none; background: #fffefb; color: #2c2c2c; padding: 0.7em 1em; border-radius: 12px;
-      font-size: 0.9em; font-weight: 600; border: 1px solid #e4d9c2; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
-    }
-    .top-buttons a:hover { transform: scale(1.02); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1); background-color: #f7f0e5; }
-    .calligraphy-button { background-color: #5a75a5 !important; color: #fff !important; border-color: #5a75a5 !important; }
+    .post-header { border-bottom: 1px solid var(--grid-border); padding-bottom: 2rem; margin-bottom: 3rem; }
+    .post-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 4px; margin-bottom: 1.5rem; display: block; }
+    .post-title { font-family: 'Teko', sans-serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 300; text-transform: uppercase; color: var(--text-primary); line-height: 1.1; letter-spacing: 1px; }
 
-    main { max-width: 800px; margin: 2em auto; padding: 0 1.5em; text-align: left; min-height: 50vh; }
+    /* Phantom Content Styling Override */
+    .post-content { font-size: 1.15rem; line-height: 1.8; color: var(--text-secondary); font-weight: 300; }
+    .post-content h2 { font-family: 'Teko', sans-serif; font-size: 2.5rem; color: var(--text-primary); text-transform: uppercase; letter-spacing: 1px; margin: 3rem 0 1rem; font-weight: 300; line-height: 1.2; }
+    .post-content h3 { font-family: 'Teko', sans-serif; font-size: 1.8rem; color: var(--accent-gold); text-transform: uppercase; margin: 2rem 0 1rem; font-weight: 300; }
+    .post-content p { margin-bottom: 1.8rem; }
+    .post-content a { color: var(--accent-gold); text-decoration: none; border-bottom: 1px solid var(--accent-gold); padding-bottom: 2px; transition: opacity 0.2s; }
+    .post-content a:hover { opacity: 0.7; cursor: none; }
+    .post-content blockquote { border-left: 2px solid var(--accent-gold); padding-left: 1.5rem; margin: 2rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary); letter-spacing: 0.5px; opacity: 0.9; }
 
-    .article-container {
-      background: #fffefb; border: 1px solid #e4d9c2; border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); overflow: hidden; margin-bottom: 3em;
-    }
-    .article-cover { width: 100%; height: 350px; object-fit: cover; display: block; border-bottom: 1px solid #e4d9c2; }
-    .article-header { padding: 2.5em 2.5em 1em 2.5em; text-align: center; border-bottom: 1px dashed #e4d9c2; }
-    .article-title { font-family: 'Yeseva One', cursive; font-size: 2.5em; color: #2c2c2c; margin: 0 0 0.2em 0; line-height: 1.2; }
-    .article-meta { color: #888; font-size: 0.95em; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1em; }
-    .article-body { padding: 2.5em; font-size: 1.1em; line-height: 1.8; color: #444; }
+    .loading-state { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-gold); text-align: center; padding: 4rem; text-transform: uppercase; letter-spacing: 3px; border: 1px dashed var(--accent-gold); opacity: 0.7; }
     
-    .article-body h2 { font-family: 'Yeseva One', cursive; color: #a55a4a; margin-top: 1.5em; margin-bottom: 0.5em; font-size: 1.8em; }
-    .article-body h3 { font-family: 'Yeseva One', cursive; color: #5a75a5; margin-top: 1.5em; margin-bottom: 0.5em; font-size: 1.4em; }
-    .article-body p { margin-bottom: 1.5em; }
-    .article-body blockquote { 
-      border-left: 4px solid #a55a4a; padding-left: 1.5em; margin: 1.5em 0;
-      font-style: italic; color: #555; background: rgba(228, 217, 194, 0.2); padding: 1.5em; border-radius: 0 8px 8px 0;
-    }
-    .article-body ul, .article-body ol { margin-bottom: 1.5em; padding-left: 1.5em; }
-    .article-body li { margin-bottom: 0.5em; }
-    .article-body a { color: #5a75a5; text-decoration: none; border-bottom: 1px dotted #5a75a5; }
-    .article-body a:hover { color: #a55a4a; border-color: #a55a4a; }
-
-    footer { text-align: center; padding: 2em 0; color: #777; font-size: 0.9em; }
-
-    body.dark-mode { background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1620215926526-9a2e631df83e?auto=format&fit=crop&q=80'); background-color: #1a1a1a; color: #e0e0e0; }
-    body.dark-mode header h1 { color: #f5f5f5; }
-    body.dark-mode .top-buttons a { background: #333; color: #e0e0e0; border-color: #555; }
-    body.dark-mode .top-buttons a:hover { background: #444; color: #fff; }
-    body.dark-mode .article-container { background: #2a2a2a; border-color: #444; }
-    body.dark-mode .article-cover { border-bottom-color: #444; filter: brightness(0.85); }
-    body.dark-mode .article-header { border-bottom-color: #444; }
-    body.dark-mode .article-title { color: #f5f5f5; }
-    body.dark-mode .article-body { color: #ccc; }
-    body.dark-mode .article-body h2 { color: #f8d37f; }
-    body.dark-mode .article-body h3 { color: #8ab4f8; }
-    body.dark-mode .article-body blockquote { border-left-color: #f8d37f; background: rgba(255,255,255,0.05); color: #bbb; }
-    
-    .loading-state { text-align: center; padding: 4rem; color: #888; font-style: italic; font-size: 1.2em; }
+    footer { text-align: center; padding: 2em 0; border-top: 1px solid var(--grid-border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-secondary); letter-spacing: 2px; text-transform: uppercase; }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>The Archives</h1>
-  <div class="top-buttons">
-    <a href="blogs.html" class="calligraphy-button">← Back to Blog</a>
-    <a href="https://tchandervar.neocities.org" class="calligraphy-button">Tchandervar Home</a>
-  </div>
-</header>
+  <div class="bg-placeholder"></div>
+  <div class="texture-overlay"></div>
+  <div class="custom-cursor" id="cursor"></div>
 
-<main id="articleTarget">
-  <div class="loading-state">Decrypting research from the vault...</div>
-</main>
+  <nav>
+    <a href="blogs.html" class="logo magnetic">← ARCHIVES</a>
+    <a href="index.html" class="nav-cta magnetic">Main System</a>
+  </nav>
 
-<footer>
-  <p>© 2026 tchandervar | Compiled by the Phantom AI for the Alfaaz Collective</p>
-</footer>
+  <main id="articleTarget">
+    <div class="loading-state">Decrypting transmission...</div>
+  </main>
 
-<script>
-  if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark-mode');
-  }
+  <footer>
+    <p>End of Transmission</p>
+  </footer>
 
-  async function loadArticle() {
-    const target = document.getElementById('articleTarget');
-    const urlParams = new URLSearchParams(window.location.search);
-    const articleId = urlParams.get('id');
+  <script>
+    // Cursor Logic
+    const cursor = document.getElementById('cursor');
+    let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+    document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+    function animateCursor() {
+      cursorX += (mouseX - cursorX) * 0.15;
+      cursorY += (mouseY - cursorY) * 0.15;
+      cursor.style.left = cursorX + 'px';
+      cursor.style.top = cursorY + 'px';
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
 
-    if (!articleId) {
-      target.innerHTML = '<div class="loading-state" style="color: #a55a4a;">Error: Document ID not specified.</div>';
-      return;
+    function attachHoverEffects() {
+      document.querySelectorAll('.magnetic, a').forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+      });
     }
 
-    try {
-      // Local fetch!
-      const res = await fetch(`/api/blog?id=${articleId}`);
-      
-      if (res.status === 404) {
-        target.innerHTML = '<div class="loading-state">This document has been sealed or does not exist.</div>';
+    // Database Fetch Logic (Untouched!)
+    async function loadArticle() {
+      const target = document.getElementById('articleTarget');
+      const urlParams = new URLSearchParams(window.location.search);
+      const articleId = urlParams.get('id');
+
+      if (!articleId) {
+        target.innerHTML = '<div class="loading-state" style="color: #ff5555; border-color: #ff5555;">[ERROR] Document ID missing.</div>';
         return;
       }
-      if (!res.ok) throw new Error('Network error');
-      
-      const article = await res.json();
-      const dateStr = new Date(article.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-      target.innerHTML = `
-        <div class="article-container">
-          ${article.cover_image ? `<img src="${article.cover_image}" alt="Cover" class="article-cover">` : ''}
-          <div class="article-header">
-            <h1 class="article-title">${article.title}</h1>
-            <div class="article-meta">Compiled by The Phantom • ${dateStr}</div>
+      try {
+        const res = await fetch(`/api/blog?id=${articleId}`);
+        
+        if (res.status === 404) {
+          target.innerHTML = '<div class="loading-state">This document is sealed or expunged.</div>';
+          return;
+        }
+        if (!res.ok) throw new Error('Network error');
+        
+        const article = await res.json();
+        const dateStr = new Date(article.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.');
+
+        target.innerHTML = `
+          <div class="post-header">
+            <span class="post-meta">LOG: ${dateStr} // PHANTOM COMMS</span>
+            <h1 class="post-title">${article.title}</h1>
           </div>
-          <div class="article-body">
+          <div class="post-content">
             ${article.content}
           </div>
-        </div>
-      `;
+        `;
 
-      document.title = `${article.title} | tchandervar`;
+        document.title = `${article.title} | Alfaaz Archives`;
+        attachHoverEffects();
 
-    } catch (error) {
-      console.error(error);
-      target.innerHTML = '<div class="loading-state" style="color: #a55a4a;">Failed to establish connection to the archive network.</div>';
+      } catch (error) {
+        console.error(error);
+        target.innerHTML = '<div class="loading-state" style="color: #ff5555; border-color: #ff5555;">[ERROR] Connection failed.</div>';
+      }
     }
-  }
 
-  document.addEventListener('DOMContentLoaded', loadArticle);
-</script>
-
+    document.addEventListener('DOMContentLoaded', () => {
+      loadArticle();
+      attachHoverEffects();
+    });
+  </script>
 </body>
 </html>
