@@ -1857,7 +1857,7 @@
   </script>
 <script>
   // ========================================
-  // LIVE NOTICES — Bfcache & Cold Start Fixed
+  // LIVE NOTICES & PHANTOM INTEGRATION
   // ========================================
   (function () {
     let isUpdating = false;
@@ -1869,7 +1869,7 @@
         grid.innerHTML = `
           <div class="update-card fade-in visible">
             <p class="update-date">Alfaaz Collective</p>
-            <p class="update-text">No active events at the moment — follow
+            <p class="update-text">No active transmissions — follow
               <a href="https://www.instagram.com/alfaaz.2020" target="_blank"
                  style="color:var(--accent-gold);">@alfaaz.2020</a> for announcements.
             </p>
@@ -1877,7 +1877,6 @@
       } else {
         cards.forEach(c => {
           const div = document.createElement('div');
-          // Note: 'visible' class added directly so it pops in instantly
           div.className = 'update-card fade-in visible';
           div.innerHTML = `
             <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
@@ -1925,7 +1924,6 @@
       if (!grid || isUpdating) return;
       isUpdating = true;
 
-      // VISUAL FIX: If the grid is empty, show a loading state instead of a blank hole
       if (grid.innerHTML.trim() === '') {
         grid.innerHTML = `
           <div class="update-card fade-in visible" style="border: 1px dashed rgba(248, 211, 127, 0.3); text-align: center;">
@@ -1936,18 +1934,43 @@
 
       try {
         const cacheBuster = new Date().getTime();
-        const res = await fetch(`/api/notices?t=${cacheBuster}`, {
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
-        });
         
-        if (res.ok) {
-          const data = await res.json();
-          const freshCards = parseToCards(data);
-          renderCards(grid, freshCards);
+        // Fetch Events and Phantom Blogs concurrently
+        const [noticesRes, blogsRes] = await Promise.all([
+          fetch(`/api/notices?t=${cacheBuster}`, { headers: { 'Cache-Control': 'no-cache' } }).catch(() => null),
+          fetch(`/api/blogs?t=${cacheBuster}`, { headers: { 'Cache-Control': 'no-cache' } }).catch(() => null)
+        ]);
+        
+        let freshCards = [];
+        
+        // 1. Process standard events
+        if (noticesRes && noticesRes.ok) {
+          const data = await noticesRes.json();
+          freshCards = parseToCards(data);
         }
+
+        // 2. Process Phantom Archives (Grab the newest one)
+        if (blogsRes && blogsRes.ok) {
+          const blogs = await blogsRes.json();
+          if (blogs && blogs.length > 0) {
+            const latestArticle = blogs[0];
+            const dateStr = new Date(latestArticle.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.');
+
+            // Add the Phantom card to the very top of the grid
+            freshCards.unshift({
+              tag: 'ARCHIVE', 
+              tagColor: 'var(--text-primary)', // Uses stark white to distinguish from gold/green events
+              date: dateStr, 
+              title: latestArticle.title,
+              body: 'A new cultural transmission has been compiled by the Phantom AI.',
+              link: `post.html?id=${latestArticle.id}`, 
+              linkLabel: 'Decrypt File →', 
+              disabled: false
+            });
+          }
+        }
+
+        renderCards(grid, freshCards);
       } catch (err) {
         console.error("Neon Transmission failed.", err);
         renderCards(grid, []); 
@@ -1956,44 +1979,10 @@
       }
     }
 
-    // 1. GUARANTEE START: Fire instantly when the page loads
     document.addEventListener('DOMContentLoaded', loadLiveNotices);
-
-    // 2. BACK BUTTON FIX: Break the "Bfcache" lock when returning from dashboard
-    window.addEventListener('pageshow', function (event) {
-      isUpdating = false; 
-      loadLiveNotices();
-    });
-
-    // 3. IDLE FIX: Auto-refresh data quietly in the background
+    window.addEventListener('pageshow', function () { isUpdating = false; loadLiveNotices(); });
     setInterval(loadLiveNotices, 30000);
   })();
-  </script>
-  <div id="phantom-notice" style="padding: 1em; border-left: 3px solid #a55a4a; background: #f7f0e5; margin-bottom: 1em; display: none;">
-  <span style="font-weight: bold; color: #a55a4a;">New from the Archives:</span>
-  <a id="phantom-link" href="#" style="color: #333; text-decoration: none;">Loading...</a>
-</div>
-
-<script>
-  // Silently check the vault when the homepage loads
-  fetch('https://alfaazcollective.vercel.app/api/blogs')
-    .then(res => res.json())
-    .then(blogs => {
-      if (blogs && blogs.length > 0) {
-        const latestArticle = blogs[0]; // Grab the newest one
-        
-        // Populate the notice board
-        const noticeDiv = document.getElementById('phantom-notice');
-        const linkTag = document.getElementById('phantom-link');
-        
-        linkTag.innerText = latestArticle.title;
-        linkTag.href = `https://alfaazcollective.vercel.app/post.html?id=${latestArticle.id}`;
-        
-        // Reveal the notice
-        noticeDiv.style.display = 'block';
-      }
-    })
-    .catch(err => console.log("Phantom is sleeping:", err));
 </script>
 </body>
 </html>
