@@ -1,0 +1,13 @@
+# Alfaaz: Art & Culture Collective
+
+## Purpose
+A digital sanctuary for Urdu, Persian, and Kashmiri literature and contemporary art.
+
+## Key Resources
+- [Art Gallery](/gallery): Curated visual works focusing on regional aesthetics.
+- [Literary Journal](/journal): Essays on the intersection of psychology and classical poetry.
+- [About Us](/about): The mission and history of the collective.
+
+## Primary Entities
+- Entity: Alfaaz Collective (Organization)
+- Focus: Art, Culture, Literature, Regional History.
