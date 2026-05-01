@@ -3,171 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Transmission | Alfaaz Collective</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Teko:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+  <title>Article | Alfaaz Collective</title>
+  <link rel="stylesheet" href="global.css">
   <style>
-    :root {
-      --bg-primary: #0b0d17;
-      --text-primary: #e6eef6;
-      --text-secondary: #a0aec0;
-      --accent-gold: #f8d37f;
-      --grid-border: rgba(230, 238, 246, 0.1);
-      --cursor-size: 12px;
-      --cursor-hover-size: 40px;
-    }
-
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      overflow-x: hidden;
-      cursor: none;
-    }
-
-    /* Background */
-    .bg-placeholder { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: linear-gradient(135deg, #0b0d17 0%, #151925 50%, #1a1f35 100%); }
-    .texture-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); pointer-events: none; }
-
-    /* Custom Cursor */
-    .custom-cursor { position: fixed; top: 0; left: 0; width: var(--cursor-size); height: var(--cursor-size); background: var(--accent-gold); border-radius: 50%; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: width 0.2s ease, height 0.2s ease, background 0.2s ease; }
-    .custom-cursor.hover { background: transparent; border: 1px solid var(--accent-gold); transform: translate(-50%, -50%) scale(1.5); }
-
-    /* Brutalist Nav */
-    nav { position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: rgba(11, 13, 23, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--grid-border); }
-    .logo { font-family: 'Teko', sans-serif; font-size: 1.8rem; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
-    .nav-cta { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-primary); border: 1px solid var(--grid-border); padding: 0.6rem 1.2rem; text-decoration: none; transition: all 0.3s ease; }
-    .nav-cta:hover { color: var(--accent-gold); border-color: var(--accent-gold); }
-
-    /* Article Structure */
-    main { max-width: 750px; margin: 10rem auto 6rem; padding: 0 2rem; }
-    
+    main { max-width: 800px; margin: 10rem auto 6rem; padding: 0 2rem; background: var(--bg-panel); border: 1px solid var(--grid-border); border-radius: 4px; box-shadow: 0 4px 30px rgba(0,0,0,0.03); padding: 4rem 5rem; }
+    @media (max-width: 768px) { main { padding: 3rem 2rem; margin-top: 6rem; } }
     .post-header { border-bottom: 1px solid var(--grid-border); padding-bottom: 2rem; margin-bottom: 3rem; }
-    .post-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 4px; margin-bottom: 1.5rem; display: block; }
-    .post-title { font-family: 'Teko', sans-serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 300; text-transform: uppercase; color: var(--text-primary); line-height: 1.1; letter-spacing: 1px; }
-
-    /* Phantom Content Styling Override */
-    .post-content { font-size: 1.15rem; line-height: 1.8; color: var(--text-secondary); font-weight: 300; }
-    .post-content h2 { font-family: 'Teko', sans-serif; font-size: 2.5rem; color: var(--text-primary); text-transform: uppercase; letter-spacing: 1px; margin: 3rem 0 1rem; font-weight: 300; line-height: 1.2; }
-    .post-content h3 { font-family: 'Teko', sans-serif; font-size: 1.8rem; color: var(--accent-gold); text-transform: uppercase; margin: 2rem 0 1rem; font-weight: 300; }
+    .post-meta { font-size: 10px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; display: block; }
+    .post-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 400; color: var(--text-primary); line-height: 1.2; letter-spacing: 1px; }
+    .post-content { font-size: 1.15rem; line-height: 1.9; color: var(--text-secondary); font-weight: 300; }
+    .post-content h2 { font-family: var(--font-heading); font-size: 2rem; color: var(--text-primary); margin: 3rem 0 1rem; font-weight: 400; line-height: 1.3; }
     .post-content p { margin-bottom: 1.8rem; }
-    .post-content a { color: var(--accent-gold); text-decoration: none; border-bottom: 1px solid var(--accent-gold); padding-bottom: 2px; transition: opacity 0.2s; }
-    .post-content a:hover { opacity: 0.7; cursor: none; }
-    .post-content blockquote { border-left: 2px solid var(--accent-gold); padding-left: 1.5rem; margin: 2rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-primary); letter-spacing: 0.5px; opacity: 0.9; }
-
-    .loading-state { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-gold); text-align: center; padding: 4rem; text-transform: uppercase; letter-spacing: 3px; border: 1px dashed var(--accent-gold); opacity: 0.7; }
-    
-    footer { text-align: center; padding: 2em 0; border-top: 1px solid var(--grid-border); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-secondary); letter-spacing: 2px; text-transform: uppercase; }
+    .post-content blockquote { border-left: 2px solid var(--accent-gold); padding-left: 1.5rem; margin: 2.5rem 0; font-style: italic; color: var(--text-secondary); }
+    .loading-state { font-size: 11px; color: var(--text-secondary); text-align: center; padding: 4rem; text-transform: uppercase; letter-spacing: 2px; border: 1px dashed var(--grid-border); border-radius: 4px; }
+    footer { text-align: center; padding: 3em 0; border-top: 1px solid var(--grid-border); font-size: 10px; color: var(--text-secondary); letter-spacing: 1px; text-transform: uppercase; }
   </style>
 </head>
 <body>
-
-  <div class="bg-placeholder"></div>
-  <div class="texture-overlay"></div>
+  <video class="bg-video" autoplay loop muted playsinline><source src="https://res.cloudinary.com/dmqwjpmjk/video/upload/v1761507594/portal-bg_oribvr.mp4" type="video/mp4"></video>
+  <div class="video-overlay"></div>
   <div class="custom-cursor" id="cursor"></div>
 
   <nav>
-    <a href="blogs.html" class="logo magnetic">← ARCHIVES</a>
-    <a href="index.html" class="nav-cta magnetic">Main System</a>
+    <a href="blogs.html" class="logo magnetic" style="font-size:1.2rem;">← Archives</a>
   </nav>
 
-  <main id="articleTarget">
-    <div class="loading-state">Decrypting transmission...</div>
-  </main>
+  <main id="articleTarget"><div class="loading-state">Loading essay...</div></main>
 
-  <footer>
-    <p>End of Transmission</p>
-  </footer>
+  <footer><p>Alfaaz Collective</p></footer>
 
+  <script src="global.js"></script>
   <script>
-    // Cursor Logic
-    const cursor = document.getElementById('cursor');
-    let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
-    document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
-    function animateCursor() {
-      cursorX += (mouseX - cursorX) * 0.15;
-      cursorY += (mouseY - cursorY) * 0.15;
-      cursor.style.left = cursorX + 'px';
-      cursor.style.top = cursorY + 'px';
-      requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
-
-    function attachHoverEffects() {
-      document.querySelectorAll('.magnetic, a').forEach(el => {
-        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-      });
-    }
-
-    // Sanitize HTML to prevent XSS before injecting blog content
     function sanitizeHTML(html) {
-      const div = document.createElement('div');
-      div.innerHTML = html;
-      // Remove dangerous tags entirely
+      const div = document.createElement('div'); div.innerHTML = html;
       div.querySelectorAll('script, iframe, object, embed, form').forEach(el => el.remove());
-      // Strip inline event handlers (onclick, onerror, etc.)
-      div.querySelectorAll('*').forEach(el => {
-        [...el.attributes].forEach(attr => {
-          if (attr.name.startsWith('on') || attr.name === 'href' && attr.value.startsWith('javascript:')) {
-            el.removeAttribute(attr.name);
-          }
-        });
-      });
+      div.querySelectorAll('*').forEach(el => { [...el.attributes].forEach(attr => { if (attr.name.startsWith('on') || attr.name === 'href' && attr.value.startsWith('javascript:')) el.removeAttribute(attr.name); }); });
       return div.innerHTML;
     }
 
-    // Database Fetch Logic (Untouched!)
     async function loadArticle() {
-      const target = document.getElementById('articleTarget');
-      const urlParams = new URLSearchParams(window.location.search);
-      const articleId = urlParams.get('id');
-
-      if (!articleId) {
-        target.innerHTML = '<div class="loading-state" style="color: #ff5555; border-color: #ff5555;">[ERROR] Document ID missing.</div>';
-        return;
-      }
-
+      const target = document.getElementById('articleTarget'), articleId = new URLSearchParams(window.location.search).get('id');
+      if (!articleId) { target.innerHTML = '<div class="loading-state" style="color:var(--accent-red);">[Error] Document ID missing.</div>'; return; }
       try {
         const res = await fetch(`/api/blog?id=${articleId}`);
-        
-        if (res.status === 404) {
-          target.innerHTML = '<div class="loading-state">This document is sealed or expunged.</div>';
-          return;
-        }
-        if (!res.ok) throw new Error('Network error');
-        
-        const article = await res.json();
-        const dateStr = new Date(article.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.');
-
-        target.innerHTML = `
-          <div class="post-header">
-            <span class="post-meta">LOG: ${dateStr} // PHANTOM COMMS</span>
-            <h1 class="post-title">${article.title}</h1>
-          </div>
-          <div class="post-content">
-            ${sanitizeHTML(article.content)}
-          </div>
-        `;
-
+        if (!res.ok) throw new Error();
+        const article = await res.json(), dateStr = new Date(article.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        target.innerHTML = `<div class="post-header"><span class="post-meta">${dateStr} // Curator's Notes</span><h1 class="post-title">${article.title}</h1></div><div class="post-content">${sanitizeHTML(article.content)}</div>`;
         document.title = `${article.title} | Alfaaz Archives`;
-        attachHoverEffects();
-
-      } catch (error) {
-        console.error(error);
-        target.innerHTML = '<div class="loading-state" style="color: #ff5555; border-color: #ff5555;">[ERROR] Connection failed.</div>';
-      }
+        if(window.refreshGlobalEffects) window.refreshGlobalEffects();
+      } catch (error) { target.innerHTML = '<div class="loading-state" style="color:var(--accent-red);">[Error] Connection failed.</div>'; }
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      loadArticle();
-      attachHoverEffects();
-    });
+    document.addEventListener('DOMContentLoaded', loadArticle);
   </script>
 </body>
 </html>

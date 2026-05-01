@@ -1,0 +1,99 @@
+/* ========================================
+   ALFAAZ COLLECTIVE — GLOBAL STYLES
+======================================== */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
+
+:root {
+  /* Pastel Video Overlay & Frosted Panels */
+  --bg-overlay: rgba(238, 233, 224, 0.75); 
+  --bg-panel: rgba(255, 253, 250, 0.85);   
+  
+  /* Text Colors */
+  --text-main: #363a37;                    
+  --text-secondary: #7a7e7b;               
+  
+  /* Complementary Accents */
+  --accent-gold: #bd6f5d;                  
+  --accent-green: #7a8f7c;                 
+  --accent-red: #c96b65;                   
+  --grid-border: rgba(54, 58, 55, 0.08);   
+  
+  /* Cursors & Animations */
+  --cursor-size: 12px;
+  --cursor-hover-size: 80px;
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: transparent;
+  color: var(--text-main);
+  font-family: var(--font-body);
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+a, button { cursor: none; } 
+
+/* --- BACKGROUND VIDEO --- */
+.bg-video {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: -3; filter: blur(3px);
+}
+.video-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--bg-overlay); backdrop-filter: blur(2px); z-index: -2;
+}
+
+/* --- CUSTOM CURSOR --- */
+.custom-cursor {
+  position: fixed; top: 0; left: 0; width: var(--cursor-size); height: var(--cursor-size);
+  background: var(--accent-gold); border-radius: 50%; pointer-events: none; z-index: 10000;
+  transform: translate(-50%, -50%); transition: width 0.3s ease, height 0.3s ease, background 0.3s ease;
+}
+.custom-cursor.hover {
+  width: var(--cursor-hover-size); height: var(--cursor-hover-size);
+  background: transparent; border: 1px solid var(--accent-gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-body); font-size: 10px; letter-spacing: 2px;
+  color: var(--accent-gold); text-transform: uppercase;
+}
+.custom-cursor.hover::after { content: 'VIEW'; }
+
+/* --- NAVIGATION --- */
+nav {
+  position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 3rem;
+  display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+  transition: transform 0.4s ease, background 0.4s ease, backdrop-filter 0.4s ease;
+}
+nav.scrolled {
+  background: rgba(248, 245, 238, 0.9); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--grid-border); padding-top: 1rem; padding-bottom: 1rem;
+}
+.logo { font-family: var(--font-heading); font-size: 1.8rem; text-transform: uppercase; color: var(--text-main); text-decoration: none; }
+
+/* --- GLOBAL BUTTONS & PANELS --- */
+.panel, .auth-card {
+  background: var(--bg-panel); border: 1px solid var(--grid-border);
+  backdrop-filter: blur(12px); border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.submit-btn, .action-btn, .cta-btn {
+  background: var(--text-main); color: #ffffff; border: 1px solid var(--text-main);
+  font-family: var(--font-body); text-transform: uppercase; letter-spacing: 2px;
+  cursor: pointer; transition: all 0.3s var(--transition-smooth); border-radius: 2px; padding: 1rem 2rem;
+}
+.submit-btn:hover, .action-btn:hover, .cta-btn:hover { background: var(--accent-green); border-color: var(--accent-green); color: #ffffff; }
+.action-btn.gold { background: transparent; color: var(--accent-gold); border-color: var(--accent-gold); }
+.action-btn.gold:hover { background: var(--accent-gold); color: #ffffff; }
+
+/* --- UTILITIES --- */
+.protected-artwork { pointer-events: none; user-select: none; -webkit-user-drag: none; margin: 3rem auto; display: block; max-width: 100%; border-radius: 4px; }
+.magnetic { transition: transform 0.3s var(--transition-smooth); }
+.fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }

@@ -2,213 +2,134 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Control Room — ALFAAZ</title>
+  <title>Administration — ALFAAZ</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Teko:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
   <style>
-    :root { --bg-primary: #0b0d17; --bg-secondary: #151925; --text-primary: #e6eef6; --text-secondary: #a0aec0; --accent-gold: #f8d37f; --accent-green: #4ade80; --accent-red: #f87171; --grid-border: rgba(230, 238, 246, 0.1); }
-    * { box-sizing: border-box; } body { background-color: var(--bg-primary); color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin: 0; min-height: 100vh; padding: 2rem; }
-    .header { font-family: 'Teko', sans-serif; font-size: 3rem; letter-spacing: 4px; color: var(--accent-gold); border-bottom: 1px solid var(--grid-border); padding-bottom: 1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1rem; }
+    .header { font-family: var(--font-heading); font-size: 2.5rem; letter-spacing: 1px; color: var(--text-primary); border-bottom: 1px solid var(--grid-border); padding-bottom: 1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1rem; margin-top: 5rem; }
     .tab-nav { display: flex; gap: 0; border-bottom: 1px solid var(--grid-border); margin-bottom: 2rem; flex-wrap: wrap; }
-    .tab-btn { padding: 0.8rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; background: transparent; color: var(--text-secondary); border: none; border-bottom: 2px solid transparent; transition: all 0.2s; }
-    .tab-btn:hover { color: var(--text-primary); } .tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
+    .tab-btn { padding: 1rem 1.5rem; font-family: var(--font-body); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; background: transparent; color: var(--text-secondary); border: none; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab-btn:hover { color: var(--accent-gold); } .tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); font-weight: 500; }
     .tab-panel { display: none; } .tab-panel.active { display: block; }
-    .section-title { color: var(--text-secondary); font-size: 11px; margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px dashed var(--grid-border); padding-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px; }
-    .data-card { background: var(--bg-secondary); border: 1px solid var(--grid-border); padding: 1.2rem 1.5rem; margin-bottom: 0.8rem; display: grid; gap: 1rem; align-items: center; }
+    .section-title { color: var(--text-secondary); font-family: var(--font-heading); font-size: 1.5rem; margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--grid-border); padding-bottom: 0.5rem; }
+    .data-card { background: var(--bg-panel); border: 1px solid var(--grid-border); padding: 1.5rem; margin-bottom: 0.8rem; display: grid; gap: 1rem; align-items: center; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
     .user-card { grid-template-columns: 2fr 1fr 1fr; } .club-card { grid-template-columns: 2fr 1fr 1fr 1fr; } .event-card { grid-template-columns: 2fr 1fr 1fr 1fr 1fr; } .exhib-card { grid-template-columns: 2fr 1.5fr 1fr 1fr; align-items: start; }
-    .label { font-size: 9px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; } .data-display { font-size: 13px; font-weight: 500; color: #fff; }
-    .badge { display: inline-block; padding: 2px 8px; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; border: 1px solid;}
-    .badge-pending { background: rgba(248,211,127,0.15); color: var(--accent-gold); border-color: var(--accent-gold); } .badge-approved { background: rgba(74,222,128,0.15); color: var(--accent-green); border-color: var(--accent-green); } .badge-rejected { background: rgba(248,113,113,0.15); color: var(--accent-red); border-color: var(--accent-red); } .badge-open { background: rgba(74,222,128,0.15); color: var(--accent-green); border-color: var(--accent-green); } .badge-closed { background: rgba(160,174,192,0.15); color: var(--text-secondary); border-color: var(--text-secondary); }
-    input, select, textarea { background: rgba(0,0,0,0.4); border: 1px solid var(--grid-border); color: var(--text-primary); padding: 0.5rem; width: 100%; font-family: inherit; font-size: 12px; } input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-gold); }
-    .btn { padding: 0.5rem 1rem; cursor: pointer; font-family: inherit; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; text-align: center; text-decoration: none; display: inline-block; transition: 0.2s; border: 1px solid; }
-    .btn-gold { background: rgba(248,211,127,0.1); color: var(--accent-gold); border-color: var(--accent-gold); } .btn-gold:hover { background: var(--accent-gold); color: var(--bg-primary); } .btn-green { background: rgba(74,222,128,0.1); color: var(--accent-green); border-color: var(--accent-green); } .btn-green:hover { background: var(--accent-green); color: var(--bg-primary); } .btn-red { background: rgba(248,113,113,0.1); color: var(--accent-red); border-color: var(--accent-red); } .btn-red:hover { background: var(--accent-red); color: var(--bg-primary); } .btn-ghost { background: transparent; color: var(--text-secondary); border-color: var(--grid-border); } .btn-ghost:hover { background: var(--text-primary); color: var(--bg-primary); } .btn-sm { padding: 0.3rem 0.7rem; font-size: 10px; } .btn-full { width: 100%; }
-    .create-form { background: var(--bg-secondary); border: 1px solid var(--grid-border); padding: 1.5rem; margin-bottom: 2rem; } .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; } .form-group { display: flex; flex-direction: column; gap: 0.3rem; } .form-label { font-size: 9px; color: var(--text-secondary); letter-spacing: 2px; text-transform: uppercase; } .empty-state { color: var(--text-secondary); font-size: 12px; padding: 2rem; text-align: center; border: 1px dashed var(--grid-border); }
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; } .modal-overlay.open { display: flex; } .modal { background: var(--bg-secondary); border: 1px solid var(--accent-gold); padding: 2rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; } .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--grid-border); padding-bottom: 1rem; }
-
-    /* ── EXHIBITION VISIBILITY TOGGLE ── */
-    .toggle-master {
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--bg-primary); border: 2px solid var(--grid-border);
-      padding: 1.5rem 2rem; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
-      transition: border-color 0.4s ease;
-    }
-    .toggle-master.is-open { border-color: var(--accent-green); }
-    .toggle-master.is-closed { border-color: var(--accent-red); }
-
-    .toggle-master-label { display: flex; flex-direction: column; gap: 0.3rem; }
-    .toggle-master-label .tm-title {
-      font-family: 'Teko', sans-serif; font-size: 2rem; letter-spacing: 3px;
-      text-transform: uppercase; line-height: 1;
-    }
-    .toggle-master-label .tm-sub {
-      font-size: 10px; letter-spacing: 2px; color: var(--text-secondary); text-transform: uppercase;
-    }
-
-    /* The pill toggle switch */
-    .pill-wrap { display: flex; align-items: center; gap: 1rem; }
-    .pill-status {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 3px;
-      text-transform: uppercase; min-width: 80px; text-align: right;
-      transition: color 0.3s ease;
-    }
-    .pill-toggle {
-      position: relative; width: 68px; height: 34px; cursor: pointer;
-      background: transparent; border: none; padding: 0; flex-shrink: 0;
-    }
-    .pill-track {
-      width: 100%; height: 100%; border-radius: 17px;
-      border: 1.5px solid var(--grid-border);
-      background: rgba(0,0,0,0.4);
-      transition: background 0.35s ease, border-color 0.35s ease;
-      position: relative;
-    }
-    .pill-thumb {
-      position: absolute; top: 4px; left: 4px;
-      width: 24px; height: 24px; border-radius: 50%;
-      background: var(--text-secondary);
-      transition: transform 0.35s cubic-bezier(0.68,-0.55,0.27,1.55), background 0.35s ease;
-    }
-    .pill-toggle.on .pill-track { background: rgba(74,222,128,0.15); border-color: var(--accent-green); }
-    .pill-toggle.on .pill-thumb { transform: translateX(34px); background: var(--accent-green); }
-    .pill-toggle.off .pill-track { background: rgba(248,113,113,0.12); border-color: var(--accent-red); }
-    .pill-toggle.off .pill-thumb { background: var(--accent-red); }
-
+    .label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; } .data-display { font-size: 14px; font-weight: 400; color: var(--text-primary); }
+    .badge { display: inline-block; padding: 4px 10px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; border: 1px solid; border-radius: 2px;}
+    .badge-pending { background: rgba(184, 134, 11, 0.05); color: var(--accent-gold); border-color: var(--accent-gold); } .badge-approved { background: rgba(22, 163, 74, 0.05); color: var(--accent-green); border-color: var(--accent-green); } .badge-rejected { background: rgba(220, 38, 38, 0.05); color: var(--accent-red); border-color: var(--accent-red); } .badge-open { background: rgba(22, 163, 74, 0.05); color: var(--accent-green); border-color: var(--accent-green); } .badge-closed { background: var(--bg-primary); color: var(--text-secondary); border-color: var(--grid-border); }
+    input, select, textarea { background: var(--bg-primary); border: 1px solid var(--grid-border); color: var(--text-primary); padding: 0.8rem; width: 100%; font-family: var(--font-body); font-size: 13px; border-radius: 2px; } input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-gold); }
+    .btn { padding: 0.6rem 1rem; cursor: pointer; font-family: var(--font-body); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; text-align: center; text-decoration: none; display: inline-block; transition: 0.2s; border: 1px solid; border-radius: 2px; }
+    .btn-gold { background: rgba(184, 134, 11, 0.05); color: var(--accent-gold); border-color: var(--accent-gold); } .btn-gold:hover { background: var(--accent-gold); color: #fff; } .btn-green { background: rgba(22, 163, 74, 0.05); color: var(--accent-green); border-color: var(--accent-green); } .btn-green:hover { background: var(--accent-green); color: #fff; } .btn-red { background: rgba(220, 38, 38, 0.05); color: var(--accent-red); border-color: var(--accent-red); } .btn-red:hover { background: var(--accent-red); color: #fff; } .btn-ghost { background: transparent; color: var(--text-secondary); border-color: var(--grid-border); } .btn-ghost:hover { background: var(--text-primary); color: #fff; } .btn-sm { padding: 0.4rem 0.8rem; font-size: 10px; } .btn-full { width: 100%; }
+    .create-form { background: var(--bg-panel); border: 1px solid var(--grid-border); padding: 2rem; margin-bottom: 2rem; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); } .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; } .form-group { display: flex; flex-direction: column; gap: 0.4rem; } .form-label { font-size: 10px; color: var(--text-secondary); letter-spacing: 1px; text-transform: uppercase; } .empty-state { color: var(--text-secondary); font-size: 13px; padding: 3rem; text-align: center; border: 1px dashed var(--grid-border); background: var(--bg-panel); border-radius: 4px; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(252, 249, 245, 0.9); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(4px); } .modal-overlay.open { display: flex; } .modal { background: var(--bg-panel); border: 1px solid var(--grid-border); box-shadow: 0 10px 40px rgba(0,0,0,0.05); padding: 3rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; border-radius: 4px; } .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--grid-border); padding-bottom: 1.5rem; }
+    .toggle-master { display: flex; align-items: center; justify-content: space-between; background: var(--bg-panel); border: 1px solid var(--grid-border); padding: 2rem; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; transition: border-color 0.4s ease; border-radius: 4px; } .toggle-master.is-open { border-color: var(--accent-green); } .toggle-master.is-closed { border-color: var(--accent-red); } .toggle-master-label { display: flex; flex-direction: column; gap: 0.4rem; } .toggle-master-label .tm-title { font-family: var(--font-heading); font-size: 2rem; color: var(--text-primary); line-height: 1; margin: 0; } .toggle-master-label .tm-sub { font-size: 11px; color: var(--text-secondary); } .pill-wrap { display: flex; align-items: center; gap: 1rem; } .pill-status { font-family: var(--font-body); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; min-width: 80px; text-align: right; font-weight: 500; } .pill-toggle { position: relative; width: 68px; height: 34px; cursor: pointer; background: transparent; border: none; padding: 0; flex-shrink: 0; } .pill-track { width: 100%; height: 100%; border-radius: 17px; border: 1px solid var(--grid-border); background: var(--bg-primary); transition: background 0.35s ease, border-color 0.35s ease; position: relative; } .pill-thumb { position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: var(--text-secondary); transition: transform 0.35s cubic-bezier(0.68,-0.55,0.27,1.55), background 0.35s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1); } .pill-toggle.on .pill-track { background: rgba(22, 163, 74, 0.1); border-color: var(--accent-green); } .pill-toggle.on .pill-thumb { transform: translateX(34px); background: var(--accent-green); } .pill-toggle.off .pill-track { background: rgba(220, 38, 38, 0.05); border-color: var(--accent-red); } .pill-toggle.off .pill-thumb { background: var(--accent-red); }
     @media (max-width: 768px) { .club-card, .event-card, .user-card, .exhib-card { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div>SYS.CONTROL_ROOM</div>
-    <a href="dashboard.html" style="font-size: 1rem; color: var(--text-secondary); text-decoration: none;">&larr; Dashboard</a>
-  </div>
-  <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('events')">Standard Events</button>
-    <button class="tab-btn" onclick="switchTab('exhibitions')">Exhibition Engine</button>
-    <button class="tab-btn" onclick="switchTab('clubs')">Club Applications</button>
-    <button class="tab-btn" onclick="switchTab('roster')">System Roster</button>
-  </div>
-
-  <div id="tab-events" class="tab-panel active">
-    <div class="section-title">[ Create Minor Event ]</div>
-    <div class="create-form">
-      <div class="form-grid">
-        <div class="form-group"><label class="form-label">Event Name *</label><input type="text" id="ev-name" placeholder="e.g. Live Painting"></div>
-        <div class="form-group"><label class="form-label">Event Date</label><input type="text" id="ev-date" placeholder="e.g. Sunday 4PM"></div>
-        <div class="form-group"><label class="form-label">Capacity (0 = unlimited)</label><input type="number" id="ev-capacity" value="0" min="0"></div>
-        <div class="form-group"><label class="form-label">Description</label><input type="text" id="ev-desc" placeholder="Brief description..."></div>
-      </div>
-      <button class="btn btn-gold" onclick="handleCreateEvent()">+ Create Event</button>
-      <span id="ev-create-msg" style="font-size:11px; margin-left:1rem; color: var(--text-secondary);"></span>
+  <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+    <div class="header">
+      <div>Administration</div>
+      <a href="dashboard.html" class="magnetic" style="font-size: 11px; color: var(--text-secondary); text-decoration: none; text-transform: uppercase; letter-spacing: 2px;">&larr; Dashboard</a>
     </div>
-    <div class="section-title">[ Live Minor Events ]</div>
-    <div id="eventsContainer"><div class="empty-state">Loading events...</div></div>
-  </div>
-
-  <div id="tab-exhibitions" class="tab-panel">
-
-    <div class="toggle-master is-closed" id="exhibToggleMaster">
-      <div class="toggle-master-label">
-        <span class="tm-title" id="exhibToggleTitle">Exhibition Portal</span>
-        <span class="tm-sub" id="exhibToggleSub">Loading current status...</span>
-      </div>
-      <div class="pill-wrap">
-        <span class="pill-status" id="exhibPillStatus" style="color:var(--text-secondary);">—</span>
-        <button class="pill-toggle off" id="exhibPillBtn" onclick="toggleExhibVisibility()" title="Toggle exhibition visibility for participants">
-          <div class="pill-track"><div class="pill-thumb"></div></div>
-        </button>
-      </div>
+    <div class="tab-nav">
+      <button class="tab-btn active magnetic" onclick="switchTab('events')">Standard Events</button>
+      <button class="tab-btn magnetic" onclick="switchTab('exhibitions')">Exhibitions</button>
+      <button class="tab-btn magnetic" onclick="switchTab('clubs')">Club Applications</button>
+      <button class="tab-btn magnetic" onclick="switchTab('roster')">Collective Roster</button>
     </div>
 
-    <div class="section-title" style="color: var(--accent-gold);">[ MASTER EXHIBITION SETTINGS ]</div>
-    <div class="create-form" style="border-color: var(--accent-gold);">
-      <div class="form-grid">
-        <div class="form-group"><label class="form-label">Exhibition Title</label><input type="text" id="cfg-title"></div>
-        <div class="form-group"><label class="form-label">Date</label><input type="text" id="cfg-date"></div>
-        <div class="form-group"><label class="form-label">Venue</label><input type="text" id="cfg-venue"></div>
-        <div class="form-group"><label class="form-label">System Status</label>
-          <select id="cfg-open">
-            <option value="true">OPEN (Accepting Applications)</option>
-            <option value="false">CLOSED (Hidden from Public)</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group" style="margin-bottom: 1.5rem;"><label class="form-label">About / Description</label><textarea id="cfg-desc" rows="3"></textarea></div>
-      <div style="border-top:1px dashed var(--grid-border);margin:1.5rem 0;padding-top:1.5rem;">
-        <div style="font-size:10px;color:var(--accent-gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem;">[ T&C + Payment Settings ]</div>
+    <div id="tab-events" class="tab-panel active">
+      <div class="section-title">Create Event</div>
+      <div class="create-form">
         <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">T&C PDF — Cloudinary URL</label>
-            <input type="text" id="cfg-tnc-url" placeholder="https://res.cloudinary.com/...">
-            <span style="font-size:9px;color:var(--text-secondary);margin-top:4px;">Upload your PDF to Cloudinary and paste the URL here. Participants will be shown this before completing registration.</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Registration Fee</label>
-            <input type="text" id="cfg-fee" placeholder="e.g. ₹500">
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label">Payment Instructions</label>
-            <textarea id="cfg-payment" rows="3" placeholder="UPI ID: alfaaz@upi&#10;Bank: HDFC — Acc: 1234567890&#10;Participants must send payment to the above and upload a screenshot."></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Payment QR Code — Cloudinary URL (optional)</label>
-            <input type="text" id="cfg-qr-url" placeholder="https://res.cloudinary.com/...">
-          </div>
+          <div class="form-group"><label class="form-label">Event Name *</label><input type="text" id="ev-name" placeholder="e.g. Live Painting"></div>
+          <div class="form-group"><label class="form-label">Event Date</label><input type="text" id="ev-date" placeholder="e.g. Sunday 4PM"></div>
+          <div class="form-group"><label class="form-label">Capacity (0 = unlimited)</label><input type="number" id="ev-capacity" value="0" min="0"></div>
+          <div class="form-group"><label class="form-label">Description</label><input type="text" id="ev-desc" placeholder="Brief description..."></div>
+        </div>
+        <button class="btn btn-gold magnetic" onclick="handleCreateEvent()">Create Event</button>
+        <span id="ev-create-msg" style="font-size:11px; margin-left:1rem; color: var(--text-secondary);"></span>
+      </div>
+      <div class="section-title">Live Events</div>
+      <div id="eventsContainer"><div class="empty-state">Loading events...</div></div>
+    </div>
+
+    <div id="tab-exhibitions" class="tab-panel">
+      <div class="toggle-master is-closed" id="exhibToggleMaster">
+        <div class="toggle-master-label">
+          <span class="tm-title" id="exhibToggleTitle">Exhibition Portal</span>
+          <span class="tm-sub" id="exhibToggleSub">Loading current status...</span>
+        </div>
+        <div class="pill-wrap">
+          <span class="pill-status" id="exhibPillStatus" style="color:var(--text-secondary);">—</span>
+          <button class="pill-toggle off magnetic" id="exhibPillBtn" onclick="toggleExhibVisibility()">
+            <div class="pill-track"><div class="pill-thumb"></div></div>
+          </button>
         </div>
       </div>
-      <button class="btn btn-gold" onclick="saveExhibConfig()">Commit Global Settings</button>
-      <span id="cfg-msg" style="font-size:11px; margin-left:1rem; color: var(--accent-green);"></span>
+
+      <div class="section-title">Master Exhibition Settings</div>
+      <div class="create-form">
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">Exhibition Title</label><input type="text" id="cfg-title"></div>
+          <div class="form-group"><label class="form-label">Date</label><input type="text" id="cfg-date"></div>
+          <div class="form-group"><label class="form-label">Venue</label><input type="text" id="cfg-venue"></div>
+          <div class="form-group"><label class="form-label">System Status</label>
+            <select id="cfg-open">
+              <option value="true">OPEN (Accepting Applications)</option>
+              <option value="false">CLOSED (Hidden from Public)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 1.5rem;"><label class="form-label">About / Description</label><textarea id="cfg-desc" rows="3"></textarea></div>
+        <button class="btn btn-gold magnetic" onclick="saveExhibConfig()">Save Global Settings</button>
+        <span id="cfg-msg" style="font-size:11px; margin-left:1rem; color: var(--accent-green);"></span>
+      </div>
+
+      <div class="section-title">Submitted Portfolios</div>
+      <div style="display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm magnetic" onclick="filterExhibitions('ALL')" id="filt-ALL">All</button>
+        <button class="btn btn-ghost btn-sm magnetic" onclick="filterExhibitions('PENDING')" id="filt-PENDING">Pending</button>
+        <button class="btn btn-ghost btn-sm magnetic" onclick="filterExhibitions('APPROVED')" id="filt-APPROVED">Approved</button>
+        <button class="btn btn-ghost btn-sm magnetic" onclick="filterExhibitions('REJECTED')" id="filt-REJECTED">Rejected</button>
+      </div>
+      <div id="exhibitionsContainer"><div class="empty-state">Loading applications...</div></div>
     </div>
 
-    <div class="section-title">[ Submitted Portfolios ]</div>
-    <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
-      <button class="btn btn-ghost btn-sm" onclick="filterExhibitions('ALL')" id="filt-ALL">All</button>
-      <button class="btn btn-ghost btn-sm" onclick="filterExhibitions('PENDING')" id="filt-PENDING">Pending</button>
-      <button class="btn btn-ghost btn-sm" onclick="filterExhibitions('APPROVED')" id="filt-APPROVED">Approved</button>
-      <button class="btn btn-ghost btn-sm" onclick="filterExhibitions('REJECTED')" id="filt-REJECTED">Rejected</button>
+    <div id="tab-clubs" class="tab-panel">
+      <div class="section-title">Club Applications</div>
+      <div style="display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm magnetic" onclick="filterClubs('ALL')" id="filter-ALL">All</button>
+        <button class="btn btn-ghost btn-sm magnetic" onclick="filterClubs('PENDING')" id="filter-PENDING">Pending</button>
+        <button class="btn btn-ghost btn-sm magnetic" onclick="filterClubs('APPROVED')" id="filter-APPROVED">Approved</button>
+        <button class="btn btn-ghost btn-sm magnetic" onclick="filterClubs('REJECTED')" id="filter-REJECTED">Rejected</button>
+      </div>
+      <div id="clubsContainer"><div class="empty-state">Loading applications...</div></div>
     </div>
-    <div id="exhibitionsContainer"><div class="empty-state">Loading applications...</div></div>
-  </div>
-
-  <div id="tab-clubs" class="tab-panel">
-    <div class="section-title">[ Club Applications ]</div>
-    <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
-      <button class="btn btn-ghost btn-sm" onclick="filterClubs('ALL')" id="filter-ALL">All</button>
-      <button class="btn btn-ghost btn-sm" onclick="filterClubs('PENDING')" id="filter-PENDING">Pending</button>
-      <button class="btn btn-ghost btn-sm" onclick="filterClubs('APPROVED')" id="filter-APPROVED">Approved</button>
-      <button class="btn btn-ghost btn-sm" onclick="filterClubs('REJECTED')" id="filter-REJECTED">Rejected</button>
+    
+    <div id="tab-roster" class="tab-panel">
+      <div class="section-title">Collective Roster</div>
+      <div id="rosterContainer"><div class="empty-state">Loading roster...</div></div>
     </div>
-    <div id="clubsContainer"><div class="empty-state">Loading applications...</div></div>
-  </div>
-  
-  <div id="tab-roster" class="tab-panel">
-    <div class="section-title">[ Collective Roster ]</div>
-    <div id="rosterContainer"><div class="empty-state">Loading roster...</div></div>
   </div>
 
   <div class="modal-overlay" id="regModal">
     <div class="modal">
       <div class="modal-header">
-        <div>
-          <div style="font-family:'Teko',sans-serif; font-size:1.8rem; color:var(--accent-gold);" id="modalTitle">REGISTRATIONS</div>
-        </div>
-        <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕ Close</button>
+        <div style="font-family:var(--font-heading); font-size:2rem; color:var(--text-primary);" id="modalTitle">Details</div>
+        <button class="btn btn-ghost btn-sm magnetic" onclick="closeModal()">✕ Close</button>
       </div>
-      <div id="modalBody"></div>
+      <div id="modalBody" style="color:var(--text-primary);"></div>
     </div>
   </div>
 
+  <script src="global.js"></script>
   <script>
-    const API_URL = "https://alfaaz-project.onrender.com";
-    const token = localStorage.getItem('alfaaz_token'); const userData = localStorage.getItem('alfaaz_user');
-    if (!token || !userData) window.location.href = 'login.html';
-    const user = JSON.parse(userData); if (user.status !== 'ADMIN') window.location.href = 'dashboard.html';
-    const HEADERS = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
-    
-    async function apiFetch(url, options = {}) {
-      const res = await fetch(url, { ...options, headers: { ...HEADERS, ...(options.headers || {}) } });
-      if (res.status === 401 || res.status === 403) { localStorage.clear(); window.location.href = 'login.html'; return null; }
-      return res;
-    }
+    const userData = localStorage.getItem('alfaaz_user');
+    if (!userData) window.location.href = 'login.html';
+    const user = JSON.parse(userData); 
+    if (user.status !== 'ADMIN') window.location.href = 'dashboard.html';
 
     const tabLoaded = {};
     function switchTab(name) {
@@ -223,320 +144,110 @@
       if (name === 'clubs') loadClubs('ALL'); if (name === 'roster') loadRoster();
     }
 
-    // GLOBALS
     let allEvents = [];
-
-    // ── EVENTS ──
     async function loadEvents() {
       const container = document.getElementById('eventsContainer');
       try {
-        const res = await apiFetch(`${API_URL}/admin/events`);
+        const res = await window.globalApiFetch('/admin/events');
+        if(!res) return;
         allEvents = await res.json();
         if (!allEvents.length) { container.innerHTML = '<div class="empty-state">No events found.</div>'; return; }
         container.innerHTML = '';
         allEvents.forEach(e => {
           const card = document.createElement('div'); card.className = 'data-card event-card';
           const isOpen = e.registration_open; const capLabel = e.capacity === 0 ? '∞' : `${e.registered}/${e.capacity}`;
-          card.innerHTML = `
-            <div><div class="label">Event</div><div class="data-display">${e.name}</div><div style="font-size:11px; color:var(--text-secondary);">${e.description || '—'}</div></div>
-            <div><div class="label">Date</div><div class="data-display" style="font-size:12px;">${e.event_date || '—'}</div></div>
-            <div><div class="label">Registered</div><div class="data-display">${capLabel}</div></div>
-            <div><div class="label">Status</div><span class="badge ${isOpen ? 'badge-open' : 'badge-closed'}">${isOpen ? 'Open' : 'Closed'}</span></div>
-            <div style="display:flex; flex-direction:column; gap:0.4rem;">
-              <button class="btn ${isOpen ? 'btn-red' : 'btn-green'} btn-sm btn-full" onclick="toggleEvent(${e.id}, this)">${isOpen ? 'Close' : 'Open'}</button>
-              <button class="btn btn-gold btn-sm btn-full" onclick="viewRegistrations(${e.id})">List</button>
-              <button class="btn btn-red btn-sm btn-full" onclick="deleteEvent(${e.id}, '${e.name.replace(/'/g, "\\'")}', this)">Delete</button>
-            </div>
-          `;
+          card.innerHTML = `<div><div class="label">Event</div><div class="data-display">${e.name}</div><div style="font-size:11px; color:var(--text-secondary);">${e.description || '—'}</div></div><div><div class="label">Date</div><div class="data-display" style="font-size:12px;">${e.event_date || '—'}</div></div><div><div class="label">Registered</div><div class="data-display">${capLabel}</div></div><div><div class="label">Status</div><span class="badge ${isOpen ? 'badge-open' : 'badge-closed'}">${isOpen ? 'Open' : 'Closed'}</span></div><div style="display:flex; flex-direction:column; gap:0.4rem;"><button class="btn ${isOpen ? 'btn-red' : 'btn-green'} btn-sm btn-full magnetic" onclick="toggleEvent(${e.id}, this)">${isOpen ? 'Close' : 'Open'}</button><button class="btn btn-gold btn-sm btn-full magnetic" onclick="viewRegistrations(${e.id})">List</button><button class="btn btn-red btn-sm btn-full magnetic" onclick="deleteEvent(${e.id}, '${e.name.replace(/'/g, "\\'")}', this)">Delete</button></div>`;
           container.appendChild(card);
         });
+        if(window.refreshGlobalEffects) window.refreshGlobalEffects();
       } catch (e) { container.innerHTML = '<div class="empty-state">Error loading events.</div>'; }
     }
 
     async function handleCreateEvent() {
       const name = document.getElementById('ev-name').value.trim(), date = document.getElementById('ev-date').value.trim(), capacity = parseInt(document.getElementById('ev-capacity').value) || 0, desc = document.getElementById('ev-desc').value.trim(), msg = document.getElementById('ev-create-msg');
       if (!name) return; msg.textContent = 'Creating...';
-      const res = await apiFetch(`${API_URL}/admin/events/create`, { method: 'POST', body: JSON.stringify({ name, description: desc, event_date: date, capacity }) });
-      if (res.ok) { msg.textContent = '✓ Created.'; loadEvents(); }
+      const res = await window.globalApiFetch('/admin/events/create', { method: 'POST', body: JSON.stringify({ name, description: desc, event_date: date, capacity }) });
+      if (res && res.ok) { msg.textContent = '✓ Created.'; loadEvents(); }
     }
-    async function toggleEvent(id, btn) { btn.textContent = '...'; const res = await apiFetch(`${API_URL}/admin/events/${id}/toggle`, { method: 'PATCH' }); if (res.ok) loadEvents(); }
-    async function deleteEvent(id, name, btn) { if (!confirm(`Delete ${name}?`)) return; btn.textContent = '...'; const res = await apiFetch(`${API_URL}/admin/events/${id}`, { method: 'DELETE' }); if (res.ok) loadEvents(); }
+    async function toggleEvent(id, btn) { btn.textContent = '...'; const res = await window.globalApiFetch(`/admin/events/${id}/toggle`, { method: 'PATCH' }); if (res && res.ok) loadEvents(); }
+    async function deleteEvent(id, name, btn) { if (!confirm(`Delete ${name}?`)) return; btn.textContent = '...'; const res = await window.globalApiFetch(`/admin/events/${id}`, { method: 'DELETE' }); if (res && res.ok) loadEvents(); }
     
     async function viewRegistrations(id) {
-      const event = allEvents.find(e => e.id === id);
-      document.getElementById('modalTitle').textContent = event.name.toUpperCase(); 
-      document.getElementById('modalBody').innerHTML = 'Loading...'; document.getElementById('regModal').classList.add('open');
-      const res = await apiFetch(`${API_URL}/admin/events/${id}/registrations`);
+      const event = allEvents.find(e => e.id === id); document.getElementById('modalTitle').textContent = event.name; document.getElementById('modalBody').innerHTML = 'Loading...'; document.getElementById('regModal').classList.add('open');
+      const res = await window.globalApiFetch(`/admin/events/${id}/registrations`);
+      if(!res) return;
       const data = await res.json();
-      let html = `<div style="font-size:11px; margin-bottom:1rem; color:var(--accent-gold);">Total Approved: ${data.registrations.length}</div>`;
-      data.registrations.forEach((r, i) => {
-          html += `<div style="padding:0.5rem; border-bottom:1px solid var(--grid-border); font-size:12px; display:flex; justify-content:space-between;">
-                     <span>${i+1}. ${r.email}</span>
-                     <span style="color:var(--text-secondary);">${r.whatsapp ? 'WA: ' + r.whatsapp : 'No WA'}</span>
-                   </div>`;
-      });
+      let html = `<div style="font-size:12px; margin-bottom:1rem; color:var(--accent-gold); font-weight:500;">Total Approved: ${data.registrations.length}</div>`;
+      data.registrations.forEach((r, i) => { html += `<div style="padding:0.8rem; border-bottom:1px solid var(--grid-border); font-size:13px; display:flex; justify-content:space-between;"><span>${i+1}. ${r.email}</span><span style="color:var(--text-secondary);">${r.whatsapp ? 'WA: ' + r.whatsapp : 'No WA'}</span></div>`; });
       document.getElementById('modalBody').innerHTML = html || 'No registrations.';
     }
     function closeModal() { document.getElementById('regModal').classList.remove('open'); }
 
-    // ── EXHIBITIONS ENGINE ──
-    let allExhibs = [];
-    let currentExhibOpen = false;
-
+    let allExhibs = [], currentExhibOpen = false;
     function applyToggleUI(isOpen) {
-      currentExhibOpen = isOpen;
-      const master = document.getElementById('exhibToggleMaster');
-      const btn    = document.getElementById('exhibPillBtn');
-      const status = document.getElementById('exhibPillStatus');
-      const sub    = document.getElementById('exhibToggleSub');
+      currentExhibOpen = isOpen; const master = document.getElementById('exhibToggleMaster'), btn = document.getElementById('exhibPillBtn'), status = document.getElementById('exhibPillStatus'), sub = document.getElementById('exhibToggleSub');
       if (!master) return;
-      if (isOpen) {
-        master.className = 'toggle-master is-open';
-        btn.className    = 'pill-toggle on';
-        status.textContent = 'VISIBLE';
-        status.style.color = 'var(--accent-green)';
-        sub.textContent  = 'Exhibition portal is LIVE — participants can see and apply.';
-      } else {
-        master.className = 'toggle-master is-closed';
-        btn.className    = 'pill-toggle off';
-        status.textContent = 'HIDDEN';
-        status.style.color = 'var(--accent-red)';
-        sub.textContent  = 'Exhibition portal is HIDDEN — invisible to participants.';
-      }
+      if (isOpen) { master.className = 'toggle-master is-open'; btn.className = 'pill-toggle on magnetic'; status.textContent = 'VISIBLE'; status.style.color = 'var(--accent-green)'; sub.textContent = 'Exhibition portal is LIVE.'; } 
+      else { master.className = 'toggle-master is-closed'; btn.className = 'pill-toggle off magnetic'; status.textContent = 'HIDDEN'; status.style.color = 'var(--accent-red)'; sub.textContent = 'Exhibition portal is HIDDEN.'; }
     }
-
     async function toggleExhibVisibility() {
-      const btn = document.getElementById('exhibPillBtn');
-      btn.style.pointerEvents = 'none'; 
-      const newState = !currentExhibOpen;
-
-      applyToggleUI(newState);
-
-      const payload = {
-        title:      document.getElementById('cfg-title').value || 'Upcoming Exhibition',
-        date_text:  document.getElementById('cfg-date').value  || 'Dates TBD',
-        venue:      document.getElementById('cfg-venue').value || 'Venue TBD',
-        about_text: document.getElementById('cfg-desc').value  || '',
-        is_open:    newState
-      };
-      const res = await apiFetch(`${API_URL}/admin/exhibitions/config`, {
-        method: 'POST', body: JSON.stringify(payload)
-      });
-      if (res && res.ok) {
-        document.getElementById('cfg-open').value = newState ? 'true' : 'false';
-        const flash = document.getElementById('cfg-msg');
-        flash.textContent = newState ? '✓ Portal opened — participants can now see the exhibition.' : '✓ Portal hidden from participants.';
-        flash.style.color = newState ? 'var(--accent-green)' : 'var(--accent-red)';
-        setTimeout(() => { flash.textContent = ''; }, 4000);
-      } else {
-        applyToggleUI(!newState);
-      }
-      btn.style.pointerEvents = '';
+      const btn = document.getElementById('exhibPillBtn'); btn.style.pointerEvents = 'none'; const newState = !currentExhibOpen; applyToggleUI(newState);
+      const payload = { title: document.getElementById('cfg-title').value || 'Exhibition', date_text: document.getElementById('cfg-date').value || 'TBD', venue: document.getElementById('cfg-venue').value || 'TBD', about_text: document.getElementById('cfg-desc').value || '', is_open: newState };
+      const res = await window.globalApiFetch('/admin/exhibitions/config', { method: 'POST', body: JSON.stringify(payload) });
+      if (res && res.ok) { document.getElementById('cfg-open').value = newState ? 'true' : 'false'; const flash = document.getElementById('cfg-msg'); flash.textContent = newState ? '✓ Portal opened' : '✓ Portal hidden'; flash.style.color = newState ? 'var(--accent-green)' : 'var(--accent-red)'; setTimeout(() => { flash.textContent = ''; }, 4000); } 
+      else { applyToggleUI(!newState); } btn.style.pointerEvents = '';
     }
-
     async function loadExhibitions(f) {
-      const cfgRes = await fetch(`${API_URL}/exhibitions/config`);
-      const cfg = await cfgRes.json();
-      document.getElementById('cfg-title').value = cfg.title || '';
-      document.getElementById('cfg-date').value = cfg.date_text || '';
-      document.getElementById('cfg-venue').value = cfg.venue || '';
-      document.getElementById('cfg-desc').value = cfg.about_text || '';
-      document.getElementById('cfg-open').value = cfg.is_open ? "true" : "false";
-      document.getElementById('cfg-tnc-url').value = cfg.tnc_pdf_url || '';
-      document.getElementById('cfg-fee').value = cfg.registration_fee || '';
-      document.getElementById('cfg-payment').value = cfg.payment_instructions || '';
-      document.getElementById('cfg-qr-url').value = cfg.payment_qr_url || '';
-
-      applyToggleUI(cfg.is_open);
-
-      const res = await apiFetch(`${API_URL}/admin/exhibitions`);
-      allExhibs = await res.json(); renderExhibitions(f);
+      const cfgRes = await fetch(`${API_URL}/exhibitions/config`), cfg = await cfgRes.json();
+      document.getElementById('cfg-title').value = cfg.title || ''; document.getElementById('cfg-date').value = cfg.date_text || ''; document.getElementById('cfg-venue').value = cfg.venue || ''; document.getElementById('cfg-desc').value = cfg.about_text || ''; document.getElementById('cfg-open').value = cfg.is_open ? "true" : "false"; applyToggleUI(cfg.is_open);
+      const res = await window.globalApiFetch('/admin/exhibitions'); if(!res) return; allExhibs = await res.json(); renderExhibitions(f);
     }
-
     async function saveExhibConfig() {
-      const isOpen = document.getElementById('cfg-open').value === "true";
-      const payload = {
-        title: document.getElementById('cfg-title').value,
-        date_text: document.getElementById('cfg-date').value,
-        venue: document.getElementById('cfg-venue').value,
-        about_text: document.getElementById('cfg-desc').value,
-        is_open: isOpen,
-        tnc_pdf_url: document.getElementById('cfg-tnc-url').value.trim() || null,
-        registration_fee: document.getElementById('cfg-fee').value.trim(),
-        payment_instructions: document.getElementById('cfg-payment').value.trim(),
-        payment_qr_url: document.getElementById('cfg-qr-url').value.trim() || null,
-      };
+      const isOpen = document.getElementById('cfg-open').value === "true", payload = { title: document.getElementById('cfg-title').value, date_text: document.getElementById('cfg-date').value, venue: document.getElementById('cfg-venue').value, about_text: document.getElementById('cfg-desc').value, is_open: isOpen };
       document.getElementById('cfg-msg').textContent = "Saving...";
-      const res = await apiFetch(`${API_URL}/admin/exhibitions/config`, { method: 'POST', body: JSON.stringify(payload) });
-      if (res.ok) {
-        document.getElementById('cfg-msg').textContent = "✓ Settings Synced Globally";
-        setTimeout(() => document.getElementById('cfg-msg').textContent = "", 3000);
-        applyToggleUI(isOpen);
-      }
+      const res = await window.globalApiFetch('/admin/exhibitions/config', { method: 'POST', body: JSON.stringify(payload) });
+      if (res && res.ok) { document.getElementById('cfg-msg').textContent = "✓ Settings Synced"; setTimeout(() => document.getElementById('cfg-msg').textContent = "", 3000); applyToggleUI(isOpen); }
     }
-
     function filterExhibitions(f) { document.querySelectorAll('[id^="filt-"]').forEach(b => b.classList.remove('btn-gold')); document.getElementById(`filt-${f}`).classList.add('btn-gold'); renderExhibitions(f); }
-    
     function renderExhibitions(f) {
-      const container = document.getElementById('exhibitionsContainer');
-      const apps = f === 'ALL' ? allExhibs : allExhibs.filter(a => a.status === f);
-      container.innerHTML = '';
+      const container = document.getElementById('exhibitionsContainer'), apps = f === 'ALL' ? allExhibs : allExhibs.filter(a => a.status === f); container.innerHTML = '';
       if (!apps.length) { container.innerHTML = '<div class="empty-state">No portfolios submitted.</div>'; return; }
       apps.forEach(a => {
-        const card = document.createElement('div'); card.className = 'data-card exhib-card';
-        const badge = a.status === 'PENDING' ? 'badge-pending' : a.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected';
-        const regStatus = a.registration_status || 'NONE';
-        const regBadge = regStatus === 'CONFIRMED' ? 'badge-approved'
-          : regStatus === 'SUBMITTED' ? 'badge-pending' : 'badge-closed';
-        const regLabel = regStatus === 'CONFIRMED' ? 'PAYMENT CONFIRMED'
-          : regStatus === 'SUBMITTED' ? 'PAYMENT PENDING' : 'AWAITING REGISTRATION';
-
-        card.innerHTML = `
-          <div>
-            <div class="label">Artist</div>
-            <div class="data-display">${a.full_name}</div>
-            <div style="font-size:10px;color:var(--text-secondary);">Age: ${a.age} | WA: ${a.whatsapp}</div>
-            <div style="font-size:10px;color:var(--text-secondary);">${a.user_email}</div>
-            ${a.applicant_note ? `<div style="font-size:9px;font-style:italic;color:var(--accent-gold);margin-top:4px;">"${a.applicant_note}"</div>` : ''}
-          </div>
-          <div>
-            <div class="label">Art Profile</div>
-            <div class="data-display" style="font-size:12px;">${a.genre}</div>
-            <div style="font-size:10px;color:var(--text-secondary);">Medium: ${a.medium}</div>
-          </div>
-          <div>
-            <div class="label">Status</div>
-            <span class="badge ${badge}" style="margin-bottom:6px;">${a.status}</span>
-            ${a.status === 'APPROVED' ? `<div style="margin-top:6px;"><span class="badge ${regBadge}" style="font-size:8px;">${regLabel}</span></div>` : ''}
-            ${a.curator_note ? `<div style="font-size:9px;color:var(--text-secondary);margin-top:4px;">Note sent.</div>` : ''}
-          </div>
-          <div style="display:flex;flex-direction:column;gap:0.4rem;">
-            <a href="${a.portfolio_url}" target="_blank" class="btn btn-ghost btn-sm btn-full" style="border-color:var(--accent-gold);color:var(--accent-gold);">View Portfolio</a>
-            ${a.status === 'PENDING' ? `
-              <button class="btn btn-green btn-sm" onclick="reviewExhibition(${a.id}, 'APPROVED', this)">Approve</button>
-              <button class="btn btn-red btn-sm" onclick="reviewExhibition(${a.id}, 'REJECTED', this)">Reject</button>` : ''}
-            ${a.status === 'REJECTED' ? `
-              <button class="btn btn-ghost btn-sm" onclick="revertExhibition(${a.id}, this)" style="border-color:var(--text-secondary);color:var(--text-secondary);">Undo Rejection</button>` : ''}
-            ${a.status === 'APPROVED' && regStatus === 'SUBMITTED' ? `
-              <button class="btn btn-ghost btn-sm" onclick="viewPaymentProof(${a.id})" style="border-color:var(--accent-gold);color:var(--accent-gold);">View Payment</button>
-              <button class="btn btn-green btn-sm" onclick="confirmPayment(${a.id}, this)">Confirm Payment</button>` : ''}
-            ${a.status === 'APPROVED' && regStatus === 'CONFIRMED' ? `
-              <button class="btn btn-ghost btn-sm" onclick="viewPaymentProof(${a.id})">View Receipt</button>` : ''}
-          </div>`;
+        const card = document.createElement('div'); card.className = 'data-card exhib-card'; const badge = a.status === 'PENDING' ? 'badge-pending' : a.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected';
+        card.innerHTML = `<div><div class="label">Artist</div><div class="data-display">${a.full_name}</div><div style="font-size:11px;color:var(--text-secondary);">${a.user_email}</div></div><div><div class="label">Art Profile</div><div class="data-display" style="font-size:13px;">${a.genre}</div><div style="font-size:11px;color:var(--text-secondary);">Medium: ${a.medium}</div></div><div><div class="label">Status</div><span class="badge ${badge}">${a.status}</span></div><div style="display:flex;flex-direction:column;gap:0.4rem;"><a href="${a.portfolio_url}" target="_blank" class="btn btn-ghost btn-sm btn-full magnetic" style="border-color:var(--accent-gold);color:var(--accent-gold);">View Portfolio</a>${a.status === 'PENDING' ? `<button class="btn btn-green btn-sm magnetic" onclick="reviewExhibition(${a.id}, 'APPROVED', this)">Approve</button><button class="btn btn-red btn-sm magnetic" onclick="reviewExhibition(${a.id}, 'REJECTED', this)">Reject</button>` : ''}${a.status === 'REJECTED' ? `<button class="btn btn-ghost btn-sm magnetic" onclick="revertExhibition(${a.id}, this)">Undo Rejection</button>` : ''}</div>`;
         container.appendChild(card);
       });
+      if(window.refreshGlobalEffects) window.refreshGlobalEffects();
     }
-    
-    async function reviewExhibition(id, status, btn) {
-      const note = prompt('Optional Curator Note (this will be shown on their dashboard):'); 
-      btn.textContent = '...';
-      const res = await apiFetch(`${API_URL}/admin/exhibitions/review`, { 
-        method: 'POST', 
-        body: JSON.stringify({ application_id: id, status: status, curator_note: note }) 
-      });
-      if (res.ok) { loadExhibitions('ALL'); filterExhibitions('ALL'); }
-    }
+    async function reviewExhibition(id, status, btn) { const note = prompt('Curator Note:'); btn.textContent = '...'; const res = await window.globalApiFetch('/admin/exhibitions/review', { method: 'POST', body: JSON.stringify({ application_id: id, status: status, curator_note: note }) }); if (res && res.ok) { loadExhibitions('ALL'); filterExhibitions('ALL'); } }
+    async function revertExhibition(id, btn) { if (!confirm('Undo rejection?')) return; btn.textContent = '...'; btn.disabled = true; const res = await window.globalApiFetch(`/admin/exhibitions/${id}/revert`, { method: 'PATCH' }); if (res && res.ok) { loadExhibitions('ALL'); filterExhibitions('ALL'); } }
 
-    async function revertExhibition(id, btn) {
-      if (!confirm('Undo rejection and move back to PENDING?')) return;
-      btn.textContent = '...'; btn.disabled = true;
-      const res = await apiFetch(`${API_URL}/admin/exhibitions/${id}/revert`, { method: 'PATCH' });
-      if (res && res.ok) { loadExhibitions('ALL'); filterExhibitions('ALL'); }
-      else { btn.textContent = 'Undo Rejection'; btn.disabled = false; alert('Failed to revert.'); }
-    }
-
-    // EXHIBITION PAYMENT MANAGEMENT
-    async function confirmPayment(id, btn) {
-      if (!confirm('Confirm payment for this participant? This will finalise their exhibition spot and send them a confirmation email.')) return;
-      btn.textContent = '...'; btn.disabled = true;
-      const res = await apiFetch(`${API_URL}/admin/exhibitions/${id}/confirm-payment`, { method: 'PATCH' });
-      if (res && res.ok) {
-        loadExhibitions('ALL'); filterExhibitions('ALL');
-      } else {
-        btn.textContent = 'Confirm Payment'; btn.disabled = false;
-        alert('Failed to confirm payment.');
-      }
-    }
-
-    async function viewPaymentProof(id) {
-      const res = await apiFetch(`${API_URL}/admin/exhibitions/${id}/registration`);
-      if (!res) return;
-      const data = await res.json();
-      document.getElementById('modalTitle').textContent = `${data.full_name.toUpperCase()} — REGISTRATION`;
-      document.getElementById('modalBody').innerHTML = `
-        <div style="display:grid;gap:1rem;">
-          <div><div class="label">Email</div><div class="data-display" style="font-size:12px;">${data.user_email}</div></div>
-          <div><div class="label">WhatsApp</div><div class="data-display" style="font-size:12px;">${data.whatsapp}</div></div>
-          <div><div class="label">Genre / Medium</div><div class="data-display" style="font-size:12px;">${data.genre} / ${data.medium}</div></div>
-          <div><div class="label">Registration Status</div><div class="data-display" style="font-size:12px;">${data.registration_status}</div></div>
-          <div><div class="label">Agreed to T&C</div><div class="data-display" style="font-size:12px;">${data.agreed_to_tnc ? '✓ Yes' : '✗ No'}</div></div>
-          ${data.participant_note_reg ? `<div><div class="label">Participant Note</div><div class="data-display" style="font-size:12px;">${data.participant_note_reg}</div></div>` : ''}
-          ${data.payment_proof_url ? `
-            <div>
-              <div class="label">Payment Proof</div>
-              <a href="${data.payment_proof_url}" target="_blank" class="btn btn-gold btn-sm" style="margin-top:0.5rem;display:inline-block;">Open Proof →</a>
-            </div>` : '<div><div class="label">Payment Proof</div><div style="color:var(--accent-red);font-size:12px;">Not submitted</div></div>'}
-          ${data.payment_confirmed_at ? `<div><div class="label">Confirmed At</div><div class="data-display" style="font-size:11px;">${new Date(data.payment_confirmed_at).toLocaleString()}</div></div>` : ''}
-        </div>`;
-      document.getElementById('regModal').classList.add('open');
-    }
-
-    // ── CLUBS ──
     let allClubApps = [];
-    async function loadClubs(f) { const res = await apiFetch(`${API_URL}/admin/club-applications`); allClubApps = await res.json(); renderClubs(f); }
+    async function loadClubs(f) { const res = await window.globalApiFetch('/admin/club-applications'); if(!res) return; allClubApps = await res.json(); renderClubs(f); }
     function filterClubs(f) { document.querySelectorAll('[id^="filter-"]').forEach(b => b.classList.remove('btn-gold')); document.getElementById(`filter-${f}`).classList.add('btn-gold'); renderClubs(f); }
-    
     function renderClubs(f) {
       const container = document.getElementById('clubsContainer'); const apps = f === 'ALL' ? allClubApps : allClubApps.filter(a => a.status === f); container.innerHTML = '';
-      if (!apps.length) { container.innerHTML = '<div class="empty-state">No apps found.</div>'; return; }
+      if (!apps.length) { container.innerHTML = '<div class="empty-state">No applications found.</div>'; return; }
       apps.forEach(a => {
         const card = document.createElement('div'); card.className = 'data-card club-card'; const badge = a.status === 'PENDING' ? 'badge-pending' : a.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected';
-        card.innerHTML = `
-          <div><div class="label">User</div><div class="data-display">${a.user_email}</div></div>
-          <div><div class="label">Club</div><div class="data-display">${a.club_name}</div></div>
-          <div><div class="label">Status</div><span class="badge ${badge}">${a.status}</span></div>
-          <div style="display:flex; flex-direction:column; gap:0.4rem;">
-            ${a.status === 'PENDING' ? `
-              <button class="btn btn-green btn-sm" onclick="reviewClub(${a.id}, 'APPROVED', this)">Approve</button>
-              <button class="btn btn-red btn-sm" onclick="reviewClub(${a.id}, 'REJECTED', this)">Reject</button>
-            ` : ''}
-            ${a.status === 'REJECTED' ? `
-              <button class="btn btn-ghost btn-sm" onclick="revertClub(${a.id}, this)">Undo Rejection</button>
-            ` : ''}
-            ${a.status === 'APPROVED' ? `
-              <span style="font-size:10px; color:var(--accent-green); text-transform:uppercase;">Approved</span>
-            ` : ''}
-          </div>
-        `;
+        card.innerHTML = `<div><div class="label">User</div><div class="data-display">${a.user_email}</div></div><div><div class="label">Club</div><div class="data-display">${a.club_name}</div></div><div><div class="label">Status</div><span class="badge ${badge}">${a.status}</span></div><div style="display:flex; flex-direction:column; gap:0.4rem;">${a.status === 'PENDING' ? `<button class="btn btn-green btn-sm magnetic" onclick="reviewClub(${a.id}, 'APPROVED', this)">Approve</button><button class="btn btn-red btn-sm magnetic" onclick="reviewClub(${a.id}, 'REJECTED', this)">Reject</button>` : ''}${a.status === 'REJECTED' ? `<button class="btn btn-ghost btn-sm magnetic" onclick="revertClub(${a.id}, this)">Undo</button>` : ''}</div>`;
         container.appendChild(card);
       });
+      if(window.refreshGlobalEffects) window.refreshGlobalEffects();
     }
-    
-    async function reviewClub(id, status, btn) { 
-      const note = status === 'REJECTED' ? prompt('Note:') : null; 
-      btn.textContent = '...'; 
-      const res = await apiFetch(`${API_URL}/admin/club-applications/review`, { method: 'POST', body: JSON.stringify({ application_id: id, status, admin_note: note }) }); 
-      if (res.ok) loadClubs('ALL'); 
-    }
+    async function reviewClub(id, status, btn) { const note = status === 'REJECTED' ? prompt('Note:') : null; btn.textContent = '...'; const res = await window.globalApiFetch('/admin/club-applications/review', { method: 'POST', body: JSON.stringify({ application_id: id, status, admin_note: note }) }); if (res && res.ok) loadClubs('ALL'); }
+    async function revertClub(id, btn) { if (!confirm('Undo rejection?')) return; btn.textContent = '...'; btn.disabled = true; const res = await window.globalApiFetch(`/admin/club-applications/${id}/revert`, { method: 'PATCH' }); if (res && res.ok) { loadClubs('ALL'); filterClubs('ALL'); } }
 
-    async function revertClub(id, btn) {
-      if (!confirm('Undo rejection and move back to PENDING?')) return;
-      btn.textContent = '...'; btn.disabled = true;
-      const res = await apiFetch(`${API_URL}/admin/club-applications/${id}/revert`, { method: 'PATCH' });
-      if (res && res.ok) { loadClubs('ALL'); filterClubs('ALL'); }
-      else { btn.textContent = 'Undo Rejection'; btn.disabled = false; alert('Failed to revert.'); }
-    }
-
-    // ── ROSTER ──
     async function loadRoster() {
-      const container = document.getElementById('rosterContainer'); const res = await apiFetch(`${API_URL}/admin/users`); const users = await res.json(); container.innerHTML = '';
+      const container = document.getElementById('rosterContainer'); const res = await window.globalApiFetch('/admin/users'); if(!res) return; const users = await res.json(); container.innerHTML = '';
       users.forEach((u, i) => {
         const card = document.createElement('div'); card.className = 'data-card user-card';
-        card.innerHTML = `<div><div class="label">User</div><div class="data-display">${u.email}</div></div><div><select id="st-${i}"><option value="PARTICIPANT" ${u.status==='PARTICIPANT'?'selected':''}>Participant</option><option value="ADMIN" ${u.status==='ADMIN'?'selected':''}>Admin</option></select></div><button class="btn btn-gold btn-sm" onclick="updateStatus('${u.email}', ${i}, this)">Commit</button>`;
+        card.innerHTML = `<div><div class="label">User</div><div class="data-display">${u.email}</div></div><div><select id="st-${i}"><option value="PARTICIPANT" ${u.status==='PARTICIPANT'?'selected':''}>Participant</option><option value="ADMIN" ${u.status==='ADMIN'?'selected':''}>Admin</option></select></div><button class="btn btn-gold btn-sm magnetic" onclick="updateStatus('${u.email}', ${i}, this)">Save</button>`;
         container.appendChild(card);
       });
+      if(window.refreshGlobalEffects) window.refreshGlobalEffects();
     }
-    async function updateStatus(email, i, btn) { const status = document.getElementById(`st-${i}`).value; btn.textContent = '...'; const res = await apiFetch(`${API_URL}/admin/update_status`, { method: 'POST', body: JSON.stringify({ email, status }) }); if (res.ok) { if (email === user.email && status === 'PARTICIPANT') { localStorage.clear(); window.location.href = 'login.html'; } btn.textContent = '✓'; setTimeout(() => btn.textContent = 'Commit', 2000); } }
+    async function updateStatus(email, i, btn) { const status = document.getElementById(`st-${i}`).value; btn.textContent = '...'; const res = await window.globalApiFetch('/admin/update_status', { method: 'POST', body: JSON.stringify({ email, status }) }); if (res && res.ok) { if (email === user.email && status === 'PARTICIPANT') { localStorage.clear(); window.location.href = 'login.html'; } btn.textContent = '✓'; setTimeout(() => btn.textContent = 'Save', 2000); } }
 
     switchTab('events'); 
   </script>
