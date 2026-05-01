@@ -105,6 +105,23 @@
       });
     }
 
+    // Sanitize HTML to prevent XSS before injecting blog content
+    function sanitizeHTML(html) {
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      // Remove dangerous tags entirely
+      div.querySelectorAll('script, iframe, object, embed, form').forEach(el => el.remove());
+      // Strip inline event handlers (onclick, onerror, etc.)
+      div.querySelectorAll('*').forEach(el => {
+        [...el.attributes].forEach(attr => {
+          if (attr.name.startsWith('on') || attr.name === 'href' && attr.value.startsWith('javascript:')) {
+            el.removeAttribute(attr.name);
+          }
+        });
+      });
+      return div.innerHTML;
+    }
+
     // Database Fetch Logic (Untouched!)
     async function loadArticle() {
       const target = document.getElementById('articleTarget');
@@ -134,7 +151,7 @@
             <h1 class="post-title">${article.title}</h1>
           </div>
           <div class="post-content">
-            ${article.content}
+            ${sanitizeHTML(article.content)}
           </div>
         `;
 
