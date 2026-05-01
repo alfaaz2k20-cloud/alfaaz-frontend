@@ -37,12 +37,11 @@
   </style>
 </head>
 <body>
-  <video class="bg-video" autoplay loop muted playsinline><source src="https://res.cloudinary.com/dmqwjpmjk/video/upload/v1761507594/portal-bg_oribvr.mp4" type="video/mp4"></video>
-  <div class="video-overlay"></div>
+ 
   <div class="custom-cursor" id="cursor"></div>
 
   <nav>
-    <a href="dashboard_2.html" class="logo magnetic" style="display:flex;align-items:center;gap:0.5rem;font-size:1.2rem;color:var(--text-secondary);"><i data-lucide="arrow-left" class="w-5 h-5"></i> Dashboard</a>
+    <a href="dashboard.html" class="logo magnetic" style="display:flex;align-items:center;gap:0.5rem;font-size:1.2rem;color:var(--text-secondary);"><i data-lucide="arrow-left" class="w-5 h-5"></i> Dashboard</a>
     <div id="userGreeting" style="font-size:11px;letter-spacing:1px;color:var(--text-secondary);">SYS.ACTIVE</div>
   </nav>
 
@@ -115,7 +114,7 @@
   <script>
     const CLOUD_NAME = "dmqwjpmjk", UPLOAD_PRESET = "alfaaz_vault";
     const userData = localStorage.getItem('alfaaz_user');
-    if (!userData) window.location.href = 'login_2.html';
+    if (!userData) window.location.href = 'login.html';
     const user = JSON.parse(userData); document.getElementById('userGreeting').textContent = `[ ${user.email.split('@')[0]} ]`;
 
     let currentStep = 1;
@@ -127,13 +126,13 @@
         const res = await window.globalApiFetch('/exhibitions/my-status');
         if(!res) return;
         const data = await res.json();
-        if (data.status === "PENDING" || data.status === "APPROVED") { alert("You already have an active submission."); window.location.href = 'dashboard_2.html'; return; }
+        if (data.status === "PENDING" || data.status === "APPROVED") { alert("You already have an active submission."); window.location.href = 'dashboard.html'; return; }
         const cfgRes = await fetch(`${API_URL}/exhibitions/config`), cfg = await cfgRes.json();
         if (cfg.title) document.getElementById('exh-title').textContent = cfg.title;
         if (cfg.date_text) document.getElementById('exh-date').innerHTML = `<span class="highlight">Exhibition Date:</span> ${cfg.date_text}`;
         if (cfg.venue) document.getElementById('exh-venue').innerHTML = `<span class="highlight">Venue:</span> ${cfg.venue}`;
         if (cfg.about_text) document.getElementById('exh-about').textContent = cfg.about_text;
-        if (!cfg.is_open) document.getElementById('exhibitionForm').innerHTML = `<div style="padding:3rem;text-align:center;"><h2 style="font-family:var(--font-heading);font-size:2.5rem;color:var(--text-primary);">Submissions Closed</h2><p style="font-size:13px;color:var(--text-secondary);margin-top:1rem;">The Curator is not accepting portfolios.</p><a href="dashboard_2.html" class="action-btn" style="margin-top:2rem;">Return to Dashboard</a></div>`;
+        if (!cfg.is_open) document.getElementById('exhibitionForm').innerHTML = `<div style="padding:3rem;text-align:center;"><h2 style="font-family:var(--font-heading);font-size:2.5rem;color:var(--text-primary);">Submissions Closed</h2><p style="font-size:13px;color:var(--text-secondary);margin-top:1rem;">The Curator is not accepting portfolios.</p><a href="dashboard.html" class="action-btn" style="margin-top:2rem;">Return to Dashboard</a></div>`;
       } catch(e) {}
     }
     init();
@@ -156,7 +155,7 @@
       const payload = { full_name: document.getElementById('fullName').value.trim(), age: parseInt(document.getElementById('age').value), address: document.getElementById('address').value.trim(), whatsapp: document.getElementById('whatsapp').value.trim(), genre: document.getElementById('genre').value.trim(), medium: document.getElementById('medium').value.trim(), portfolio_url: uploadedPdfUrl, over_19: true, agreed_to_screening: true, applicant_note: document.getElementById('comments').value.trim() || null };
       try {
         const res = await window.globalApiFetch('/exhibitions/apply', { method: 'POST', body: JSON.stringify(payload) });
-        if (res && res.ok) { statusMsg.style.color = 'var(--accent-green)'; statusMsg.textContent = '[ ✓ Success ]'; btn.textContent = '✓ Submitted'; setTimeout(() => window.location.href = 'dashboard_2.html', 2000); } 
+        if (res && res.ok) { statusMsg.style.color = 'var(--accent-green)'; statusMsg.textContent = '[ ✓ Success ]'; btn.textContent = '✓ Submitted'; setTimeout(() => window.location.href = 'dashboard.html', 2000); } 
         else { const data = await res.json(); throw new Error(data.detail || 'Failed'); }
       } catch(e) { statusMsg.style.color = 'var(--accent-red)'; statusMsg.textContent = `[ ${e.message} ]`; btn.disabled = false; btn.textContent = 'Submit Portfolio'; }
     }
