@@ -11,24 +11,47 @@
     .page-title { font-family: var(--font-heading); font-size: clamp(3rem, 6vw, 4.5rem); font-weight: 400; text-transform: uppercase; letter-spacing: 1px; color: var(--text-primary); margin-bottom: 0.5rem; line-height: 1; }
     .page-subtitle { font-family: var(--font-body); font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4rem; display: block; border-bottom: 1px solid var(--grid-border); padding-bottom: 2rem; }
     .archive-grid { display: flex; flex-direction: column; gap: 1.5rem; }
-    .archive-card { background: var(--bg-panel); padding: 3rem; position: relative; overflow: hidden; transition: all 0.4s ease; border: 1px solid var(--grid-border); text-decoration: none; display: block; cursor: none; border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
-    .archive-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent-gold); transform: scaleY(0); transform-origin: top; transition: transform 0.4s ease; }
-    .archive-card:hover::before { transform: scaleY(1); }
-    .archive-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.05); border-color: rgba(184, 134, 11, 0.2); }
-    .archive-meta { font-family: var(--font-body); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 1rem; display: block; }
+    .archive-card { background: var(--bg-secondary); padding: 3rem; position: relative; transition: box-shadow 0.4s var(--transition-smooth), transform 0.4s var(--transition-smooth); border: 1px solid var(--grid-border); text-decoration: none; display: block; cursor: none; box-shadow: var(--shadow-base); }
+    .archive-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-float); border-color: rgba(189, 111, 93, 0.3); }
+    .archive-meta { font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 1rem; display: block; }
     .archive-title { font-family: var(--font-heading); font-size: 2.2rem; font-weight: 400; color: var(--text-primary); line-height: 1.2; margin-bottom: 1rem; }
     .archive-excerpt { font-family: var(--font-body); font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
-    .loading-state { font-size: 11px; color: var(--text-secondary); text-align: center; padding: 4rem; text-transform: uppercase; letter-spacing: 2px; border: 1px dashed var(--grid-border); border-radius: 4px; }
+    .loading-state { font-size: 11px; color: var(--text-secondary); text-align: center; padding: 4rem; text-transform: uppercase; letter-spacing: 2px; border: 1px dashed var(--grid-border); }
     footer { text-align: center; padding: 3em 0; border-top: 1px solid var(--grid-border); font-size: 10px; color: var(--text-secondary); letter-spacing: 1px; text-transform: uppercase; }
+
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; }
+    .nav-links a { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); text-decoration: none; position: relative; padding: 0.5rem 0; transition: color 0.3s ease; }
+    .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px; background: var(--accent-gold); transition: width 0.4s ease; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a:hover { color: var(--accent-gold); }
+    .nav-actions { display: flex; align-items: center; gap: 1.5rem; }
+    .mobile-only-link { display: none; }
+    #menuToggle { display: none; cursor: none; color: var(--text-primary); background: none; border: none; z-index: 1001; }
+    #menuToggle .hamburger-close { display: none; }
+    #menuToggle.active .hamburger-open { display: none; }
+    #menuToggle.active .hamburger-close { display: block; }
+    @media (max-width: 768px) { nav { padding: 1rem 1.5rem; } .nav-login { display: none !important; } .mobile-only-link { display: block; } .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; flex-direction: column; background: var(--bg-secondary); padding: 2rem; gap: 1.5rem; border-bottom: 1px solid var(--grid-border); box-shadow: 0 10px 20px rgba(0,0,0,0.05); } .nav-links.active { display: flex; } #menuToggle { display: flex; align-items: center; justify-content: center; margin-left: 0.5rem; } }
   </style>
 </head>
 <body>
-  
   <div class="custom-cursor" id="cursor"></div>
 
-  <nav>
+  <nav id="navbar">
     <a href="index.html" class="logo magnetic">ALFAAZ</a>
-    <a href="index.html" class="nav-cta magnetic">Home</a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html#home" class="magnetic">Home</a>
+      <a href="index.html#updates" class="magnetic">Exhibitions</a>
+      <a href="index.html#about" class="magnetic">About</a>
+      <a href="index.html#journey" class="magnetic">Gallery</a>
+      <a href="index.html#clubs" class="magnetic">Clubs</a>
+      <a href="blogs.html" class="magnetic" style="color:var(--accent-gold);">Journal</a>
+      <a id="mobileLoginBtn" href="login.html" class="mobile-only-link magnetic">Login / Register</a>
+    </div>
+    <div class="nav-actions">
+      <a id="navLoginBtn" href="login.html" class="nav-login magnetic" style="font-family: var(--font-body); font-size:11px; text-decoration:none; text-transform:uppercase; letter-spacing:2px; color:var(--text-primary); transition: color 0.3s;">Login / Register</a>
+      <a id="tchLinkNav" href="https://tchandervar.neocities.org" target="_blank" rel="noopener noreferrer" class="cta-btn magnetic" style="padding: 0.6rem 1.2rem; font-size: 10px;">Tchandervar</a>
+      <button id="menuToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu" class="w-6 h-6 hamburger-open"></i><i data-lucide="x" class="w-6 h-6 hamburger-close"></i></button>
+    </div>
   </nav>
 
   <main>
@@ -41,10 +64,13 @@
 
   <script src="global.js"></script>
   <script>
+    const menuToggle = document.getElementById('menuToggle'), navLinks = document.getElementById('navLinks');
+    menuToggle?.addEventListener('click', () => { const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true'; menuToggle.setAttribute('aria-expanded', !isExpanded); menuToggle.classList.toggle('active'); navLinks.classList.toggle('active'); });
+
     async function loadBlogs() {
       const container = document.getElementById('blogContainer');
       try {
-        const res = await fetch('/api/blogs'); if (!res.ok) throw new Error();
+        const res = await fetch('https://alfaaz-project.onrender.com/blogs'); if (!res.ok) throw new Error();
         const blogs = await res.json();
         if (!blogs.length) { container.innerHTML = '<div class="loading-state">The archives are currently empty.</div>'; return; }
         container.innerHTML = blogs.map(blog => `

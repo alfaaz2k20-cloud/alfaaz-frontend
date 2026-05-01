@@ -8,24 +8,24 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="global.css">
   <style>
-    .auth-card { width: 100%; max-width: 420px; padding: 4rem 3rem; position: relative; margin: 6rem auto; }
-    .auth-title { font-family: var(--font-heading); font-size: 2.5rem; text-align: center; margin-bottom: 0.5rem; }
-    .auth-subtitle { font-size: 11px; color: var(--text-secondary); letter-spacing: 1px; text-align: center; margin-bottom: 3rem; text-transform: uppercase; }
-    .input-group { margin-bottom: 1.5rem; }
-    .input-label { display: block; font-size: 10px; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; }
+    .auth-card { width: 100%; max-width: 420px; padding: 4rem 3rem; margin: 8rem auto; position: relative; }
+    .auth-title { font-family: var(--font-heading); font-size: 2.5rem; text-align: center; margin-bottom: 0.5rem; font-weight: 400; }
+    .auth-subtitle { font-family: var(--font-body); font-size: 10px; color: var(--text-secondary); letter-spacing: 2px; text-align: center; margin-bottom: 3rem; text-transform: uppercase; }
+    .input-group { margin-bottom: 2rem; }
     .auth-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--grid-border); color: var(--text-primary); font-family: var(--font-body); font-size: 14px; padding: 0.5rem 0; transition: border-color 0.3s ease; }
     .auth-input:focus { outline: none; border-bottom-color: var(--accent-gold); }
     .password-wrap { position: relative; }
     .password-wrap .auth-input { padding-right: 3rem; }
-    .toggle-pw { position: absolute; right: 0; bottom: 0.5rem; background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 0; transition: color 0.3s ease; }
+    .toggle-pw { position: absolute; right: 0; bottom: 0.5rem; background: none; border: none; color: var(--text-secondary); font-family: var(--font-body); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 0; transition: color 0.3s ease; }
     .toggle-pw:hover { color: var(--accent-gold); }
-    .recovery-link { display: block; text-align: right; font-size: 10px; color: var(--text-secondary); text-decoration: none; margin-top: -0.5rem; margin-bottom: 2rem; transition: color 0.3s ease; }
+    .forgot-hint { font-size: 10px; color: var(--text-secondary); margin-top: 6px; opacity: 0; transform: translateY(-4px); transition: opacity 0.3s ease, transform 0.3s ease; }
+    .forgot-hint.visible { opacity: 1; transform: translateY(0); }
+    .recovery-link { display: block; text-align: right; font-size: 10px; color: var(--text-secondary); text-decoration: none; margin-top: 0.5rem; margin-bottom: 2rem; transition: color 0.3s ease; text-transform: uppercase; letter-spacing: 1px; }
     .recovery-link:hover { color: var(--accent-gold); }
     .toggle-auth { margin-top: 2rem; text-align: center; font-size: 11px; color: var(--text-secondary); }
-    .toggle-auth a { color: var(--accent-gold); text-decoration: none; transition: border-color 0.3s ease; }
-    .forgot-hint { font-size: 10px; color: var(--text-secondary); margin-top: 4px; opacity: 0; transform: translateY(-4px); transition: opacity 0.3s ease, transform 0.3s ease; }
-    .forgot-hint.visible { opacity: 1; transform: translateY(0); }
-    .back-btn { position: fixed; top: 2rem; left: 2rem; color: var(--text-secondary); text-decoration: none; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem; transition: color 0.3s ease; }
+    .toggle-auth a { color: var(--accent-gold); text-decoration: none; transition: color 0.3s ease; }
+    .toggle-auth a:hover { color: var(--accent-green); }
+    .back-btn { position: fixed; top: 2rem; left: 2rem; color: var(--text-secondary); text-decoration: none; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem; transition: color 0.3s ease; z-index: 100; }
     .back-btn:hover { color: var(--accent-gold); }
   </style>
 </head>
@@ -33,7 +33,7 @@
   <div class="custom-cursor" id="cursor"></div>
   <a href="index.html" class="back-btn magnetic"><i data-lucide="arrow-left" class="w-4 h-4"></i> Return</a>
 
-  <div class="auth-card">
+  <div class="auth-card panel">
     <h1 class="auth-title">Login</h1>
     <p class="auth-subtitle">Access your account</p>
     <form id="authForm">
@@ -93,6 +93,5 @@
       } catch (error) { alert("Cannot reach the server."); } finally { submitBtn.textContent = original; submitBtn.disabled = false; }
     });
   </script>
-  <script src="api.js"></script>
 </body>
 </html>

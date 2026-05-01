@@ -4,26 +4,54 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Article | Alfaaz Collective</title>
+  <script src="https://unpkg.com/lucide@latest" defer></script>
   <link rel="stylesheet" href="global.css">
   <style>
-    main { max-width: 800px; margin: 10rem auto 6rem; padding: 0 2rem; background: var(--bg-panel); border: 1px solid var(--grid-border); border-radius: 4px; box-shadow: 0 4px 30px rgba(0,0,0,0.03); padding: 4rem 5rem; }
+    main { max-width: 800px; margin: 8rem auto 6rem; background: var(--bg-secondary); border: 1px solid var(--grid-border); box-shadow: var(--shadow-float); padding: 5rem 6rem; }
     @media (max-width: 768px) { main { padding: 3rem 2rem; margin-top: 6rem; } }
-    .post-header { border-bottom: 1px solid var(--grid-border); padding-bottom: 2rem; margin-bottom: 3rem; }
-    .post-meta { font-size: 10px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; display: block; }
+    .post-header { border-bottom: 1px solid var(--grid-border); padding-bottom: 2rem; margin-bottom: 3rem; text-align: center;}
+    .post-meta { font-size: 10px; font-weight: 600; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; display: block; }
     .post-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 400; color: var(--text-primary); line-height: 1.2; letter-spacing: 1px; }
     .post-content { font-size: 1.15rem; line-height: 1.9; color: var(--text-secondary); font-weight: 300; }
     .post-content h2 { font-family: var(--font-heading); font-size: 2rem; color: var(--text-primary); margin: 3rem 0 1rem; font-weight: 400; line-height: 1.3; }
     .post-content p { margin-bottom: 1.8rem; }
     .post-content blockquote { border-left: 2px solid var(--accent-gold); padding-left: 1.5rem; margin: 2.5rem 0; font-style: italic; color: var(--text-secondary); }
-    .loading-state { font-size: 11px; color: var(--text-secondary); text-align: center; padding: 4rem; text-transform: uppercase; letter-spacing: 2px; border: 1px dashed var(--grid-border); border-radius: 4px; }
+    .loading-state { font-size: 11px; color: var(--text-secondary); text-align: center; padding: 4rem; text-transform: uppercase; letter-spacing: 2px; border: 1px dashed var(--grid-border); }
     footer { text-align: center; padding: 3em 0; border-top: 1px solid var(--grid-border); font-size: 10px; color: var(--text-secondary); letter-spacing: 1px; text-transform: uppercase; }
+
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; }
+    .nav-links a { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); text-decoration: none; position: relative; padding: 0.5rem 0; transition: color 0.3s ease; }
+    .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px; background: var(--accent-gold); transition: width 0.4s ease; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a:hover { color: var(--accent-gold); }
+    .nav-actions { display: flex; align-items: center; gap: 1.5rem; }
+    .mobile-only-link { display: none; }
+    #menuToggle { display: none; cursor: none; color: var(--text-primary); background: none; border: none; z-index: 1001; }
+    #menuToggle .hamburger-close { display: none; }
+    #menuToggle.active .hamburger-open { display: none; }
+    #menuToggle.active .hamburger-close { display: block; }
+    @media (max-width: 768px) { nav { padding: 1rem 1.5rem; } .nav-login { display: none !important; } .mobile-only-link { display: block; } .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; flex-direction: column; background: var(--bg-secondary); padding: 2rem; gap: 1.5rem; border-bottom: 1px solid var(--grid-border); box-shadow: 0 10px 20px rgba(0,0,0,0.05); } .nav-links.active { display: flex; } #menuToggle { display: flex; align-items: center; justify-content: center; margin-left: 0.5rem; } }
   </style>
 </head>
 <body>
-    <div class="custom-cursor" id="cursor"></div>
+  <div class="custom-cursor" id="cursor"></div>
 
-  <nav>
-    <a href="blogs.html" class="logo magnetic" style="font-size:1.2rem;">← Archives</a>
+  <nav id="navbar">
+    <a href="index.html" class="logo magnetic">ALFAAZ</a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html#home" class="magnetic">Home</a>
+      <a href="index.html#updates" class="magnetic">Exhibitions</a>
+      <a href="index.html#about" class="magnetic">About</a>
+      <a href="index.html#journey" class="magnetic">Gallery</a>
+      <a href="index.html#clubs" class="magnetic">Clubs</a>
+      <a href="blogs.html" class="magnetic" style="color:var(--accent-gold);">Journal</a>
+      <a id="mobileLoginBtn" href="login.html" class="mobile-only-link magnetic">Login / Register</a>
+    </div>
+    <div class="nav-actions">
+      <a id="navLoginBtn" href="login.html" class="nav-login magnetic" style="font-family: var(--font-body); font-size:11px; text-decoration:none; text-transform:uppercase; letter-spacing:2px; color:var(--text-primary); transition: color 0.3s;">Login / Register</a>
+      <a id="tchLinkNav" href="https://tchandervar.neocities.org" target="_blank" rel="noopener noreferrer" class="cta-btn magnetic" style="padding: 0.6rem 1.2rem; font-size: 10px;">Tchandervar</a>
+      <button id="menuToggle" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu" class="w-6 h-6 hamburger-open"></i><i data-lucide="x" class="w-6 h-6 hamburger-close"></i></button>
+    </div>
   </nav>
 
   <main id="articleTarget"><div class="loading-state">Loading essay...</div></main>
@@ -32,6 +60,9 @@
 
   <script src="global.js"></script>
   <script>
+    const menuToggle = document.getElementById('menuToggle'), navLinks = document.getElementById('navLinks');
+    menuToggle?.addEventListener('click', () => { const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true'; menuToggle.setAttribute('aria-expanded', !isExpanded); menuToggle.classList.toggle('active'); navLinks.classList.toggle('active'); });
+
     function sanitizeHTML(html) {
       const div = document.createElement('div'); div.innerHTML = html;
       div.querySelectorAll('script, iframe, object, embed, form').forEach(el => el.remove());
@@ -43,7 +74,7 @@
       const target = document.getElementById('articleTarget'), articleId = new URLSearchParams(window.location.search).get('id');
       if (!articleId) { target.innerHTML = '<div class="loading-state" style="color:var(--accent-red);">[Error] Document ID missing.</div>'; return; }
       try {
-        const res = await fetch(`/api/blog?id=${articleId}`);
+        const res = await fetch(`https://alfaaz-project.onrender.com/blog?id=${articleId}`);
         if (!res.ok) throw new Error();
         const article = await res.json(), dateStr = new Date(article.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         target.innerHTML = `<div class="post-header"><span class="post-meta">${dateStr} // Curator's Notes</span><h1 class="post-title">${article.title}</h1></div><div class="post-content">${sanitizeHTML(article.content)}</div>`;

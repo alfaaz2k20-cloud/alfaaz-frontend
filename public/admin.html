@@ -4,29 +4,70 @@
   <meta charset="UTF-8">
   <title>Administration — ALFAAZ</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="global.css">
   <style>
-    .header { font-family: var(--font-heading); font-size: 2.5rem; letter-spacing: 1px; color: var(--text-primary); border-bottom: 1px solid var(--grid-border); padding-bottom: 1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1rem; margin-top: 5rem; }
+    .header { font-family: var(--font-heading); font-size: 2.5rem; letter-spacing: 1px; color: var(--text-primary); border-bottom: 1px solid var(--grid-border); padding-bottom: 1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1rem; margin-top: 6rem; }
     .tab-nav { display: flex; gap: 0; border-bottom: 1px solid var(--grid-border); margin-bottom: 2rem; flex-wrap: wrap; }
-    .tab-btn { padding: 1rem 1.5rem; font-family: var(--font-body); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; background: transparent; color: var(--text-secondary); border: none; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab-btn { padding: 1rem 1.5rem; font-family: var(--font-body); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; cursor: none; background: transparent; color: var(--text-secondary); border: none; border-bottom: 2px solid transparent; transition: all 0.2s; }
     .tab-btn:hover { color: var(--accent-gold); } .tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); font-weight: 500; }
     .tab-panel { display: none; } .tab-panel.active { display: block; }
-    .section-title { color: var(--text-secondary); font-family: var(--font-heading); font-size: 1.5rem; margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--grid-border); padding-bottom: 0.5rem; }
-    .data-card { background: var(--bg-panel); border: 1px solid var(--grid-border); padding: 1.5rem; margin-bottom: 0.8rem; display: grid; gap: 1rem; align-items: center; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+    .section-title { color: var(--text-primary); font-family: var(--font-heading); font-size: 1.5rem; margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--grid-border); padding-bottom: 0.5rem; }
+    
+    .data-card { background: var(--bg-secondary); border: 1px solid var(--grid-border); padding: 1.5rem; margin-bottom: 1rem; display: grid; gap: 1rem; align-items: center; box-shadow: var(--shadow-base); }
     .user-card { grid-template-columns: 2fr 1fr 1fr; } .club-card { grid-template-columns: 2fr 1fr 1fr 1fr; } .event-card { grid-template-columns: 2fr 1fr 1fr 1fr 1fr; } .exhib-card { grid-template-columns: 2fr 1.5fr 1fr 1fr; align-items: start; }
-    .label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; } .data-display { font-size: 14px; font-weight: 400; color: var(--text-primary); }
+    .data-display { font-size: 14px; font-weight: 400; color: var(--text-primary); }
+    
     .badge { display: inline-block; padding: 4px 10px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; border: 1px solid; border-radius: 2px;}
-    .badge-pending { background: rgba(184, 134, 11, 0.05); color: var(--accent-gold); border-color: var(--accent-gold); } .badge-approved { background: rgba(22, 163, 74, 0.05); color: var(--accent-green); border-color: var(--accent-green); } .badge-rejected { background: rgba(220, 38, 38, 0.05); color: var(--accent-red); border-color: var(--accent-red); } .badge-open { background: rgba(22, 163, 74, 0.05); color: var(--accent-green); border-color: var(--accent-green); } .badge-closed { background: var(--bg-primary); color: var(--text-secondary); border-color: var(--grid-border); }
-    input, select, textarea { background: var(--bg-primary); border: 1px solid var(--grid-border); color: var(--text-primary); padding: 0.8rem; width: 100%; font-family: var(--font-body); font-size: 13px; border-radius: 2px; } input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-gold); }
-    .btn { padding: 0.6rem 1rem; cursor: pointer; font-family: var(--font-body); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; text-align: center; text-decoration: none; display: inline-block; transition: 0.2s; border: 1px solid; border-radius: 2px; }
-    .btn-gold { background: rgba(184, 134, 11, 0.05); color: var(--accent-gold); border-color: var(--accent-gold); } .btn-gold:hover { background: var(--accent-gold); color: #fff; } .btn-green { background: rgba(22, 163, 74, 0.05); color: var(--accent-green); border-color: var(--accent-green); } .btn-green:hover { background: var(--accent-green); color: #fff; } .btn-red { background: rgba(220, 38, 38, 0.05); color: var(--accent-red); border-color: var(--accent-red); } .btn-red:hover { background: var(--accent-red); color: #fff; } .btn-ghost { background: transparent; color: var(--text-secondary); border-color: var(--grid-border); } .btn-ghost:hover { background: var(--text-primary); color: #fff; } .btn-sm { padding: 0.4rem 0.8rem; font-size: 10px; } .btn-full { width: 100%; }
-    .create-form { background: var(--bg-panel); border: 1px solid var(--grid-border); padding: 2rem; margin-bottom: 2rem; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); } .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; } .form-group { display: flex; flex-direction: column; gap: 0.4rem; } .form-label { font-size: 10px; color: var(--text-secondary); letter-spacing: 1px; text-transform: uppercase; } .empty-state { color: var(--text-secondary); font-size: 13px; padding: 3rem; text-align: center; border: 1px dashed var(--grid-border); background: var(--bg-panel); border-radius: 4px; }
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(252, 249, 245, 0.9); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(4px); } .modal-overlay.open { display: flex; } .modal { background: var(--bg-panel); border: 1px solid var(--grid-border); box-shadow: 0 10px 40px rgba(0,0,0,0.05); padding: 3rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; border-radius: 4px; } .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--grid-border); padding-bottom: 1.5rem; }
-    .toggle-master { display: flex; align-items: center; justify-content: space-between; background: var(--bg-panel); border: 1px solid var(--grid-border); padding: 2rem; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; transition: border-color 0.4s ease; border-radius: 4px; } .toggle-master.is-open { border-color: var(--accent-green); } .toggle-master.is-closed { border-color: var(--accent-red); } .toggle-master-label { display: flex; flex-direction: column; gap: 0.4rem; } .toggle-master-label .tm-title { font-family: var(--font-heading); font-size: 2rem; color: var(--text-primary); line-height: 1; margin: 0; } .toggle-master-label .tm-sub { font-size: 11px; color: var(--text-secondary); } .pill-wrap { display: flex; align-items: center; gap: 1rem; } .pill-status { font-family: var(--font-body); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; min-width: 80px; text-align: right; font-weight: 500; } .pill-toggle { position: relative; width: 68px; height: 34px; cursor: pointer; background: transparent; border: none; padding: 0; flex-shrink: 0; } .pill-track { width: 100%; height: 100%; border-radius: 17px; border: 1px solid var(--grid-border); background: var(--bg-primary); transition: background 0.35s ease, border-color 0.35s ease; position: relative; } .pill-thumb { position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: var(--text-secondary); transition: transform 0.35s cubic-bezier(0.68,-0.55,0.27,1.55), background 0.35s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1); } .pill-toggle.on .pill-track { background: rgba(22, 163, 74, 0.1); border-color: var(--accent-green); } .pill-toggle.on .pill-thumb { transform: translateX(34px); background: var(--accent-green); } .pill-toggle.off .pill-track { background: rgba(220, 38, 38, 0.05); border-color: var(--accent-red); } .pill-toggle.off .pill-thumb { background: var(--accent-red); }
-    @media (max-width: 768px) { .club-card, .event-card, .user-card, .exhib-card { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
+    .badge-pending { background: rgba(184, 134, 11, 0.05); color: var(--accent-gold); border-color: var(--accent-gold); } .badge-approved { background: rgba(122, 143, 124, 0.05); color: var(--accent-green); border-color: var(--accent-green); } .badge-rejected { background: rgba(201, 107, 101, 0.05); color: var(--accent-red); border-color: var(--accent-red); } .badge-open { background: rgba(122, 143, 124, 0.05); color: var(--accent-green); border-color: var(--accent-green); } .badge-closed { background: var(--bg-primary); color: var(--text-secondary); border-color: var(--grid-border); }
+    
+    input, select, textarea { background: transparent; border: none; border-bottom: 1px solid var(--grid-border); color: var(--text-primary); padding: 0.8rem 0; width: 100%; font-family: var(--font-body); font-size: 13px; border-radius: 0; transition: border-color 0.3s; } input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: var(--accent-gold); }
+    .create-form { margin-bottom: 3rem; } .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; } .form-group { display: flex; flex-direction: column; gap: 0.4rem; } 
+    .empty-state { color: var(--text-secondary); font-size: 13px; padding: 3rem; text-align: center; border: 1px dashed var(--grid-border); background: var(--bg-secondary); }
+    
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(248, 246, 240, 0.95); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(4px); } .modal-overlay.open { display: flex; } .modal { background: var(--bg-secondary); border: 1px solid var(--grid-border); box-shadow: var(--shadow-float); padding: 3rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; } .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--grid-border); padding-bottom: 1.5rem; }
+    
+    .toggle-master { display: flex; align-items: center; justify-content: space-between; background: var(--bg-secondary); border: 1px solid var(--grid-border); padding: 2rem; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; transition: border-color 0.4s ease; box-shadow: var(--shadow-base); } .toggle-master.is-open { border-color: var(--accent-green); } .toggle-master.is-closed { border-color: var(--accent-red); } .toggle-master-label { display: flex; flex-direction: column; gap: 0.4rem; } .toggle-master-label .tm-title { font-family: var(--font-heading); font-size: 2rem; color: var(--text-primary); line-height: 1; margin: 0; } .toggle-master-label .tm-sub { font-size: 11px; color: var(--text-secondary); } .pill-wrap { display: flex; align-items: center; gap: 1rem; } .pill-status { font-family: var(--font-body); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; min-width: 80px; text-align: right; font-weight: 500; } .pill-toggle { position: relative; width: 68px; height: 34px; cursor: none; background: transparent; border: none; padding: 0; flex-shrink: 0; } .pill-track { width: 100%; height: 100%; border-radius: 17px; border: 1px solid var(--grid-border); background: var(--bg-primary); transition: background 0.35s ease, border-color 0.35s ease; position: relative; } .pill-thumb { position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: var(--text-secondary); transition: transform 0.35s cubic-bezier(0.68,-0.55,0.27,1.55), background 0.35s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1); } .pill-toggle.on .pill-track { background: rgba(122, 143, 124, 0.1); border-color: var(--accent-green); } .pill-toggle.on .pill-thumb { transform: translateX(34px); background: var(--accent-green); } .pill-toggle.off .pill-track { background: rgba(201, 107, 101, 0.05); border-color: var(--accent-red); } .pill-toggle.off .pill-thumb { background: var(--accent-red); }
+    
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; }
+    .nav-links a { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); text-decoration: none; position: relative; padding: 0.5rem 0; transition: color 0.3s ease; }
+    .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px; background: var(--accent-gold); transition: width 0.4s ease; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a:hover { color: var(--accent-gold); }
+    .nav-actions { display: flex; align-items: center; gap: 1.5rem; }
+    .mobile-only-link { display: none; }
+    #menuToggle { display: none; cursor: none; color: var(--text-primary); background: none; border: none; z-index: 1001; }
+    #menuToggle .hamburger-close { display: none; }
+    #menuToggle.active .hamburger-open { display: none; }
+    #menuToggle.active .hamburger-close { display: block; }
+
+    @media (max-width: 768px) { .club-card, .event-card, .user-card, .exhib-card { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } nav { padding: 1rem 1.5rem; } .nav-login { display: none !important; } .mobile-only-link { display: block; } .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; flex-direction: column; background: var(--bg-secondary); padding: 2rem; gap: 1.5rem; border-bottom: 1px solid var(--grid-border); box-shadow: 0 10px 20px rgba(0,0,0,0.05); } .nav-links.active { display: flex; } #menuToggle { display: flex; align-items: center; justify-content: center; margin-left: 0.5rem; } }
   </style>
 </head>
 <body>
+  <div class="custom-cursor" id="cursor"></div>
+
+  <nav id="navbar">
+    <a href="index.html" class="logo magnetic">ALFAAZ</a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html#home" class="magnetic">Home</a>
+      <a href="index.html#updates" class="magnetic">Exhibitions</a>
+      <a href="index.html#about" class="magnetic">About</a>
+      <a href="index.html#journey" class="magnetic">Gallery</a>
+      <a href="index.html#clubs" class="magnetic">Clubs</a>
+      <a href="blogs.html" class="magnetic">Journal</a>
+      <a id="mobileLoginBtn" href="login.html" class="mobile-only-link magnetic">Login / Register</a>
+    </div>
+    <div class="nav-actions">
+      <a id="tchLinkNav" href="https://tchandervar.neocities.org" target="_blank" rel="noopener noreferrer" class="cta-btn magnetic" style="padding: 0.6rem 1.2rem; font-size: 10px;">Tchandervar</a>
+      <button id="logoutBtn" class="magnetic" style="background: transparent; border: none; color: var(--text-secondary); font-family: var(--font-body); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s ease;">Log Out</button>
+      <button id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+        <i data-lucide="menu" class="w-6 h-6 hamburger-open"></i>
+        <i data-lucide="x" class="w-6 h-6 hamburger-close"></i>
+      </button>
+    </div>
+  </nav>
+
   <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
     <div class="header">
       <div>Administration</div>
@@ -41,14 +82,14 @@
 
     <div id="tab-events" class="tab-panel active">
       <div class="section-title">Create Event</div>
-      <div class="create-form">
+      <div class="create-form panel">
         <div class="form-grid">
-          <div class="form-group"><label class="form-label">Event Name *</label><input type="text" id="ev-name" placeholder="e.g. Live Painting"></div>
-          <div class="form-group"><label class="form-label">Event Date</label><input type="text" id="ev-date" placeholder="e.g. Sunday 4PM"></div>
-          <div class="form-group"><label class="form-label">Capacity (0 = unlimited)</label><input type="number" id="ev-capacity" value="0" min="0"></div>
-          <div class="form-group"><label class="form-label">Description</label><input type="text" id="ev-desc" placeholder="Brief description..."></div>
+          <div class="form-group"><label class="data-label">Event Name *</label><input type="text" id="ev-name" placeholder="e.g. Live Painting"></div>
+          <div class="form-group"><label class="data-label">Event Date</label><input type="text" id="ev-date" placeholder="e.g. Sunday 4PM"></div>
+          <div class="form-group"><label class="data-label">Capacity (0 = unlimited)</label><input type="number" id="ev-capacity" value="0" min="0"></div>
+          <div class="form-group"><label class="data-label">Description</label><input type="text" id="ev-desc" placeholder="Brief description..."></div>
         </div>
-        <button class="btn btn-gold magnetic" onclick="handleCreateEvent()">Create Event</button>
+        <button class="action-btn gold magnetic" onclick="handleCreateEvent()">Create Event</button>
         <span id="ev-create-msg" style="font-size:11px; margin-left:1rem; color: var(--text-secondary);"></span>
       </div>
       <div class="section-title">Live Events</div>
@@ -70,29 +111,29 @@
       </div>
 
       <div class="section-title">Master Exhibition Settings</div>
-      <div class="create-form">
+      <div class="create-form panel">
         <div class="form-grid">
-          <div class="form-group"><label class="form-label">Exhibition Title</label><input type="text" id="cfg-title"></div>
-          <div class="form-group"><label class="form-label">Date</label><input type="text" id="cfg-date"></div>
-          <div class="form-group"><label class="form-label">Venue</label><input type="text" id="cfg-venue"></div>
-          <div class="form-group"><label class="form-label">System Status</label>
+          <div class="form-group"><label class="data-label">Exhibition Title</label><input type="text" id="cfg-title"></div>
+          <div class="form-group"><label class="data-label">Date</label><input type="text" id="cfg-date"></div>
+          <div class="form-group"><label class="data-label">Venue</label><input type="text" id="cfg-venue"></div>
+          <div class="form-group"><label class="data-label">System Status</label>
             <select id="cfg-open">
               <option value="true">OPEN (Accepting Applications)</option>
               <option value="false">CLOSED (Hidden from Public)</option>
             </select>
           </div>
         </div>
-        <div class="form-group" style="margin-bottom: 1.5rem;"><label class="form-label">About / Description</label><textarea id="cfg-desc" rows="3"></textarea></div>
-        <button class="btn btn-gold magnetic" onclick="saveExhibConfig()">Save Global Settings</button>
+        <div class="form-group" style="margin-bottom: 2rem;"><label class="data-label">About / Description</label><textarea id="cfg-desc" rows="3"></textarea></div>
+        <button class="action-btn gold magnetic" onclick="saveExhibConfig()">Save Global Settings</button>
         <span id="cfg-msg" style="font-size:11px; margin-left:1rem; color: var(--accent-green);"></span>
       </div>
 
       <div class="section-title">Submitted Portfolios</div>
       <div style="display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap;">
-        <button class="btn btn-ghost btn-sm magnetic" onclick="filterExhibitions('ALL')" id="filt-ALL">All</button>
-        <button class="btn btn-ghost btn-sm magnetic" onclick="filterExhibitions('PENDING')" id="filt-PENDING">Pending</button>
-        <button class="btn btn-ghost btn-sm magnetic" onclick="filterExhibitions('APPROVED')" id="filt-APPROVED">Approved</button>
-        <button class="btn btn-ghost btn-sm magnetic" onclick="filterExhibitions('REJECTED')" id="filt-REJECTED">Rejected</button>
+        <button class="action-btn gold magnetic" style="padding: 0.5rem 1rem;" onclick="filterExhibitions('ALL')" id="filt-ALL">All</button>
+        <button class="action-btn gold magnetic" style="padding: 0.5rem 1rem;" onclick="filterExhibitions('PENDING')" id="filt-PENDING">Pending</button>
+        <button class="action-btn gold magnetic" style="padding: 0.5rem 1rem;" onclick="filterExhibitions('APPROVED')" id="filt-APPROVED">Approved</button>
+        <button class="action-btn gold magnetic" style="padding: 0.5rem 1rem;" onclick="filterExhibitions('REJECTED')" id="filt-REJECTED">Rejected</button>
       </div>
       <div id="exhibitionsContainer"><div class="empty-state">Loading applications...</div></div>
     </div>
@@ -100,10 +141,10 @@
     <div id="tab-clubs" class="tab-panel">
       <div class="section-title">Club Applications</div>
       <div style="display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap;">
-        <button class="btn btn-ghost btn-sm magnetic" onclick="filterClubs('ALL')" id="filter-ALL">All</button>
-        <button class="btn btn-ghost btn-sm magnetic" onclick="filterClubs('PENDING')" id="filter-PENDING">Pending</button>
-        <button class="btn btn-ghost btn-sm magnetic" onclick="filterClubs('APPROVED')" id="filter-APPROVED">Approved</button>
-        <button class="btn btn-ghost btn-sm magnetic" onclick="filterClubs('REJECTED')" id="filter-REJECTED">Rejected</button>
+        <button class="action-btn gold magnetic" style="padding: 0.5rem 1rem;" onclick="filterClubs('ALL')" id="filter-ALL">All</button>
+        <button class="action-btn gold magnetic" style="padding: 0.5rem 1rem;" onclick="filterClubs('PENDING')" id="filter-PENDING">Pending</button>
+        <button class="action-btn gold magnetic" style="padding: 0.5rem 1rem;" onclick="filterClubs('APPROVED')" id="filter-APPROVED">Approved</button>
+        <button class="action-btn gold magnetic" style="padding: 0.5rem 1rem;" onclick="filterClubs('REJECTED')" id="filter-REJECTED">Rejected</button>
       </div>
       <div id="clubsContainer"><div class="empty-state">Loading applications...</div></div>
     </div>
@@ -118,7 +159,7 @@
     <div class="modal">
       <div class="modal-header">
         <div style="font-family:var(--font-heading); font-size:2rem; color:var(--text-primary);" id="modalTitle">Details</div>
-        <button class="btn btn-ghost btn-sm magnetic" onclick="closeModal()">✕ Close</button>
+        <button class="action-btn magnetic" style="padding: 0.5rem 1rem; border-color: transparent;" onclick="closeModal()">✕ Close</button>
       </div>
       <div id="modalBody" style="color:var(--text-primary);"></div>
     </div>
@@ -130,6 +171,10 @@
     if (!userData) window.location.href = 'login.html';
     const user = JSON.parse(userData); 
     if (user.status !== 'ADMIN') window.location.href = 'dashboard.html';
+
+    document.getElementById('logoutBtn').addEventListener('click', () => { localStorage.clear(); window.location.href = 'login.html'; });
+    const menuToggle = document.getElementById('menuToggle'), navLinks = document.getElementById('navLinks');
+    menuToggle?.addEventListener('click', () => { const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true'; menuToggle.setAttribute('aria-expanded', !isExpanded); menuToggle.classList.toggle('active'); navLinks.classList.toggle('active'); });
 
     const tabLoaded = {};
     function switchTab(name) {
@@ -143,7 +188,7 @@
       if (name === 'events') loadEvents(); if (name === 'exhibitions') loadExhibitions('ALL');
       if (name === 'clubs') loadClubs('ALL'); if (name === 'roster') loadRoster();
     }
-    
+
     let allEvents = [];
     async function loadEvents() {
       const container = document.getElementById('eventsContainer');
@@ -154,9 +199,9 @@
         if (!allEvents.length) { container.innerHTML = '<div class="empty-state">No events found.</div>'; return; }
         container.innerHTML = '';
         allEvents.forEach(e => {
-          const card = document.createElement('div'); card.className = 'data-card event-card';
+          const card = document.createElement('div'); card.className = 'data-card event-card magnetic';
           const isOpen = e.registration_open; const capLabel = e.capacity === 0 ? '∞' : `${e.registered}/${e.capacity}`;
-          card.innerHTML = `<div><div class="label">Event</div><div class="data-display">${e.name}</div><div style="font-size:11px; color:var(--text-secondary);">${e.description || '—'}</div></div><div><div class="label">Date</div><div class="data-display" style="font-size:12px;">${e.event_date || '—'}</div></div><div><div class="label">Registered</div><div class="data-display">${capLabel}</div></div><div><div class="label">Status</div><span class="badge ${isOpen ? 'badge-open' : 'badge-closed'}">${isOpen ? 'Open' : 'Closed'}</span></div><div style="display:flex; flex-direction:column; gap:0.4rem;"><button class="btn ${isOpen ? 'btn-red' : 'btn-green'} btn-sm btn-full magnetic" onclick="toggleEvent(${e.id}, this)">${isOpen ? 'Close' : 'Open'}</button><button class="btn btn-gold btn-sm btn-full magnetic" onclick="viewRegistrations(${e.id})">List</button><button class="btn btn-red btn-sm btn-full magnetic" onclick="deleteEvent(${e.id}, '${e.name.replace(/'/g, "\\'")}', this)">Delete</button></div>`;
+          card.innerHTML = `<div><div class="data-label">Event</div><div class="data-display">${e.name}</div><div style="font-size:11px; color:var(--text-secondary);">${e.description || '—'}</div></div><div><div class="data-label">Date</div><div class="data-display" style="font-size:12px;">${e.event_date || '—'}</div></div><div><div class="data-label">Registered</div><div class="data-display">${capLabel}</div></div><div><div class="data-label">Status</div><span class="badge ${isOpen ? 'badge-open' : 'badge-closed'}">${isOpen ? 'Open' : 'Closed'}</span></div><div style="display:flex; flex-direction:column; gap:0.4rem;"><button class="action-btn ${isOpen ? '' : 'gold'}" style="padding: 0.5rem; font-size:9px;" onclick="toggleEvent(${e.id}, this)">${isOpen ? 'Close' : 'Open'}</button><button class="action-btn gold" style="padding: 0.5rem; font-size:9px;" onclick="viewRegistrations(${e.id})">List</button><button class="action-btn" style="padding: 0.5rem; font-size:9px; border-color:var(--accent-red); color:var(--accent-red);" onclick="deleteEvent(${e.id}, '${e.name.replace(/'/g, "\\'")}', this)">Delete</button></div>`;
           container.appendChild(card);
         });
         if(window.refreshGlobalEffects) window.refreshGlobalEffects();
@@ -198,7 +243,7 @@
       else { applyToggleUI(!newState); } btn.style.pointerEvents = '';
     }
     async function loadExhibitions(f) {
-      const cfgRes = await fetch(`${API_URL}/exhibitions/config`), cfg = await cfgRes.json();
+      const cfgRes = await fetch(`https://alfaaz-project.onrender.com/exhibitions/config`), cfg = await cfgRes.json();
       document.getElementById('cfg-title').value = cfg.title || ''; document.getElementById('cfg-date').value = cfg.date_text || ''; document.getElementById('cfg-venue').value = cfg.venue || ''; document.getElementById('cfg-desc').value = cfg.about_text || ''; document.getElementById('cfg-open').value = cfg.is_open ? "true" : "false"; applyToggleUI(cfg.is_open);
       const res = await window.globalApiFetch('/admin/exhibitions'); if(!res) return; allExhibs = await res.json(); renderExhibitions(f);
     }
@@ -208,13 +253,14 @@
       const res = await window.globalApiFetch('/admin/exhibitions/config', { method: 'POST', body: JSON.stringify(payload) });
       if (res && res.ok) { document.getElementById('cfg-msg').textContent = "✓ Settings Synced"; setTimeout(() => document.getElementById('cfg-msg').textContent = "", 3000); applyToggleUI(isOpen); }
     }
-    function filterExhibitions(f) { document.querySelectorAll('[id^="filt-"]').forEach(b => b.classList.remove('btn-gold')); document.getElementById(`filt-${f}`).classList.add('btn-gold'); renderExhibitions(f); }
+    function filterExhibitions(f) { document.querySelectorAll('[id^="filt-"]').forEach(b => { b.classList.remove('gold'); b.style.color = ''; b.style.borderColor = ''; }); const target = document.getElementById(`filt-${f}`); target.classList.add('gold'); renderExhibitions(f); }
     function renderExhibitions(f) {
       const container = document.getElementById('exhibitionsContainer'), apps = f === 'ALL' ? allExhibs : allExhibs.filter(a => a.status === f); container.innerHTML = '';
       if (!apps.length) { container.innerHTML = '<div class="empty-state">No portfolios submitted.</div>'; return; }
       apps.forEach(a => {
-        const card = document.createElement('div'); card.className = 'data-card exhib-card'; const badge = a.status === 'PENDING' ? 'badge-pending' : a.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected';
-        card.innerHTML = `<div><div class="label">Artist</div><div class="data-display">${a.full_name}</div><div style="font-size:11px;color:var(--text-secondary);">${a.user_email}</div></div><div><div class="label">Art Profile</div><div class="data-display" style="font-size:13px;">${a.genre}</div><div style="font-size:11px;color:var(--text-secondary);">Medium: ${a.medium}</div></div><div><div class="label">Status</div><span class="badge ${badge}">${a.status}</span></div><div style="display:flex;flex-direction:column;gap:0.4rem;"><a href="${a.portfolio_url}" target="_blank" class="btn btn-ghost btn-sm btn-full magnetic" style="border-color:var(--accent-gold);color:var(--accent-gold);">View Portfolio</a>${a.status === 'PENDING' ? `<button class="btn btn-green btn-sm magnetic" onclick="reviewExhibition(${a.id}, 'APPROVED', this)">Approve</button><button class="btn btn-red btn-sm magnetic" onclick="reviewExhibition(${a.id}, 'REJECTED', this)">Reject</button>` : ''}${a.status === 'REJECTED' ? `<button class="btn btn-ghost btn-sm magnetic" onclick="revertExhibition(${a.id}, this)">Undo Rejection</button>` : ''}</div>`;
+        const card = document.createElement('div'); card.className = 'data-card exhib-card magnetic';
+        const badge = a.status === 'PENDING' ? 'badge-pending' : a.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected';
+        card.innerHTML = `<div><div class="data-label">Artist</div><div class="data-display">${a.full_name}</div><div style="font-size:11px;color:var(--text-secondary);">${a.user_email}</div></div><div><div class="data-label">Art Profile</div><div class="data-display" style="font-size:13px;">${a.genre}</div><div style="font-size:11px;color:var(--text-secondary);">Medium: ${a.medium}</div></div><div><div class="data-label">Status</div><span class="badge ${badge}">${a.status}</span></div><div style="display:flex;flex-direction:column;gap:0.4rem;"><a href="${a.portfolio_url}" target="_blank" class="action-btn gold" style="padding:0.5rem; font-size:9px;">View Portfolio</a>${a.status === 'PENDING' ? `<button class="action-btn" style="padding:0.5rem; font-size:9px;" onclick="reviewExhibition(${a.id}, 'APPROVED', this)">Approve</button><button class="action-btn" style="padding:0.5rem; font-size:9px; border-color:var(--accent-red); color:var(--accent-red);" onclick="reviewExhibition(${a.id}, 'REJECTED', this)">Reject</button>` : ''}${a.status === 'REJECTED' ? `<button class="action-btn" style="padding:0.5rem; font-size:9px;" onclick="revertExhibition(${a.id}, this)">Undo Rejection</button>` : ''}</div>`;
         container.appendChild(card);
       });
       if(window.refreshGlobalEffects) window.refreshGlobalEffects();
@@ -224,13 +270,13 @@
 
     let allClubApps = [];
     async function loadClubs(f) { const res = await window.globalApiFetch('/admin/club-applications'); if(!res) return; allClubApps = await res.json(); renderClubs(f); }
-    function filterClubs(f) { document.querySelectorAll('[id^="filter-"]').forEach(b => b.classList.remove('btn-gold')); document.getElementById(`filter-${f}`).classList.add('btn-gold'); renderClubs(f); }
+    function filterClubs(f) { document.querySelectorAll('[id^="filter-"]').forEach(b => { b.classList.remove('gold'); b.style.color = ''; b.style.borderColor = ''; }); const target = document.getElementById(`filter-${f}`); target.classList.add('gold'); renderClubs(f); }
     function renderClubs(f) {
       const container = document.getElementById('clubsContainer'); const apps = f === 'ALL' ? allClubApps : allClubApps.filter(a => a.status === f); container.innerHTML = '';
       if (!apps.length) { container.innerHTML = '<div class="empty-state">No applications found.</div>'; return; }
       apps.forEach(a => {
-        const card = document.createElement('div'); card.className = 'data-card club-card'; const badge = a.status === 'PENDING' ? 'badge-pending' : a.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected';
-        card.innerHTML = `<div><div class="label">User</div><div class="data-display">${a.user_email}</div></div><div><div class="label">Club</div><div class="data-display">${a.club_name}</div></div><div><div class="label">Status</div><span class="badge ${badge}">${a.status}</span></div><div style="display:flex; flex-direction:column; gap:0.4rem;">${a.status === 'PENDING' ? `<button class="btn btn-green btn-sm magnetic" onclick="reviewClub(${a.id}, 'APPROVED', this)">Approve</button><button class="btn btn-red btn-sm magnetic" onclick="reviewClub(${a.id}, 'REJECTED', this)">Reject</button>` : ''}${a.status === 'REJECTED' ? `<button class="btn btn-ghost btn-sm magnetic" onclick="revertClub(${a.id}, this)">Undo</button>` : ''}</div>`;
+        const card = document.createElement('div'); card.className = 'data-card club-card magnetic'; const badge = a.status === 'PENDING' ? 'badge-pending' : a.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected';
+        card.innerHTML = `<div><div class="data-label">User</div><div class="data-display">${a.user_email}</div></div><div><div class="data-label">Club</div><div class="data-display">${a.club_name}</div></div><div><div class="data-label">Status</div><span class="badge ${badge}">${a.status}</span></div><div style="display:flex; flex-direction:column; gap:0.4rem;">${a.status === 'PENDING' ? `<button class="action-btn" style="padding:0.5rem; font-size:9px;" onclick="reviewClub(${a.id}, 'APPROVED', this)">Approve</button><button class="action-btn" style="padding:0.5rem; font-size:9px; border-color:var(--accent-red); color:var(--accent-red);" onclick="reviewClub(${a.id}, 'REJECTED', this)">Reject</button>` : ''}${a.status === 'REJECTED' ? `<button class="action-btn" style="padding:0.5rem; font-size:9px;" onclick="revertClub(${a.id}, this)">Undo</button>` : ''}</div>`;
         container.appendChild(card);
       });
       if(window.refreshGlobalEffects) window.refreshGlobalEffects();
@@ -241,8 +287,8 @@
     async function loadRoster() {
       const container = document.getElementById('rosterContainer'); const res = await window.globalApiFetch('/admin/users'); if(!res) return; const users = await res.json(); container.innerHTML = '';
       users.forEach((u, i) => {
-        const card = document.createElement('div'); card.className = 'data-card user-card';
-        card.innerHTML = `<div><div class="label">User</div><div class="data-display">${u.email}</div></div><div><select id="st-${i}"><option value="PARTICIPANT" ${u.status==='PARTICIPANT'?'selected':''}>Participant</option><option value="ADMIN" ${u.status==='ADMIN'?'selected':''}>Admin</option></select></div><button class="btn btn-gold btn-sm magnetic" onclick="updateStatus('${u.email}', ${i}, this)">Save</button>`;
+        const card = document.createElement('div'); card.className = 'data-card user-card magnetic';
+        card.innerHTML = `<div><div class="data-label">User</div><div class="data-display">${u.email}</div></div><div><select id="st-${i}"><option value="PARTICIPANT" ${u.status==='PARTICIPANT'?'selected':''}>Participant</option><option value="ADMIN" ${u.status==='ADMIN'?'selected':''}>Admin</option></select></div><button class="action-btn gold" style="padding:0.5rem; font-size:9px;" onclick="updateStatus('${u.email}', ${i}, this)">Save</button>`;
         container.appendChild(card);
       });
       if(window.refreshGlobalEffects) window.refreshGlobalEffects();

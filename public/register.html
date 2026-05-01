@@ -8,27 +8,29 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="global.css">
   <style>
-    .auth-card { width: 100%; max-width: 420px; padding: 4rem 3rem; position: relative; margin: 6rem auto; }
-    .auth-title { font-family: var(--font-heading); font-size: 2.5rem; text-align: center; margin-bottom: 0.5rem; }
-    .auth-subtitle { font-size: 11px; color: var(--text-secondary); letter-spacing: 1px; text-align: center; margin-bottom: 3rem; text-transform: uppercase; }
-    .input-group { margin-bottom: 1.5rem; }
-    .input-label { display: block; font-size: 10px; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; }
+    .auth-card { width: 100%; max-width: 420px; padding: 4rem 3rem; margin: 8rem auto; position: relative; }
+    .auth-title { font-family: var(--font-heading); font-size: 2.5rem; text-align: center; margin-bottom: 0.5rem; font-weight: 400; }
+    .auth-subtitle { font-family: var(--font-body); font-size: 10px; color: var(--text-secondary); letter-spacing: 2px; text-align: center; margin-bottom: 3rem; text-transform: uppercase; }
+    .input-group { margin-bottom: 2rem; }
     .auth-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--grid-border); color: var(--text-primary); font-family: var(--font-body); font-size: 14px; padding: 0.5rem 0; transition: border-color 0.3s ease; }
     .auth-input:focus { outline: none; border-bottom-color: var(--accent-gold); }
-    .strength-bar-wrap { margin-top: 8px; height: 2px; background: var(--grid-border); border-radius: 2px; }
-    .strength-bar { height: 100%; width: 0%; transition: width 0.4s ease, background 0.4s ease; border-radius: 2px; }
+    .password-wrap { position: relative; }
+    .password-wrap .auth-input { padding-right: 3rem; }
+    .strength-bar-wrap { margin-top: 8px; height: 2px; background: var(--grid-border); }
+    .strength-bar { height: 100%; width: 0%; transition: width 0.4s ease, background 0.4s ease; }
     .strength-label, .match-indicator { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-top: 6px; min-height: 12px; }
     .toggle-auth { margin-top: 2rem; text-align: center; font-size: 11px; color: var(--text-secondary); }
-    .toggle-auth a { color: var(--accent-gold); text-decoration: none; transition: border-color 0.3s ease; }
-    .back-btn { position: fixed; top: 2rem; left: 2rem; color: var(--text-secondary); text-decoration: none; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem; transition: color 0.3s ease; }
+    .toggle-auth a { color: var(--accent-gold); text-decoration: none; transition: color 0.3s ease; }
+    .toggle-auth a:hover { color: var(--accent-green); }
+    .back-btn { position: fixed; top: 2rem; left: 2rem; color: var(--text-secondary); text-decoration: none; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem; transition: color 0.3s ease; z-index: 100; }
     .back-btn:hover { color: var(--accent-gold); }
   </style>
 </head>
 <body>
-   <div class="custom-cursor" id="cursor"></div>
+  <div class="custom-cursor" id="cursor"></div>
   <a href="index.html" class="back-btn magnetic"><i data-lucide="arrow-left" class="w-4 h-4"></i> Return</a>
 
-  <div class="auth-card">
+  <div class="auth-card panel">
     <h1 class="auth-title">Register</h1>
     <p class="auth-subtitle">Join the collective</p>
     <form id="registerForm">
@@ -71,7 +73,7 @@
       e.preventDefault();
       const emailValue = document.getElementById('regEmail').value.trim(), nameValue = document.getElementById('regName').value.trim(), passwordValue = passwordInput.value, confirmValue = confirmInput.value;
       if (passwordValue.length < 8) { matchIndicator.textContent = '✗ Password must be at least 8 characters.'; matchIndicator.style.color = 'var(--accent-red)'; return; }
-      if (passwordValue !== confirmValue) { matchIndicator.textContent = '✗ Passwords must match.'; matchIndicator.style.color = 'var(--accent-red)'; confirmInput.focus(); return; }
+      if (passwordValue !== confirmValue) { matchIndicator.textContent = '✗ Passwords must match before proceeding.'; matchIndicator.style.color = 'var(--accent-red)'; confirmInput.focus(); return; }
       
       submitBtn.textContent = "Processing..."; submitBtn.disabled = true;
       try {
@@ -88,6 +90,5 @@
       } catch (error) { submitBtn.textContent = "Create Account"; submitBtn.disabled = false; alert("Cannot reach the server."); }
     });
   </script>
-  <script src="api.js"></script>
 </body>
 </html>
