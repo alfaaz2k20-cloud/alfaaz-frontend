@@ -133,7 +133,8 @@
     @media (max-width: 1024px) { .about-grid { grid-template-columns: 1fr; gap: 3rem; } nav { padding: 1.5rem 2rem; } .social-sidebar { display: none; } }
     @media (max-width: 768px) { 
         nav { padding: 1rem 1.5rem; } 
-        .nav-actions { display: none; } /* Hide desktop buttons */
+        .nav-login { display: none !important; } /* Only hide the login text */
+         #tchLinkNav { padding: 0.5rem 0.8rem !important; font-size: 9px !important; } /* Scale button for mobile */
         .mobile-only-link { display: block; } /* Show in dropdown */
         .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; flex-direction: column; background: var(--bg-panel); padding: 2rem; gap: 1.5rem; border-bottom: 1px solid var(--grid-border); box-shadow: 0 10px 20px rgba(0,0,0,0.05); } 
         .nav-links.active { display: flex; } 
@@ -485,24 +486,47 @@
         return cards;
       }
       async function loadLiveNotices() {
-        const grid = document.getElementById('noticesGrid'); if (!grid || isUpdating) return; isUpdating = true;
+        const grid = document.getElementById('noticesGrid'); 
+        if (!grid || isUpdating) return; 
+        isUpdating = true;
+        
         try {
-          const [noticesRes, blogsRes] = await Promise.all([ fetch(`https://alfaaz-project.onrender.com/events/active`).catch(() => null), fetch(`https://alfaaz-project.onrender.com/blogs`).catch(() => null) ]);
+          const cacheBuster = new Date().getTime();
+          // FIXED: Pointing back to your Vercel /api/ routes
+          const [noticesRes, blogsRes] = await Promise.all([ 
+            fetch(`/api/notices?t=${cacheBuster}`).catch(() => null), 
+            fetch(`/api/blogs?t=${cacheBuster}`).catch(() => null) 
+          ]);
+          
           let freshCards = [];
+          
           if (noticesRes && noticesRes.ok) {
-              const events = await noticesRes.json();
-              freshCards = parseToCards({ events: events }); // Simplify to standard parsing
+            freshCards = parseToCards(await noticesRes.json());
           }
+          
           if (blogsRes && blogsRes.ok) {
             const blogs = await blogsRes.json();
             if (blogs && blogs.length > 0) {
               const latestArticle = blogs[0];
-              freshCards.unshift({ tag: 'JOURNAL', tagColor: 'var(--text-primary)', date: new Date(latestArticle.created_at).toLocaleDateString(), title: latestArticle.title, body: 'A new article has been published by the Curator.', link: `post.html?id=${latestArticle.id}`, linkLabel: 'Read Article →', disabled: false });
+              freshCards.unshift({ 
+                tag: 'JOURNAL', 
+                tagColor: 'var(--text-primary)', 
+                date: new Date(latestArticle.created_at).toLocaleDateString(), 
+                title: latestArticle.title, 
+                body: 'A new article has been published by the Curator.', 
+                link: `post.html?id=${latestArticle.id}`, 
+                linkLabel: 'Read Article →', 
+                disabled: false 
+              });
             }
           }
           renderCards(grid, freshCards);
           if (window.refreshGlobalEffects) window.refreshGlobalEffects();
-        } catch (err) { renderCards(grid, []); } finally { isUpdating = false; }
+        } catch (err) { 
+          renderCards(grid, []); 
+        } finally { 
+          isUpdating = false; 
+        }
       }
       document.addEventListener('DOMContentLoaded', loadLiveNotices);
       window.addEventListener('pageshow', function () { isUpdating = false; loadLiveNotices(); });
