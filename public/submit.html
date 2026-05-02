@@ -19,18 +19,7 @@
     input[type="file"]::file-selector-button:hover { background: var(--text-primary); color: #fff; }
     #status-msg { margin-top: 15px; font-size: 11px; text-align: center; letter-spacing: 1px; text-transform: uppercase; }
     
-    .nav-links { display: flex; align-items: center; gap: 2.5rem; }
-    .nav-links a { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); text-decoration: none; position: relative; padding: 0.5rem 0; transition: color 0.3s ease; }
-    .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px; background: var(--accent-gold); transition: width 0.4s ease; }
-    .nav-links a:hover::after { width: 100%; }
-    .nav-links a:hover { color: var(--accent-gold); }
-    .nav-actions { display: flex; align-items: center; gap: 1.5rem; }
-    .mobile-only-link { display: none; }
-    #menuToggle { display: none; cursor: none; color: var(--text-primary); background: none; border: none; z-index: 1001; }
-    #menuToggle .hamburger-close { display: none; }
-    #menuToggle.active .hamburger-open { display: none; }
-    #menuToggle.active .hamburger-close { display: block; }
-    @media (max-width: 768px) { nav { padding: 1rem 1.5rem; } .nav-login { display: none !important; } .mobile-only-link { display: block; } .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; flex-direction: column; background: var(--bg-secondary); padding: 2rem; gap: 1.5rem; border-bottom: 1px solid var(--grid-border); box-shadow: 0 10px 20px rgba(0,0,0,0.05); } .nav-links.active { display: flex; } #menuToggle { display: flex; align-items: center; justify-content: center; margin-left: 0.5rem; } }
+        @media (max-width: 768px) { nav { padding: 1rem 1.5rem; } .nav-login { display: none !important; } .mobile-only-link { display: block; } .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; flex-direction: column; background: var(--bg-secondary); padding: 2rem; gap: 1.5rem; border-bottom: 1px solid var(--grid-border); box-shadow: 0 10px 20px rgba(0,0,0,0.05); } .nav-links.active { display: flex; } #menuToggle { display: flex; align-items: center; justify-content: center; margin-left: 0.5rem; } }
   </style>
 </head>
 <body>
