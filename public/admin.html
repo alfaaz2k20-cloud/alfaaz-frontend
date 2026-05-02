@@ -47,24 +47,12 @@
 <body>
   <div class="custom-cursor" id="cursor"></div>
 
-  <nav id="navbar">
+  <nav id="navbar" style="justify-content: space-between;">
     <a href="index.html" class="logo magnetic">ALFAAZ</a>
-    <div class="nav-links" id="navLinks">
-      <a href="index.html#home" class="magnetic">Home</a>
-      <a href="index.html#updates" class="magnetic">Exhibitions</a>
-      <a href="index.html#about" class="magnetic">About</a>
-      <a href="index.html#journey" class="magnetic">Gallery</a>
-      <a href="index.html#clubs" class="magnetic">Clubs</a>
-      <a href="blogs.html" class="magnetic">Journal</a>
-      <a id="mobileLoginBtn" href="login.html" class="mobile-only-link magnetic">Login / Register</a>
-    </div>
-    <div class="nav-actions">
-      <a id="tchLinkNav" href="https://tchandervar.neocities.org" target="_blank" rel="noopener noreferrer" class="cta-btn magnetic" style="padding: 0.6rem 1.2rem; font-size: 10px;">Tchandervar</a>
-      <button id="logoutBtn" class="magnetic" style="background: transparent; border: none; color: var(--text-secondary); font-family: var(--font-body); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s ease;">Log Out</button>
-      <button id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
-        <i data-lucide="menu" class="w-6 h-6 hamburger-open"></i>
-        <i data-lucide="x" class="w-6 h-6 hamburger-close"></i>
-      </button>
+    
+    <div class="nav-actions" style="gap: 2rem;">
+      <a href="dashboard.html" class="magnetic" style="font-size: 11px; color: var(--text-primary); text-decoration: none; text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s ease;">Dashboard</a>
+      <button id="logoutBtn" class="magnetic" style="background: transparent; border: none; color: var(--text-secondary); font-family: var(--font-body); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; cursor: none; transition: color 0.3s ease;">Log Out</button>
     </div>
   </nav>
 
