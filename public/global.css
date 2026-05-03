@@ -193,3 +193,9 @@ nav.scrolled {
   box-shadow: var(--shadow-float);
   z-index: 2;
 }
+
+.logo.ur-hover::before {
+  font-size: 1.3em; /* Scales the Urdu to perfectly match the English weight */
+  font-style: normal; /* Removes the italics to keep it feeling like a brand mark */
+  color: var(--text-primary); /* Keeps it slate/charcoal instead of gold */
+}
