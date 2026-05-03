@@ -2,7 +2,7 @@
    ALFAAZ COLLECTIVE — GLOBAL STYLES
    V2: Architectural & Tactile
 ======================================== */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
 
 :root {
   /* Core Backgrounds */
@@ -27,8 +27,8 @@
   /* Cursors & Animations */
   --cursor-size: 12px;
   --cursor-hover-size: 80px;
-  --font-heading: 'Playfair Display', serif;
-  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Crimson Pro', serif;
+  --font-body: 'EB Garamond', serif;
   --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
