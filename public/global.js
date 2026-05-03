@@ -115,7 +115,7 @@ window.globalApiFetch = async function(endpoint, options = {}) {
       bilingualElements.forEach(el => {
         el.classList.toggle('lang-swapped');
       });
-    }, 10000);
+    }, 5000);
   }
 
   // Start the cycle once the page loads
