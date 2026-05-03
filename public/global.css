@@ -5,19 +5,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
-  /* Core Backgrounds (Fixed Variables) */
-  --bg-primary: #f8f6f0;     /* Earthy, warm gallery wall */
-  --bg-secondary: #ffffff;   /* Pure white for panels/cards */
-  --bg-overlay: rgba(248, 246, 240, 0.85); /* Frosted video overlay */
+  /* Core Backgrounds */
+  --bg-primary: #f8f6f0;     
+  --bg-secondary: #ffffff;   
+  --bg-overlay: rgba(248, 246, 240, 0.85); 
   
-  /* Text Colors (Fixed Variables) */
-  --text-primary: #2d312e;   /* Deep slate/charcoal (softer than black) */
-  --text-secondary: #8b908d; /* Muted architectural slate */
+  /* Text Colors */
+  --text-primary: #2d312e;   
+  --text-secondary: #8b908d; 
   
   /* Complementary Accents */
-  --accent-gold: #bd6f5d;    /* Muted Terracotta */
-  --accent-green: #7a8f7c;   /* Soft Sage Green */
-  --accent-red: #c96b65;     /* Soft Brick */
+  --accent-gold: #bd6f5d;    
+  --accent-green: #7a8f7c;   
+  --accent-red: #c96b65;     
   
   /* Borders & Shadows */
   --grid-border: rgba(45, 49, 46, 0.12);
@@ -45,7 +45,6 @@ body {
   line-height: 1.7;
 }
 
-/* Adds a subtle, unselectable SVG noise grain over the entire site */
 body::after {
   content: "";
   position: fixed;
@@ -56,42 +55,17 @@ body::after {
 }
 
 /* ── 2. POLISH: SELECTION, FOCUS, SCROLLBARS ── */
-::selection {
-  background: var(--accent-gold);
-  color: var(--bg-secondary);
-}
-
-:focus-visible {
-  outline: 2px solid var(--accent-gold);
-  outline-offset: 4px;
-}
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(45, 49, 46, 0.2);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-gold);
-}
-
+::selection { background: var(--accent-gold); color: var(--bg-secondary); }
+:focus-visible { outline: 2px solid var(--accent-gold); outline-offset: 4px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: rgba(45, 49, 46, 0.2); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
 a, button { cursor: none; } 
 
 /* ── 3. BACKGROUND VIDEO ── */
-.bg-video {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  object-fit: cover; z-index: -3; filter: blur(3px);
-}
-.video-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: var(--bg-overlay); backdrop-filter: blur(4px); z-index: -2;
-}
+.bg-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; filter: blur(3px); }
+.video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-overlay); backdrop-filter: blur(4px); z-index: -2; }
 
 /* ── 4. CUSTOM CURSOR ── */
 .custom-cursor {
@@ -102,8 +76,7 @@ a, button { cursor: none; }
 .custom-cursor.hover {
   width: var(--cursor-hover-size); height: var(--cursor-hover-size);
   background: rgba(255, 255, 255, 0.1); border: 1px solid var(--accent-gold);
-  backdrop-filter: blur(2px);
-  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center;
   font-family: var(--font-body); font-size: 10px; font-weight: 500; letter-spacing: 0.2em;
   color: var(--accent-gold); text-transform: uppercase;
 }
@@ -123,73 +96,96 @@ nav.scrolled {
 
 /* ── 6. PANELS & DEPTH ── */
 .panel, .auth-card {
-  background: var(--bg-secondary); 
-  border: 1px solid var(--grid-border);
-  border-radius: 0px; /* Removed rounded corners for an architectural, print-like feel */
-  box-shadow: var(--shadow-base);
-  transition: box-shadow 0.4s var(--transition-smooth), transform 0.4s var(--transition-smooth);
+  background: var(--bg-secondary); border: 1px solid var(--grid-border); border-radius: 0px; 
+  box-shadow: var(--shadow-base); transition: box-shadow 0.4s var(--transition-smooth), transform 0.4s var(--transition-smooth);
 }
-.panel:hover, .auth-card:hover {
-  box-shadow: var(--shadow-float);
-}
+.panel:hover, .auth-card:hover { box-shadow: var(--shadow-float); }
 
 /* ── 7. TYPOGRAPHY: TIGHT LABEL SYSTEM ── */
 .data-label, .input-label, .section-label {
-  font-family: var(--font-body);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.18em; /* Tighter, more deliberate tracking */
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
+  font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.18em; 
+  text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem;
 }
 
 /* ── 8. ARCHITECTURAL BUTTONS ── */
 .submit-btn, .action-btn, .cta-btn, .nav-cta {
-  background: var(--text-primary); 
-  color: var(--bg-secondary); 
-  border: 1px solid var(--text-primary);
-  font-family: var(--font-body); 
-  font-size: 11px; 
-  font-weight: 500;
-  text-transform: uppercase; 
-  letter-spacing: 0.15em;
-  padding: 1rem 2.5rem;
-  border-radius: 0; /* Sharp, structured edges */
-  cursor: none; 
-  transition: all 0.3s var(--transition-smooth);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  background: var(--text-primary); color: var(--bg-secondary); border: 1px solid var(--text-primary);
+  font-family: var(--font-body); font-size: 11px; font-weight: 500; text-transform: uppercase; 
+  letter-spacing: 0.15em; padding: 1rem 2.5rem; border-radius: 0; cursor: none; 
+  transition: all 0.3s var(--transition-smooth); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 .submit-btn:hover, .action-btn:hover, .cta-btn:hover, .nav-cta:hover { 
-  background: var(--accent-green); 
-  border-color: var(--accent-green); 
-  color: var(--bg-secondary); 
-  transform: translateY(-2px); /* Physical lift effect */
-  box-shadow: 0 8px 20px rgba(122, 143, 124, 0.25);
+  background: var(--accent-green); border-color: var(--accent-green); color: var(--bg-secondary); 
+  transform: translateY(-2px); box-shadow: 0 8px 20px rgba(122, 143, 124, 0.25);
 }
-
-.action-btn.gold { 
-  background: transparent; 
-  color: var(--accent-gold); 
-  border-color: var(--grid-border); /* Subtle default border */
-  box-shadow: none;
-}
-.action-btn.gold:hover { 
-  background: var(--accent-gold); 
-  border-color: var(--accent-gold);
-  color: var(--bg-secondary); 
-  box-shadow: 0 8px 20px rgba(189, 111, 93, 0.25);
-}
+.action-btn.gold { background: transparent; color: var(--accent-gold); border-color: var(--grid-border); box-shadow: none; }
+.action-btn.gold:hover { background: var(--accent-gold); border-color: var(--accent-gold); color: var(--bg-secondary); box-shadow: 0 8px 20px rgba(189, 111, 93, 0.25); }
 
 /* ── 9. PROTECTED ARTWORK ── */
 .protected-artwork {
-  pointer-events: none; user-select: none; -webkit-user-drag: none;
-  margin: 3rem auto; display: block; max-width: 100%; 
-  border-radius: 0; /* Keep it sharp */
-  box-shadow: var(--shadow-float); /* Give the art serious depth */
+  pointer-events: none; user-select: none; -webkit-user-drag: none; margin: 3rem auto; 
+  display: block; max-width: 100%; border-radius: 0; box-shadow: var(--shadow-float); 
 }
 
 /* ── 10. UTILITIES ── */
 .magnetic { transition: transform 0.3s var(--transition-smooth); }
 .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth); }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+
+/* ==================================================
+   THE LIVING ARCHIVE: GLOBAL ENHANCEMENTS
+================================================== */
+
+/* 1. Bilingual Hover Engine */
+.ur-hover {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+.ur-hover .en-text {
+  transition: opacity 0.4s var(--transition-smooth), transform 0.4s var(--transition-smooth);
+}
+.ur-hover::after {
+  content: attr(data-ur);
+  position: absolute;
+  font-family: var(--font-heading);
+  font-size: 1.6em;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--accent-gold);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s var(--transition-smooth), transform 0.4s var(--transition-smooth);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.ur-hover:hover .en-text {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.ur-hover:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 2. Editorial Card Hover */
+.update-card {
+  background: var(--bg-secondary);
+  padding: 2.5rem;
+  border: 1px solid transparent;
+  transition: all 0.5s var(--transition-smooth);
+  position: relative;
+  z-index: 1;
+  border-radius: 0;
+  box-shadow: var(--shadow-base);
+}
+.update-card:hover {
+  background: var(--bg-primary); 
+  border-color: var(--accent-gold);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-float);
+  z-index: 2;
+}

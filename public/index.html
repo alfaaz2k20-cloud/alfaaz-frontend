@@ -38,8 +38,23 @@
     .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-overlay); backdrop-filter: blur(2px); z-index: -1; }
     
     .hero-content { position: relative; z-index: 10; text-align: center; padding: 0 2rem; }
-    .hero-title { font-family: var(--font-heading); font-size: clamp(3rem, 12vw, 8rem); font-weight: 400; line-height: 0.95; text-transform: uppercase; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 1.5rem; opacity: 0; transform: translateY(30px); transition: opacity 1.2s ease, transform 1.2s ease; }
+    
+    /* ── LANDING PAGE ENHANCEMENTS (Hero Breathing Effect) ── */
+    .hero-title { 
+      font-family: var(--font-heading); 
+      font-size: clamp(3rem, 12vw, 8rem); 
+      font-weight: 400; line-height: 0.95; 
+      text-transform: uppercase; 
+      letter-spacing: -1px; 
+      color: var(--text-primary); 
+      margin-bottom: 1.5rem; 
+      opacity: 0; transform: translateY(30px); 
+      transition: opacity 1.3s var(--transition-smooth), transform 1.3s var(--transition-smooth), letter-spacing 0.8s var(--transition-smooth); 
+      cursor: default;
+    }
     .hero-title.visible { opacity: 1; transform: translateY(0); }
+    .hero-title:hover { letter-spacing: 2px; }
+
     .hero-subtitle { font-size: clamp(0.7rem, 1.2vw, 0.9rem); letter-spacing: 6px; text-transform: uppercase; color: var(--text-secondary); opacity: 0; transform: translateY(20px); transition: opacity 1s ease 0.5s, transform 1s ease 0.5s; }
     .hero-subtitle.visible { opacity: 0.9; transform: translateY(0); }
     .hero-scroll { position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; z-index: 10; }
@@ -59,8 +74,7 @@
     .section-header { margin-bottom: 3rem; text-align: center; }
     .section-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 400; text-transform: uppercase; letter-spacing: 1px; color: var(--text-primary); }
     .updates-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
-    .update-card { background: var(--bg-secondary); padding: 2.5rem; border: 1px solid var(--grid-border); border-radius: 0; box-shadow: var(--shadow-base); transition: box-shadow 0.4s var(--transition-smooth), transform 0.4s var(--transition-smooth); }
-    .update-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-float); border-color: rgba(189, 111, 93, 0.3); }
+    
     .update-date { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 1rem; }
     .update-text { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 400; color: var(--text-primary); line-height: 1.4; }
 
@@ -82,7 +96,21 @@
     .slider-wrap { position: relative; overflow: hidden; border-radius: 0; box-shadow: var(--shadow-float); }
     .slides { display: flex; transition: transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1); }
     .slide { min-width: 100%; user-select: none; position: relative; }
-    .slide img { width: 100%; height: auto; display: block; object-fit: cover; aspect-ratio: 16/9; transition: filter 0.6s ease; }
+    
+    /* ── LANDING PAGE ENHANCEMENTS (Printed Ink Effect) ── */
+    .slide img { 
+      width: 100%; height: auto; display: block; object-fit: cover; aspect-ratio: 16/9; 
+      filter: grayscale(100%) contrast(1.1) brightness(0.95);
+      mix-blend-mode: multiply; 
+      opacity: 0.85;
+      transition: filter 0.8s var(--transition-smooth), mix-blend-mode 0.8s var(--transition-smooth), opacity 0.8s var(--transition-smooth); 
+    }
+    .slide:hover img { 
+      filter: grayscale(0%) contrast(1) brightness(1);
+      mix-blend-mode: normal; 
+      opacity: 1;
+    }
+
     .slide-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem; background: linear-gradient(180deg, transparent 0%, rgba(248, 246, 240, 0.95) 100%); transform: translateY(10px); opacity: 0; transition: all 0.4s ease; }
     .slide:hover .slide-overlay { transform: translateY(0); opacity: 1; }
     .slide-title { font-family: var(--font-heading); font-size: 2rem; font-weight: 400; letter-spacing: 1px; color: var(--text-primary); }
@@ -155,13 +183,27 @@
     <a href="#" class="logo magnetic">ALFAAZ</a>
     
     <div class="nav-links" id="navLinks">
-      <a href="#home" class="magnetic">Home</a>
-      <a href="#updates" class="magnetic">Exhibitions</a>
-      <a href="#about" class="magnetic">About</a>
-      <a href="#journey" class="magnetic">Gallery</a>
-      <a href="#clubs" class="magnetic">Clubs</a>
-      <a href="blogs.html" class="magnetic">Journal</a>
-      <a id="mobileLoginBtn" href="login.html" class="mobile-only-link magnetic">Login / Register</a>
+      <a href="#home" class="magnetic ur-hover" data-ur="گھر">
+        <span class="en-text">Home</span>
+      </a>
+      <a href="#updates" class="magnetic ur-hover" data-ur="نمائش">
+        <span class="en-text">Exhibitions</span>
+      </a>
+      <a href="#about" class="magnetic ur-hover" data-ur="بَیان">
+        <span class="en-text">About</span>
+      </a>
+      <a href="#journey" class="magnetic ur-hover" data-ur="حاشِیہ">
+        <span class="en-text">Gallery</span>
+      </a>
+      <a href="#clubs" class="magnetic ur-hover" data-ur="حلقہ">
+        <span class="en-text">Clubs</span>
+      </a>
+      <a href="blogs.html" class="magnetic ur-hover" data-ur="رسالہ">
+        <span class="en-text">Journal</span>
+      </a>
+      <a id="mobileLoginBtn" href="login.html" class="mobile-only-link magnetic ur-hover" data-ur="داخلہ">
+        <span class="en-text">Login / Register</span>
+      </a>
     </div>
 
     <div class="nav-actions">
@@ -215,7 +257,9 @@
     <section id="updates" class="updates-section">
       <div class="section-header fade-in">
         <p class="section-label">Latest Announcements</p>
-        <h2 class="section-title">Notice Board</h2>
+        <h2 class="section-title ur-hover" data-ur="رسالہ">
+          <span class="en-text">The Journal</span>
+        </h2>
       </div>
       <div id="noticesGrid" class="updates-grid">
         <div class="update-card fade-in visible" id="noticeLoading">
@@ -229,7 +273,9 @@
       <div class="about-grid">
         <div class="about-content fade-in">
           <p class="section-label">Our Mission</p>
-          <h2 class="about-lead">A collective united by <span class="highlight">passion</span> for art, literature, and culture.</h2>
+          <h2 class="section-title ur-hover" style="margin-bottom: 2rem; font-size: clamp(2rem, 3.5vw, 3rem);" data-ur="بَیان">
+            <span class="en-text">In Their Words</span>
+          </h2>
           <p class="about-text">Alfaaz is a collective dedicated to fostering spaces where creativity meets collaboration. We celebrate artists and writers through exhibitions, curated showcases, and open dialogue.</p>
           <a href="https://linktr.ee/alfaaz2k20" target="_blank" class="cta-btn magnetic">View Archives</a>
         </div>
@@ -251,7 +297,12 @@
     </section>
 
     <section id="journey" class="journey-section">
-      <div class="section-header fade-in"><p class="section-label">Our History</p><h2 class="section-title">Past Exhibitions</h2></div>
+      <div class="section-header fade-in">
+        <p class="section-label">Our History</p>
+        <h2 class="section-title ur-hover" data-ur="حاشِیہ">
+          <span class="en-text">The Margins</span>
+        </h2>
+      </div>
       <div class="slider-container fade-in">
         <div id="slider" class="slider-wrap">
           <div id="slides" class="slides">
@@ -286,7 +337,12 @@
     </section>
 
     <section class="cta-section">
-      <div class="fade-in"><p class="section-label">Explore More</p><h2 class="cta-title">Archived Works</h2><p class="cta-text">Discover our collective's ongoing initiatives, curated shows, and archived exhibitions celebrating local art and expression.</p><a href="https://linktr.ee/alfaaz2k20" target="_blank" rel="noopener noreferrer" class="cta-btn magnetic">Visit Collection →</a></div>
+      <div class="fade-in">
+        <p class="section-label" style="margin-bottom: 1.5rem;">An Open Call</p>
+        <h2 class="cta-title" style="margin-bottom: 1.5rem;">Send word,<br><em style="font-style: italic; color: var(--accent-gold);">or a page.</em></h2>
+        <p class="cta-text">Discover our collective's ongoing initiatives, curated shows, and archived exhibitions celebrating local art and expression.</p>
+        <a href="https://linktr.ee/alfaaz2k20" target="_blank" rel="noopener noreferrer" class="cta-btn magnetic">Submit Work →</a>
+      </div>
     </section>
   </main>
 
