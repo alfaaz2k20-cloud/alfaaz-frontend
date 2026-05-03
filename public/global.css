@@ -137,7 +137,7 @@ nav.scrolled {
    THE LIVING ARCHIVE: GLOBAL ENHANCEMENTS
 ================================================== */
 
-/* 1. Bilingual Hover Engine */
+/* 1. Bilingual Auto-Cycle Engine */
 .ur-hover {
   position: relative;
   display: inline-flex;
@@ -146,7 +146,7 @@ nav.scrolled {
   text-decoration: none;
 }
 .ur-hover .en-text {
-  transition: opacity 0.4s var(--transition-smooth), transform 0.4s var(--transition-smooth);
+  transition: opacity 1.2s var(--transition-smooth), transform 1.2s var(--transition-smooth);
 }
 .ur-hover::after {
   content: attr(data-ur);
@@ -158,15 +158,19 @@ nav.scrolled {
   color: var(--accent-gold);
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 0.4s var(--transition-smooth), transform 0.4s var(--transition-smooth);
+  transition: opacity 1.2s var(--transition-smooth), transform 1.2s var(--transition-smooth);
   pointer-events: none;
   white-space: nowrap;
 }
-.ur-hover:hover .en-text {
+
+/* The hover override AND the automated swap state */
+.ur-hover:hover .en-text,
+.ur-hover.lang-swapped .en-text {
   opacity: 0;
   transform: translateY(-8px);
 }
-.ur-hover:hover::after {
+.ur-hover:hover::after,
+.ur-hover.lang-swapped::after {
   opacity: 1;
   transform: translateY(0);
 }

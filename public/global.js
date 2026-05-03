@@ -103,3 +103,21 @@ window.globalApiFetch = async function(endpoint, options = {}) {
         throw error;
     }
 };
+
+// 5. The Bilingual Heartbeat
+(function() {
+  function startLanguageCycle() {
+    const bilingualElements = document.querySelectorAll('.ur-hover');
+    if (bilingualElements.length === 0) return;
+
+    // Toggle the language state every 10 seconds (10,000 milliseconds)
+    setInterval(() => {
+      bilingualElements.forEach(el => {
+        el.classList.toggle('lang-swapped');
+      });
+    }, 10000);
+  }
+
+  // Start the cycle once the page loads
+  document.addEventListener('DOMContentLoaded', startLanguageCycle);
+})();
