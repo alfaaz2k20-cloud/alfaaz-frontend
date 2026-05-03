@@ -523,7 +523,12 @@
       const navLoginBtn = document.getElementById('navLoginBtn'), joinClubBtn = document.getElementById('joinClubBtn'), mobileLoginLink = document.getElementById('mobileLoginBtn');
       if (isLoggedIn) {
         if (navLoginBtn) { navLoginBtn.textContent = 'Dashboard'; navLoginBtn.href = 'dashboard.html'; }
-        if (mobileLoginLink) { mobileLoginLink.textContent = 'Dashboard'; mobileLoginLink.href = 'dashboard.html'; }
+        if (mobileLoginLink) {
+          const enSpan = mobileLoginLink.querySelector('.en-text');
+          if (enSpan) enSpan.textContent = 'Dashboard';
+          else mobileLoginLink.textContent = 'Dashboard';
+          mobileLoginLink.href = 'dashboard.html';
+        }
         if (joinClubBtn) { joinClubBtn.textContent = 'Apply for a Club'; joinClubBtn.href = 'dashboard.html'; }
       }
     })();

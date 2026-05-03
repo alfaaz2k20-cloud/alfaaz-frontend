@@ -40,9 +40,9 @@
     <a href="index.html" class="logo magnetic">ALFAAZ</a>
     <div class="nav-links" id="navLinks">
       <a href="index.html#home" class="magnetic">Home</a>
-      <a href="index.html#updates" class="magnetic">Exhibitions</a>
+      <a href="index.html#updates" class="magnetic">Updates</a>
       <a href="index.html#about" class="magnetic">About</a>
-      <a href="index.html#journey" class="magnetic">Gallery</a>
+      <a href="index.html#journey" class="magnetic">Margins</a>
       <a href="index.html#clubs" class="magnetic">Clubs</a>
       <a href="blogs.html" class="magnetic" style="color:var(--accent-gold);">Journal</a>
       <a id="mobileLoginBtn" href="login.html" class="mobile-only-link magnetic">Login / Register</a>
@@ -74,7 +74,7 @@
       const target = document.getElementById('articleTarget'), articleId = new URLSearchParams(window.location.search).get('id');
       if (!articleId) { target.innerHTML = '<div class="loading-state" style="color:var(--accent-red);">[Error] Document ID missing.</div>'; return; }
       try {
-        const res = await fetch(`https://alfaaz-project.onrender.com/blog?id=${articleId}`);
+        const res = await fetch(`/api/blog?id=${articleId}`);
         if (!res.ok) throw new Error();
         const article = await res.json(), dateStr = new Date(article.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         target.innerHTML = `<div class="post-header"><span class="post-meta">${dateStr} // Curator's Notes</span><h1 class="post-title">${article.title}</h1></div><div class="post-content">${sanitizeHTML(article.content)}</div>`;
@@ -83,6 +83,23 @@
       } catch (error) { target.innerHTML = '<div class="loading-state" style="color:var(--accent-red);">[Error] Connection failed.</div>'; }
     }
     document.addEventListener('DOMContentLoaded', loadArticle);
+
+// SMART ROUTING (Sync logged-in state across sub-pages)
+    (function() {
+      const isLoggedIn = !!localStorage.getItem('alfaaz_token') && !!localStorage.getItem('alfaaz_user');
+      const navLoginBtn = document.getElementById('navLoginBtn'), mobileLoginLink = document.getElementById('mobileLoginBtn');
+      if (isLoggedIn) {
+        if (navLoginBtn) { navLoginBtn.textContent = 'Dashboard'; navLoginBtn.href = 'dashboard.html'; }
+        if (mobileLoginLink) {
+          // Both sub-pages are currently missing the ur-hover spans, but this protects it if you add them later
+          const enSpan = mobileLoginLink.querySelector('.en-text');
+          if (enSpan) enSpan.textContent = 'Dashboard';
+          else mobileLoginLink.textContent = 'Dashboard';
+          mobileLoginLink.href = 'dashboard.html';
+        }
+      }
+    })();
+
   </script>
 </body>
 </html>

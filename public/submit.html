@@ -70,7 +70,12 @@
   <script>
     const userData = localStorage.getItem('alfaaz_user'), token = localStorage.getItem('alfaaz_token');
     if (!userData || !token) window.location.href = 'login.html';
-    const user = JSON.parse(userData); 
+    const user = JSON.parse(userData);
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    });
     const menuToggle = document.getElementById('menuToggle'), navLinks = document.getElementById('navLinks');
     menuToggle?.addEventListener('click', () => { const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true'; menuToggle.setAttribute('aria-expanded', !isExpanded); menuToggle.classList.toggle('active'); navLinks.classList.toggle('active'); });
 

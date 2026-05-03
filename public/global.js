@@ -99,7 +99,7 @@ window.globalApiFetch = async function(endpoint, options = {}) {
 
         return response;
     } catch (error) {
-        console.error("Transmission Intercepted:", error);
+        console.error("API fetch error:", error);
         throw error;
     }
 };

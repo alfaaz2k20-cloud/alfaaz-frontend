@@ -40,9 +40,9 @@
     <a href="index.html" class="logo magnetic">ALFAAZ</a>
     <div class="nav-links" id="navLinks">
       <a href="index.html#home" class="magnetic">Home</a>
-      <a href="index.html#updates" class="magnetic">Exhibitions</a>
+      <a href="index.html#updates" class="magnetic">Updates</a>
       <a href="index.html#about" class="magnetic">About</a>
-      <a href="index.html#journey" class="magnetic">Gallery</a>
+      <a href="index.html#journey" class="magnetic">Margins</a>
       <a href="index.html#clubs" class="magnetic">Clubs</a>
       <a href="blogs.html" class="magnetic" style="color:var(--accent-gold);">Journal</a>
       <a id="mobileLoginBtn" href="login.html" class="mobile-only-link magnetic">Login / Register</a>
@@ -70,7 +70,7 @@
     async function loadBlogs() {
       const container = document.getElementById('blogContainer');
       try {
-        const res = await fetch('https://alfaaz-project.onrender.com/blogs'); if (!res.ok) throw new Error();
+        const res = await fetch('/api/blogs'); if (!res.ok) throw new Error();
         const blogs = await res.json();
         if (!blogs.length) { container.innerHTML = '<div class="loading-state">The archives are currently empty.</div>'; return; }
         container.innerHTML = blogs.map(blog => `
@@ -83,6 +83,23 @@
       } catch (error) { container.innerHTML = '<div class="loading-state" style="color: var(--accent-red);">[Error] Archives unavailable.</div>'; }
     }
     document.addEventListener('DOMContentLoaded', loadBlogs);
+
+// SMART ROUTING (Sync logged-in state across sub-pages)
+    (function() {
+      const isLoggedIn = !!localStorage.getItem('alfaaz_token') && !!localStorage.getItem('alfaaz_user');
+      const navLoginBtn = document.getElementById('navLoginBtn'), mobileLoginLink = document.getElementById('mobileLoginBtn');
+      if (isLoggedIn) {
+        if (navLoginBtn) { navLoginBtn.textContent = 'Dashboard'; navLoginBtn.href = 'dashboard.html'; }
+        if (mobileLoginLink) {
+          // Both sub-pages are currently missing the ur-hover spans, but this protects it if you add them later
+          const enSpan = mobileLoginLink.querySelector('.en-text');
+          if (enSpan) enSpan.textContent = 'Dashboard';
+          else mobileLoginLink.textContent = 'Dashboard';
+          mobileLoginLink.href = 'dashboard.html';
+        }
+      }
+    })();
+
   </script>
 </body>
 </html>

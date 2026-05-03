@@ -99,6 +99,9 @@ nav.scrolled {
   background: rgba(244, 241, 234, 0.92); backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--grid-border); padding-top: 1.2rem; padding-bottom: 1.2rem;
 }
+nav.hidden {
+  transform: translateY(-100%);
+}
 .logo { font-family: var(--font-heading); font-size: 1.8rem; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
 
 /* ── 6. PANELS & DEPTH ── */
