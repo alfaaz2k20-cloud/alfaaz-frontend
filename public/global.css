@@ -2,7 +2,7 @@
    ALFAAZ COLLECTIVE — GLOBAL STYLES
    V2: Architectural & Tactile
 ======================================== */
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;1,400&family=Alegreya+Sans:wght@300;400;500&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
 
 :root {
   /* Core Backgrounds */
@@ -19,6 +19,11 @@
   --accent-green: #7a8f7c;   
   --accent-red: #c96b65;     
   
+  /* Typography Variables */
+  --font-heading: 'Alegreya', serif;        
+  --font-body: 'Alegreya Sans', sans-serif; 
+  --font-urdu: 'Noto Nastaliq Urdu', serif; 
+  
   /* Borders & Shadows */
   --grid-border: rgba(45, 49, 46, 0.12);
   --shadow-base: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 0 3px rgba(0, 0, 0, 0.02);
@@ -27,8 +32,6 @@
   /* Cursors & Animations */
   --cursor-size: 12px;
   --cursor-hover-size: 80px;
-  --font-heading: 'Crimson Pro', serif;
-  --font-body: 'EB Garamond', serif;
   --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -132,12 +135,11 @@ nav.scrolled {
 .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth); }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
 
-
 /* ==================================================
    THE LIVING ARCHIVE: GLOBAL ENHANCEMENTS
 ================================================== */
 
-/* 1. Bilingual Auto-Cycle Engine */
+/* 1. Bilingual Auto-Cycle Engine (FIXED) */
 .ur-hover {
   position: relative;
   display: inline-flex;
@@ -148,31 +150,53 @@ nav.scrolled {
 .ur-hover .en-text {
   transition: opacity 1.2s var(--transition-smooth), transform 1.2s var(--transition-smooth);
 }
-.ur-hover::after {
+/* Uses ::before to prevent conflicts with the gold hover line in nav */
+.ur-hover::before {
   content: attr(data-ur);
   position: absolute;
-  font-family: var(--font-heading);
-  font-size: 1.6em;
-  font-style: italic;
-  font-weight: 300;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translateY(8px);
+  font-family: var(--font-urdu); 
+  font-size: 1.4em; 
+  line-height: 1;
+  font-style: normal; 
+  font-weight: 400;
   color: var(--accent-gold);
   opacity: 0;
-  transform: translateY(8px);
   transition: opacity 1.2s var(--transition-smooth), transform 1.2s var(--transition-smooth);
   pointer-events: none;
   white-space: nowrap;
 }
 
-/* The hover override AND the automated swap state */
+/* The swap states */
 .ur-hover:hover .en-text,
 .ur-hover.lang-swapped .en-text {
   opacity: 0;
   transform: translateY(-8px);
 }
-.ur-hover:hover::after,
-.ur-hover.lang-swapped::after {
+.ur-hover:hover::before,
+.ur-hover.lang-swapped::before {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, -50%) translateY(0);
+}
+
+/* ── NAV LOGO BILINGUAL OVERRIDE ── */
+.logo.ur-hover::before {
+  font-family: var(--font-urdu);
+  font-size: 1.1em; 
+  font-style: normal; 
+  color: var(--text-primary); 
+  margin-top: -4px; 
+}
+
+/* ── HERO TITLE BILINGUAL OVERRIDE ── */
+.hero-title.ur-hover::before {
+  font-family: var(--font-urdu);
+  font-size: 0.8em; 
+  font-style: normal; 
+  color: var(--text-primary); 
+  margin-top: -15px; 
 }
 
 /* 2. Editorial Card Hover */
@@ -194,8 +218,23 @@ nav.scrolled {
   z-index: 2;
 }
 
-.logo.ur-hover::before {
-  font-size: 1.3em; /* Scales the Urdu to perfectly match the English weight */
-  font-style: normal; /* Removes the italics to keep it feeling like a brand mark */
-  color: var(--text-primary); /* Keeps it slate/charcoal instead of gold */
+/* 3. Stacked Journal Articles */
+.updates-stack {
+  display: flex;
+  flex-direction: column;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.stacked-article {
+  background: transparent;
+  padding: 3rem 2rem;
+  border-top: 1px solid var(--grid-border);
+  transition: all 0.4s var(--transition-smooth);
+  text-align: left;
+}
+.stacked-article:last-child {
+  border-bottom: 1px solid var(--grid-border);
+}
+.stacked-article:hover {
+  background: var(--bg-secondary);
 }
