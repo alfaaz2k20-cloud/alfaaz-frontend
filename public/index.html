@@ -73,7 +73,6 @@
     .updates-section { padding: 6rem 3rem; background: transparent; border-top: 1px solid var(--grid-border); }
     .section-header { margin-bottom: 3rem; text-align: center; }
     .section-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 400; text-transform: uppercase; letter-spacing: 1px; color: var(--text-primary); }
-    .updates-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
     
     .update-date { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 1rem; }
     .update-text { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 400; color: var(--text-primary); line-height: 1.4; }
@@ -103,7 +102,7 @@
     .club-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
 
     /* ── 04 · MARGINS — HORIZONTAL VITRINE ─────── */
-    .margins-section { padding: 6rem 3rem; background: transparent; border-top: 1px solid var(--grid-border); }
+    .margins-section { padding: 6rem 3rem; background: transparent; border-top: 1px solid var(--grid-border); position: relative; }
     .vitrine {
       display: flex; gap: 2.5rem; padding: 2rem 0 3rem;
       overflow-x: auto;
@@ -177,6 +176,11 @@
       color: var(--text-secondary); display: flex; justify-content: center; align-items: center; gap: 0.8rem;
     }
     .vitrine-hint::after { content: '→'; color: var(--accent-gold); }
+
+    /* Re-added Slider Controls for Desktop Support */
+    .slider-controls { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin-top: 1rem; }
+    .slider-arrow { width: 45px; height: 45px; background: var(--bg-secondary); border: 1px solid var(--grid-border); border-radius: 50%; color: var(--text-primary); cursor: none; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: var(--shadow-base); }
+    .slider-arrow:hover { background: var(--accent-gold); border-color: var(--accent-gold); color: #fff; transform: scale(1.05); box-shadow: var(--shadow-float); }
 
     .cta-section { padding: 8rem 3rem; background: transparent; border-top: 1px solid var(--grid-border); text-align: center; }
     .cta-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 400; letter-spacing: 1px; color: var(--text-primary); margin-bottom: 1.5rem; }
@@ -279,7 +283,9 @@
       <div class="video-overlay"></div>
 
       <div class="hero-content">
-        <h1 class="hero-title">ALFAAZ COLLECTIVE</h1>
+        <h1 class="hero-title ur-hover" data-ur="الفاظ" style="width: 100%; justify-content: center;">
+          <span class="en-text">ALFAAZ COLLECTIVE</span>
+        </h1>
         <p class="hero-subtitle">Art • Literature • Culture</p>
       </div>
       <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
@@ -309,10 +315,10 @@
           <span class="en-text">Updates</span>
         </h2>
       </div>
-      <div id="noticesGrid" class="updates-grid">
-        <div class="update-card fade-in visible" id="noticeLoading">
+      <div id="noticesGrid" class="updates-stack">
+        <div class="stacked-article fade-in visible" id="noticeLoading">
           <p class="update-date" style="color: var(--accent-gold);">Fetching updates...</p>
-          <p class="update-text">Connecting to Gallery Server...</p>
+          <p class="update-text" style="font-family: var(--font-body); font-size: 14px;">Connecting to Gallery Server...</p>
         </div>
       </div>
     </section>
@@ -403,6 +409,12 @@
           <div class="vitrine-photo"><img src="./images/slider-8.jpg" alt="Act"></div>
           <div class="vitrine-caption"><em>Act</em><small>Summer 2023 · The Swan</small></div>
         </div>
+      </div>
+      
+      <!-- DESKTOP SLIDER BUTTONS RESTORED -->
+      <div class="slider-controls fade-in">
+        <button id="vitrinePrev" class="slider-arrow magnetic"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+        <button id="vitrineNext" class="slider-arrow magnetic"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
       </div>
     </section>
 
@@ -589,6 +601,23 @@
       document.addEventListener('DOMContentLoaded', loadLiveNotices);
       window.addEventListener('pageshow', function () { isUpdating = false; loadLiveNotices(); });
       setInterval(loadLiveNotices, 30000);
+    })();
+    
+    // VITRINE DESKTOP SLIDER
+    (function() {
+      const vitrine = document.querySelector('.vitrine');
+      const vPrev = document.getElementById('vitrinePrev');
+      const vNext = document.getElementById('vitrineNext');
+      if (vitrine && vPrev && vNext) {
+        // Adjusts scroll amount based on screen size so it feels natural
+        const scrollAmount = window.innerWidth > 768 ? 400 : 300;
+        vPrev.addEventListener('click', () => {
+          vitrine.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        });
+        vNext.addEventListener('click', () => {
+          vitrine.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        });
+      }
     })();
   </script>
 </body>

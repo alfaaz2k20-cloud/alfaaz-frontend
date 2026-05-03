@@ -5,10 +5,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;1,400&family=Alegreya+Sans:wght@300;400;500&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
 
 :root {
-  /* Core Backgrounds */
-  --bg-primary: #f8f6f0;     
+  /* Core Backgrounds - Warmed up for a Journal feel */
+  --bg-primary: #f4f1ea;     
   --bg-secondary: #ffffff;   
-  --bg-overlay: rgba(248, 246, 240, 0.85); 
+  --bg-overlay: rgba(244, 241, 234, 0.85); 
   
   /* Text Colors */
   --text-primary: #2d312e;   
@@ -37,9 +37,12 @@
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ── 1. CORE BODY & TACTILE GRAIN ── */
+/* ── 1. CORE BODY & TACTILE PAPER GRAIN ── */
 body {
-  background-color: transparent;
+  background-color: var(--bg-primary);
+  /* Creates a soft "desk lamp" illumination on the page */
+  background-image: radial-gradient(circle at 50% 0%, #fbfaf8 0%, var(--bg-primary) 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-body);
   margin: 0;
@@ -52,7 +55,8 @@ body::after {
   content: "";
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+  /* Softened the frequency to mimic paper pulp/fibers instead of harsh static */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 9999;
 }
@@ -92,7 +96,7 @@ nav {
   transition: transform 0.4s var(--transition-smooth), background 0.4s ease, backdrop-filter 0.4s ease, padding 0.4s ease;
 }
 nav.scrolled {
-  background: rgba(248, 246, 240, 0.92); backdrop-filter: blur(16px);
+  background: rgba(244, 241, 234, 0.92); backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--grid-border); padding-top: 1.2rem; padding-bottom: 1.2rem;
 }
 .logo { font-family: var(--font-heading); font-size: 1.8rem; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
@@ -150,7 +154,6 @@ nav.scrolled {
 .ur-hover .en-text {
   transition: opacity 1.2s var(--transition-smooth), transform 1.2s var(--transition-smooth);
 }
-/* Uses ::before to prevent conflicts with the gold hover line in nav */
 .ur-hover::before {
   content: attr(data-ur);
   position: absolute;
@@ -169,7 +172,6 @@ nav.scrolled {
   white-space: nowrap;
 }
 
-/* The swap states */
 .ur-hover:hover .en-text,
 .ur-hover.lang-swapped .en-text {
   opacity: 0;
@@ -181,7 +183,6 @@ nav.scrolled {
   transform: translate(-50%, -50%) translateY(0);
 }
 
-/* ── NAV LOGO BILINGUAL OVERRIDE ── */
 .logo.ur-hover::before {
   font-family: var(--font-urdu);
   font-size: 1.1em; 
@@ -190,7 +191,6 @@ nav.scrolled {
   margin-top: -4px; 
 }
 
-/* ── HERO TITLE BILINGUAL OVERRIDE ── */
 .hero-title.ur-hover::before {
   font-family: var(--font-urdu);
   font-size: 0.8em; 
