@@ -132,22 +132,19 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
 .ur-hover:hover .en-text, .ur-hover.lang-swapped .en-text { opacity: 0; transform: translateY(-8px); }
 .ur-hover:hover::before, .ur-hover.lang-swapped::before { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
 
-/* ── 2. HERO VIDEO & STACKING FIX ── */
-.hero { z-index: 1 !important; } /* Traps the video above the body background */
-.bg-video { z-index: -2 !important; }
-.video-overlay { z-index: -1 !important; }
+/* ── 2. URDU SCALING & SPLIT-LINE FIX ── */
 
-/* ── 3. RESTORED & INDESTRUCTIBLE HERO TITLE ── */
 .logo.ur-hover::before { font-family: var(--font-urdu); font-size: 1.1em; font-style: normal; color: var(--text-primary); margin-top: -4px; }
 
+/* Perfected Two-Line Stacked Title */
 .hero-title {
   font-family: var(--font-heading) !important;
-  font-size: clamp(3.5rem, 12vw, 8rem) !important; /* RESTORED MASSIVE SIZE */
+  font-size: clamp(2.8rem, 9vw, 6.5rem) !important; /* Slightly lower font size to balance the stack */
   font-weight: 400 !important;
   line-height: 1 !important;
   text-transform: uppercase !important;
   color: var(--text-primary) !important;
-  margin-bottom: 1.5rem !important;
+  margin-bottom: 1.5rem !important; /* Restored normal, tight gap! */
 }
 
 .hero-title.ur-hover { 
@@ -162,22 +159,22 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
   display: block !important;
   width: 100% !important;
   white-space: normal !important; 
-  word-break: keep-all !important; 
   text-align: center !important;
+  line-height: 1.05 !important; /* Tightens the vertical space between ALFAAZ and COLLECTIVE */
   transition: opacity 1.2s var(--transition-smooth), transform 1.2s var(--transition-smooth) !important;
 }
 
 .hero-title.ur-hover::before { 
   font-size: 1.5em !important; 
-  margin-top: -10px !important; 
+  margin-top: 0 !important; /* Drops perfectly in the center of the two lines */
   color: var(--text-primary) !important; 
 }
 
-/* ── 4. CLUBS ALIGNMENT FIX ── */
+/* Clubs Margin Fix so Urdu doesn't overlap paragraphs */
 .club-title { margin-bottom: 2.5rem !important; }
-.club-title.ur-hover::before { font-size: 1.5em !important; margin-top: -8px !important; }
+.club-title.ur-hover::before { font-size: 1.6em; margin-top: -8px; }
 
-/* 5. Editorial Card Hover */
+/* 3. Editorial Card Hover */
 .update-card { background: var(--bg-secondary); padding: 2.5rem; border: 1px solid transparent; transition: all 0.5s var(--transition-smooth); position: relative; z-index: 1; border-radius: 0; box-shadow: var(--shadow-base); }
 .update-card:hover { background: var(--bg-primary); border-color: var(--accent-gold); transform: translateY(-4px); box-shadow: var(--shadow-float); z-index: 2; }
 .updates-stack { display: flex; flex-direction: column; max-width: 900px; margin: 0 auto; }
@@ -189,7 +186,7 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
    MOBILE OPTIMIZATIONS & FIXES
 ================================================== */
 @media (max-width: 768px) {
-  .hero-title { font-size: clamp(3rem, 15vw, 4.5rem) !important; } 
+  .hero-title { font-size: clamp(2.5rem, 12vw, 4rem) !important; } 
   .auth-container, .dash-container, .editor-container, .vault-container { margin-top: 6rem !important; margin-bottom: 2rem !important; }
   #phantomMiniOverlay { bottom: 1.5rem !important; right: 1.5rem !important; }
 }
