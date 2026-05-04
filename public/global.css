@@ -29,9 +29,6 @@
   --shadow-base: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 0 3px rgba(0, 0, 0, 0.02);
   --shadow-float: 0 20px 40px -4px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
   
-  /* Cursors & Animations */
-  --cursor-size: 12px;
-  --cursor-hover-size: 80px;
   --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -40,7 +37,6 @@
 /* ── 1. CORE BODY & TACTILE PAPER GRAIN ── */
 body {
   background-color: var(--bg-primary);
-  /* Creates a soft "desk lamp" illumination on the page */
   background-image: radial-gradient(circle at 50% 0%, #fbfaf8 0%, var(--bg-primary) 100%);
   background-attachment: fixed;
   color: var(--text-primary);
@@ -55,7 +51,6 @@ body::after {
   content: "";
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
-  /* Softened the frequency to mimic paper pulp/fibers instead of harsh static */
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 9999;
@@ -68,28 +63,12 @@ body::after {
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: rgba(45, 49, 46, 0.2); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
-a, button { cursor: none; } 
 
 /* ── 3. BACKGROUND VIDEO ── */
 .bg-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; filter: blur(3px); }
 .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-overlay); backdrop-filter: blur(4px); z-index: -2; }
 
-/* ── 4. CUSTOM CURSOR ── */
-.custom-cursor {
-  position: fixed; top: 0; left: 0; width: var(--cursor-size); height: var(--cursor-size);
-  background: var(--accent-gold); border-radius: 50%; pointer-events: none; z-index: 10000;
-  transform: translate(-50%, -50%); transition: width 0.3s ease, height 0.3s ease, background 0.3s ease;
-}
-.custom-cursor.hover {
-  width: var(--cursor-hover-size); height: var(--cursor-hover-size);
-  background: rgba(255, 255, 255, 0.1); border: 1px solid var(--accent-gold);
-  backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-body); font-size: 10px; font-weight: 500; letter-spacing: 0.2em;
-  color: var(--accent-gold); text-transform: uppercase;
-}
-.custom-cursor.hover::after { content: 'VIEW'; }
-
-/* ── 5. ARCHITECTURAL NAVIGATION ── */
+/* ── 4. ARCHITECTURAL NAVIGATION ── */
 nav {
   position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 3rem;
   display: flex; justify-content: space-between; align-items: center; z-index: 1000;
@@ -99,29 +78,27 @@ nav.scrolled {
   background: rgba(244, 241, 234, 0.92); backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--grid-border); padding-top: 1.2rem; padding-bottom: 1.2rem;
 }
-nav.hidden {
-  transform: translateY(-100%);
-}
+nav.hidden { transform: translateY(-100%); }
 .logo { font-family: var(--font-heading); font-size: 1.8rem; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
 
-/* ── 6. PANELS & DEPTH ── */
+/* ── 5. PANELS & DEPTH ── */
 .panel, .auth-card {
   background: var(--bg-secondary); border: 1px solid var(--grid-border); border-radius: 0px; 
   box-shadow: var(--shadow-base); transition: box-shadow 0.4s var(--transition-smooth), transform 0.4s var(--transition-smooth);
 }
 .panel:hover, .auth-card:hover { box-shadow: var(--shadow-float); }
 
-/* ── 7. TYPOGRAPHY: TIGHT LABEL SYSTEM ── */
+/* ── 6. TYPOGRAPHY: TIGHT LABEL SYSTEM ── */
 .data-label, .input-label, .section-label {
   font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.18em; 
   text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem;
 }
 
-/* ── 8. ARCHITECTURAL BUTTONS ── */
+/* ── 7. ARCHITECTURAL BUTTONS ── */
 .submit-btn, .action-btn, .cta-btn, .nav-cta {
   background: var(--text-primary); color: var(--bg-secondary); border: 1px solid var(--text-primary);
   font-family: var(--font-body); font-size: 11px; font-weight: 500; text-transform: uppercase; 
-  letter-spacing: 0.15em; padding: 1rem 2.5rem; border-radius: 0; cursor: none; 
+  letter-spacing: 0.15em; padding: 1rem 2.5rem; border-radius: 0; 
   transition: all 0.3s var(--transition-smooth); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 .submit-btn:hover, .action-btn:hover, .cta-btn:hover, .nav-cta:hover { 
@@ -131,14 +108,8 @@ nav.hidden {
 .action-btn.gold { background: transparent; color: var(--accent-gold); border-color: var(--grid-border); box-shadow: none; }
 .action-btn.gold:hover { background: var(--accent-gold); border-color: var(--accent-gold); color: var(--bg-secondary); box-shadow: 0 8px 20px rgba(189, 111, 93, 0.25); }
 
-/* ── 9. PROTECTED ARTWORK ── */
-.protected-artwork {
-  pointer-events: none; user-select: none; -webkit-user-drag: none; margin: 3rem auto; 
-  display: block; max-width: 100%; border-radius: 0; box-shadow: var(--shadow-float); 
-}
-
-/* ── 10. UTILITIES ── */
-.magnetic { transition: transform 0.3s var(--transition-smooth); }
+/* ── 8. UTILITIES ── */
+.magnetic { transition: transform 0.3s var(--transition-smooth); display: inline-block; }
 .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth); }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
 
@@ -146,7 +117,7 @@ nav.hidden {
    THE LIVING ARCHIVE: GLOBAL ENHANCEMENTS
 ================================================== */
 
-/* 1. Bilingual Auto-Cycle Engine (FIXED) */
+/* 1. Bilingual Auto-Cycle Engine */
 .ur-hover {
   position: relative;
   display: inline-flex;
@@ -154,90 +125,63 @@ nav.hidden {
   justify-content: center;
   text-decoration: none;
 }
-.ur-hover .en-text {
-  transition: opacity 1.2s var(--transition-smooth), transform 1.2s var(--transition-smooth);
-}
+.ur-hover .en-text { transition: opacity 1.2s var(--transition-smooth), transform 1.2s var(--transition-smooth); }
 .ur-hover::before {
-  content: attr(data-ur);
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  content: attr(data-ur); position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%) translateY(8px);
-  font-family: var(--font-urdu); 
-  font-size: 1.4em; 
-  line-height: 1;
-  font-style: normal; 
-  font-weight: 400;
-  color: var(--accent-gold);
-  opacity: 0;
+  font-family: var(--font-urdu); font-size: 1.4em; line-height: 1;
+  font-style: normal; font-weight: 400; color: var(--accent-gold); opacity: 0;
   transition: opacity 1.2s var(--transition-smooth), transform 1.2s var(--transition-smooth);
-  pointer-events: none;
-  white-space: nowrap;
+  pointer-events: none; white-space: nowrap;
 }
-
-.ur-hover:hover .en-text,
-.ur-hover.lang-swapped .en-text {
-  opacity: 0;
-  transform: translateY(-8px);
-}
-.ur-hover:hover::before,
-.ur-hover.lang-swapped::before {
-  opacity: 1;
-  transform: translate(-50%, -50%) translateY(0);
-}
-
-.logo.ur-hover::before {
-  font-family: var(--font-urdu);
-  font-size: 1.1em; 
-  font-style: normal; 
-  color: var(--text-primary); 
-  margin-top: -4px; 
-}
-
-.hero-title.ur-hover::before {
-  font-family: var(--font-urdu);
-  font-size: 0.8em; 
-  font-style: normal; 
-  color: var(--text-primary); 
-  margin-top: -15px; 
-}
+.ur-hover:hover .en-text, .ur-hover.lang-swapped .en-text { opacity: 0; transform: translateY(-8px); }
+.ur-hover:hover::before, .ur-hover.lang-swapped::before { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+.logo.ur-hover::before { font-family: var(--font-urdu); font-size: 1.1em; font-style: normal; color: var(--text-primary); margin-top: -4px; }
+.hero-title.ur-hover::before { font-family: var(--font-urdu); font-size: 0.8em; font-style: normal; color: var(--text-primary); margin-top: -15px; }
 
 /* 2. Editorial Card Hover */
-.update-card {
-  background: var(--bg-secondary);
-  padding: 2.5rem;
-  border: 1px solid transparent;
-  transition: all 0.5s var(--transition-smooth);
-  position: relative;
-  z-index: 1;
-  border-radius: 0;
-  box-shadow: var(--shadow-base);
-}
-.update-card:hover {
-  background: var(--bg-primary); 
-  border-color: var(--accent-gold);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-float);
-  z-index: 2;
-}
+.update-card { background: var(--bg-secondary); padding: 2.5rem; border: 1px solid transparent; transition: all 0.5s var(--transition-smooth); position: relative; z-index: 1; border-radius: 0; box-shadow: var(--shadow-base); }
+.update-card:hover { background: var(--bg-primary); border-color: var(--accent-gold); transform: translateY(-4px); box-shadow: var(--shadow-float); z-index: 2; }
 
 /* 3. Stacked Journal Articles */
-.updates-stack {
-  display: flex;
-  flex-direction: column;
-  max-width: 900px;
-  margin: 0 auto;
+.updates-stack { display: flex; flex-direction: column; max-width: 900px; margin: 0 auto; }
+.stacked-article { background: transparent; padding: 3rem 2rem; border-top: 1px solid var(--grid-border); transition: all 0.4s var(--transition-smooth); text-align: left; }
+.stacked-article:last-child { border-bottom: 1px solid var(--grid-border); }
+.stacked-article:hover { background: var(--bg-secondary); }
+
+/* ==================================================
+   MOBILE OPTIMIZATIONS & FIXES
+================================================== */
+@media (max-width: 768px) {
+  /* Fix the 100vh address bar bug */
+  .hero { min-height: 100svh; }
+  
+  /* Prevent the massive title from breaking awkwardly */
+  .hero-title { font-size: clamp(2.5rem, 15vw, 4rem); word-break: keep-all; white-space: pre-line; }
+  
+  /* Auth/Admin Page Margins */
+  .auth-container, .dash-container, .editor-container, .vault-container { margin-top: 6rem !important; margin-bottom: 2rem !important; }
+  
+  /* Separate Phantom Widget */
+  #phantomMiniOverlay { bottom: 1.5rem !important; right: 1.5rem !important; }
 }
-.stacked-article {
-  background: transparent;
-  padding: 3rem 2rem;
-  border-top: 1px solid var(--grid-border);
-  transition: all 0.4s var(--transition-smooth);
-  text-align: left;
+
+/* Enforce strict horizontal panning on the Vitrine for Android & Mobile Fixes */
+.vitrine {
+  display: flex; gap: 2.5rem; 
+  padding: 3rem 1.5rem; /* Prevents tilted items from clipping edges */
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: none; -ms-overflow-style: none;
+  touch-action: pan-x; /* Explicit instruction for mobile browsers */
 }
-.stacked-article:last-child {
-  border-bottom: 1px solid var(--grid-border);
+.vitrine::-webkit-scrollbar { display: none; }
+.vitrine-item {
+  flex-shrink: 0;
+  width: clamp(260px, 75vw, 360px); /* Better fit for 375px screens */
+  scroll-snap-align: center;
+  display: flex; flex-direction: column; gap: 1.2rem;
+  transform: rotate(-0.8deg); transition: transform 0.5s var(--transition-smooth);
 }
-.stacked-article:hover {
-  background: var(--bg-secondary);
-}
+.vitrine-item:nth-child(even) { transform: rotate(0.8deg); margin-top: 2rem; }
+.vitrine-item:nth-child(3n) { transform: rotate(-1.2deg); }
+.vitrine-item:hover { transform: rotate(0deg) translateY(-5px); z-index: 10; }
