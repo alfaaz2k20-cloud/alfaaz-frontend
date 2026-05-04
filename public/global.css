@@ -195,17 +195,14 @@ nav.hidden { transform: translateY(-100%); }
 
 /*
   Block context (h1, h2, h3):
-  display:block with overflow:hidden so the absolute
-  ::before is clipped within the heading's own bounds
-  and doesn't bleed into adjacent content.
-  No inline-flex — that would collapse block width.
+  display:block so the element keeps full width.
+  No overflow:hidden — Nastaliq letterforms need room to breathe.
 */
 h1.ur-hover,
 h2.ur-hover,
 h3.ur-hover {
   display: block;
   position: relative;
-  overflow: hidden;
 }
 
 /* Hero title */
@@ -239,10 +236,7 @@ h3.ur-hover {
 
 /* Club titles */
 .club-title { margin-bottom: 2.5rem; }
-.club-title.ur-hover::before { font-size: 1.6em; }
-
-/* Section h2 headings */
-h2.ur-hover::before { font-size: 0.9em; color: var(--accent-gold); }
+.club-title.ur-hover::before { font-size: 1.6em; margin-top: -8px; }
 
 /* ── NOTICE CARDS ─────────────────────────────── */
 .update-card {
