@@ -137,22 +137,21 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
 
 /* ── URDU SCALING & ALIGNMENT FIXES ── */
 
-/* REVERTED: Navbar Logo back to original size */
 .logo.ur-hover::before { font-family: var(--font-urdu); font-size: 1.1em; font-style: normal; color: var(--text-primary); margin-top: -4px; }
 
-/* FIXED: ALFAAZ COLLECTIVE Hero Title layout */
+/* FIX: Un-flex the Hero Title so typography wraps normally */
 .hero-title.ur-hover { 
-  display: flex; /* Overrides inline-flex so it spans 100% width and centers */
+  display: block !important; /* Forces block layout instead of inline-flex */
   width: 100%; 
 }
 .hero-title .en-text {
-  display: block;
-  width: 100%;
-  white-space: normal; /* Restores normal, natural wrapping */
+  display: inline; /* Standard text behavior */
+  white-space: pre-wrap; 
+  word-break: keep-all; /* Prevents words from breaking in half */
 }
 .hero-title.ur-hover::before { 
-  font-size: 1.2em; /* Resized to fit naturally over the English text */
-  margin-top: -15px; 
+  font-size: 1.5em; /* Massive Urdu size */
+  margin-top: 0; /* Centered perfectly over the block text */
   color: var(--text-primary); 
 }
 
@@ -176,8 +175,8 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
 @media (max-width: 768px) {
   .hero { min-height: 100svh; }
   
-  /* Natural mobile scaling so "COLLECTIVE" fits without clipping edges */
-  .hero-title { font-size: clamp(2rem, 10vw, 4rem); } 
+  /* Restores size on mobile while respecting word-breaks */
+  .hero-title { font-size: clamp(2.5rem, 12vw, 4.5rem) !important; } 
   
   .auth-container, .dash-container, .editor-container, .vault-container { margin-top: 6rem !important; margin-bottom: 2rem !important; }
   #phantomMiniOverlay { bottom: 1.5rem !important; right: 1.5rem !important; }
