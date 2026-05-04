@@ -127,7 +127,7 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
 .ur-hover::before {
   content: attr(data-ur); position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%) translateY(8px);
-  font-family: var(--font-urdu); font-size: 1.4em; line-height: 1;
+  font-family: var(--font-urdu); line-height: 1;
   font-style: normal; font-weight: 400; color: var(--accent-gold); opacity: 0;
   transition: opacity 1.2s var(--transition-smooth), transform 1.2s var(--transition-smooth);
   pointer-events: none; white-space: nowrap;
@@ -135,11 +135,28 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
 .ur-hover:hover .en-text, .ur-hover.lang-swapped .en-text { opacity: 0; transform: translateY(-8px); }
 .ur-hover:hover::before, .ur-hover.lang-swapped::before { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
 
-/* Urdu Size Overrides to prevent overlapping */
-.logo.ur-hover::before { font-family: var(--font-urdu); font-size: 1.1em; font-style: normal; color: var(--text-primary); margin-top: -4px; }
-.hero-title.ur-hover::before { font-family: var(--font-urdu); font-size: 0.8em; font-style: normal; color: var(--text-primary); margin-top: -15px; }
-/* Downsized the Club Urdu text slightly so it doesn't hit the paragraph */
-.club-title.ur-hover::before { font-family: var(--font-urdu); font-size: 1.2em; font-style: normal; margin-top: -4px; }
+/* ── URDU SCALING & OVERLAP FIXES (DESKTOP & MOBILE) ── */
+.logo.ur-hover::before { 
+    font-size: 1.3em; 
+    margin-top: -4px; 
+    color: var(--text-primary); 
+}
+
+/* Drastically increased Nastaliq size for the main Hero text */
+.hero-title.ur-hover::before { 
+    font-size: 1.8em; 
+    margin-top: -20px; 
+    color: var(--text-primary); 
+}
+
+/* Enforced spacing globally to prevent Urdu text from colliding with English paragraphs */
+.club-title { 
+    margin-bottom: 2.5rem !important; 
+}
+.club-title.ur-hover::before { 
+    font-size: 1.6em; 
+    margin-top: -8px; 
+}
 
 /* 2. Editorial Card Hover */
 .update-card { background: var(--bg-secondary); padding: 2.5rem; border: 1px solid transparent; transition: all 0.5s var(--transition-smooth); position: relative; z-index: 1; border-radius: 0; box-shadow: var(--shadow-base); }
@@ -156,11 +173,7 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
 ================================================== */
 @media (max-width: 768px) {
   .hero { min-height: 100svh; }
-  
-  /* Bumps the font size back up and allows it to break lines naturally */
-  .hero-title { font-size: clamp(3rem, 12vw, 5rem); }
-  .hero-title .en-text { white-space: normal; display: block; line-height: 1.1; }
-  
+  .hero-title { font-size: clamp(3rem, 12vw, 5rem); word-break: keep-all; white-space: pre-line; }
   .auth-container, .dash-container, .editor-container, .vault-container { margin-top: 6rem !important; margin-bottom: 2rem !important; }
   #phantomMiniOverlay { bottom: 1.5rem !important; right: 1.5rem !important; }
 }
@@ -184,9 +197,3 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
 .vitrine-item:nth-child(even) { transform: rotate(0.8deg); margin-top: 2rem; }
 .vitrine-item:nth-child(3n) { transform: rotate(-1.2deg); }
 .vitrine-item:hover { transform: rotate(0deg) translateY(-5px); z-index: 10; }
-
-/* Increased bottom margin to give the Urdu hover more breathing room */
-.club-title { 
-  font-family: var(--font-heading); font-size: 1.5rem; font-weight: 400; 
-  color: var(--text-primary); margin-bottom: 1.5rem; 
-}
