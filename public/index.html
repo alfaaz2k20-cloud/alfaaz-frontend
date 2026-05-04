@@ -32,10 +32,10 @@
     #menuToggle.active .hamburger-open { display: none; }
     #menuToggle.active .hamburger-close { display: block; }
 
-    /* HERO & VIDEO CONFINEMENT */
-    .hero { position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .bg-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; filter: blur(3px); }
-    .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-overlay); backdrop-filter: blur(2px); z-index: -1; }
+    /* HERO & VIDEO CONFINEMENT (FIXED Z-INDEXES) */
+    .hero { position: relative; min-height: 100svh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .bg-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; filter: blur(3px); }
+    .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-overlay); backdrop-filter: blur(2px); z-index: 2; }
     
     .hero-content { position: relative; z-index: 10; text-align: center; padding: 0 2rem; }
     .hero-subtitle { font-size: clamp(0.7rem, 1.2vw, 0.9rem); letter-spacing: 6px; text-transform: uppercase; color: var(--text-secondary); opacity: 0; transform: translateY(20px); transition: opacity 1s ease 0.5s, transform 1s ease 0.5s; }
@@ -407,7 +407,7 @@
     const fadeObserver = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } }); }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
     fadeElements.forEach(el => fadeObserver.observe(el));
 
-    // NAV SCROLL
+    // NAV SCROLL (Cleaned of btnTop logic)
     const navbar = document.getElementById('navbar');
     let lastY = window.scrollY, ticking = false;
     window.addEventListener('scroll', () => {
