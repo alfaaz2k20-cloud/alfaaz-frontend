@@ -132,30 +132,52 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
 .ur-hover:hover .en-text, .ur-hover.lang-swapped .en-text { opacity: 0; transform: translateY(-8px); }
 .ur-hover:hover::before, .ur-hover.lang-swapped::before { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
 
-/* ── 2. URDU SCALING & ALIGNMENT FIXES ── */
+/* ── 2. HERO VIDEO & STACKING FIX ── */
+.hero { z-index: 1 !important; } /* Traps the video above the body background */
+.bg-video { z-index: -2 !important; }
+.video-overlay { z-index: -1 !important; }
 
+/* ── 3. RESTORED & INDESTRUCTIBLE HERO TITLE ── */
 .logo.ur-hover::before { font-family: var(--font-urdu); font-size: 1.1em; font-style: normal; color: var(--text-primary); margin-top: -4px; }
 
-/* THE ULTIMATE HERO TITLE FIX */
+.hero-title {
+  font-family: var(--font-heading) !important;
+  font-size: clamp(3.5rem, 12vw, 8rem) !important; /* RESTORED MASSIVE SIZE */
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+  color: var(--text-primary) !important;
+  margin-bottom: 1.5rem !important;
+}
+
 .hero-title.ur-hover { 
-  display: block !important; 
-  width: 100%; 
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
 }
+
 .hero-title .en-text {
-  display: block; /* Allows natural wrapping and preserves transform animation */
-  white-space: pre-wrap; 
+  display: block !important;
+  width: 100% !important;
+  white-space: normal !important; 
+  word-break: keep-all !important; 
+  text-align: center !important;
+  transition: opacity 1.2s var(--transition-smooth), transform 1.2s var(--transition-smooth) !important;
 }
+
 .hero-title.ur-hover::before { 
-  font-size: 1.2em; /* Keeps Urdu scaled safely to the English box */
-  margin-top: -5px; 
-  color: var(--text-primary); 
+  font-size: 1.5em !important; 
+  margin-top: -10px !important; 
+  color: var(--text-primary) !important; 
 }
 
-/* Clubs Margin Fix so Urdu doesn't overlap paragraphs */
+/* ── 4. CLUBS ALIGNMENT FIX ── */
 .club-title { margin-bottom: 2.5rem !important; }
-.club-title.ur-hover::before { font-size: 1.6em; margin-top: -8px; }
+.club-title.ur-hover::before { font-size: 1.5em !important; margin-top: -8px !important; }
 
-/* 3. Editorial Card Hover */
+/* 5. Editorial Card Hover */
 .update-card { background: var(--bg-secondary); padding: 2.5rem; border: 1px solid transparent; transition: all 0.5s var(--transition-smooth); position: relative; z-index: 1; border-radius: 0; box-shadow: var(--shadow-base); }
 .update-card:hover { background: var(--bg-primary); border-color: var(--accent-gold); transform: translateY(-4px); box-shadow: var(--shadow-float); z-index: 2; }
 .updates-stack { display: flex; flex-direction: column; max-width: 900px; margin: 0 auto; }
@@ -167,7 +189,7 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
    MOBILE OPTIMIZATIONS & FIXES
 ================================================== */
 @media (max-width: 768px) {
-  .hero-title { font-size: clamp(2.5rem, 12vw, 4.5rem) !important; } 
+  .hero-title { font-size: clamp(3rem, 15vw, 4.5rem) !important; } 
   .auth-container, .dash-container, .editor-container, .vault-container { margin-top: 6rem !important; margin-bottom: 2rem !important; }
   #phantomMiniOverlay { bottom: 1.5rem !important; right: 1.5rem !important; }
 }
