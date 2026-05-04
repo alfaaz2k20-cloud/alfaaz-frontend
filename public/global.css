@@ -139,23 +139,25 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
 
 .logo.ur-hover::before { font-family: var(--font-urdu); font-size: 1.1em; font-style: normal; color: var(--text-primary); margin-top: -4px; }
 
-/* FIX: Un-flex the Hero Title so typography wraps normally */
+/* FIX: Hero Title formatting restored */
 .hero-title.ur-hover { 
-  display: block !important; /* Forces block layout instead of inline-flex */
+  display: flex !important; 
   width: 100%; 
+  justify-content: center;
+  align-items: center;
 }
 .hero-title .en-text {
-  display: inline; /* Standard text behavior */
-  white-space: pre-wrap; 
-  word-break: keep-all; /* Prevents words from breaking in half */
+  display: block; /* Restores the CSS transform animation! */
+  white-space: normal; /* Restores natural word wrapping */
+  text-align: center;
 }
 .hero-title.ur-hover::before { 
-  font-size: 1.5em; /* Massive Urdu size */
-  margin-top: 0; /* Centered perfectly over the block text */
+  font-size: 1.6em; /* Beautifully large */
+  margin-top: -15px; /* Center optically */
   color: var(--text-primary); 
 }
 
-/* Kept: Clubs Margin Fix so Urdu doesn't overlap paragraphs */
+/* FIX: Clubs Margin Fix so Urdu doesn't overlap paragraphs */
 .club-title { margin-bottom: 2.5rem !important; }
 .club-title.ur-hover::before { font-size: 1.6em; margin-top: -8px; }
 
