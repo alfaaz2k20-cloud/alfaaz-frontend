@@ -135,28 +135,30 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
 .ur-hover:hover .en-text, .ur-hover.lang-swapped .en-text { opacity: 0; transform: translateY(-8px); }
 .ur-hover:hover::before, .ur-hover.lang-swapped::before { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
 
-/* ── URDU SCALING & OVERLAP FIXES (DESKTOP & MOBILE) ── */
-.logo.ur-hover::before { 
-    font-size: 1.3em; 
-    margin-top: -4px; 
-    color: var(--text-primary); 
-}
+/* ── URDU SCALING & ALIGNMENT FIXES ── */
 
-/* Drastically increased Nastaliq size for the main Hero text */
+/* REVERTED: Navbar Logo back to original size */
+.logo.ur-hover::before { font-family: var(--font-urdu); font-size: 1.1em; font-style: normal; color: var(--text-primary); margin-top: -4px; }
+
+/* FIXED: ALFAAZ COLLECTIVE Hero Title layout */
+.hero-title.ur-hover { 
+  display: flex; /* Overrides inline-flex so it spans 100% width and centers */
+  width: 100%; 
+}
+.hero-title .en-text {
+  display: block;
+  width: 100%;
+  white-space: normal; /* Restores normal, natural wrapping */
+}
 .hero-title.ur-hover::before { 
-    font-size: 1.8em; 
-    margin-top: -20px; 
-    color: var(--text-primary); 
+  font-size: 1.2em; /* Resized to fit naturally over the English text */
+  margin-top: -15px; 
+  color: var(--text-primary); 
 }
 
-/* Enforced spacing globally to prevent Urdu text from colliding with English paragraphs */
-.club-title { 
-    margin-bottom: 2.5rem !important; 
-}
-.club-title.ur-hover::before { 
-    font-size: 1.6em; 
-    margin-top: -8px; 
-}
+/* Kept: Clubs Margin Fix so Urdu doesn't overlap paragraphs */
+.club-title { margin-bottom: 2.5rem !important; }
+.club-title.ur-hover::before { font-size: 1.6em; margin-top: -8px; }
 
 /* 2. Editorial Card Hover */
 .update-card { background: var(--bg-secondary); padding: 2.5rem; border: 1px solid transparent; transition: all 0.5s var(--transition-smooth); position: relative; z-index: 1; border-radius: 0; box-shadow: var(--shadow-base); }
@@ -173,7 +175,10 @@ a.magnetic, span.magnetic, button.magnetic { display: inline-block; }
 ================================================== */
 @media (max-width: 768px) {
   .hero { min-height: 100svh; }
-  .hero-title { font-size: clamp(3rem, 12vw, 5rem); word-break: keep-all; white-space: pre-line; }
+  
+  /* Natural mobile scaling so "COLLECTIVE" fits without clipping edges */
+  .hero-title { font-size: clamp(2rem, 10vw, 4rem); } 
+  
   .auth-container, .dash-container, .editor-container, .vault-container { margin-top: 6rem !important; margin-bottom: 2rem !important; }
   #phantomMiniOverlay { bottom: 1.5rem !important; right: 1.5rem !important; }
 }
